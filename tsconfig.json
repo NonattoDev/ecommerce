@@ -27,7 +27,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/components/Header/header.tsx"  ],
+, "src/components/Header/header.tsx", "src/pages/api/db/db.ts", "src/pages/api/db/knexfile.ts"  ],
   "exclude": [
     "node_modules"
   ]

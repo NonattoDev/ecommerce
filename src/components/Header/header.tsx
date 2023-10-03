@@ -1,7 +1,5 @@
-import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import Nav from "react-bootstrap/Nav";
 import logo from "./logo-progjteo.png";
 import Navbar from "react-bootstrap/Navbar";
 import Image from "next/image";
@@ -12,7 +10,7 @@ function Header() {
     <Navbar expand="lg" className="bg-body-tertiary" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <Container fluid>
         <Navbar.Brand href="/" style={{ margin: "0px 30px" }}>
-          <Image src={logo} alt="Logo" width={150} height={60} />
+          <Image src={logo} alt="Logo" width={160} height={70} />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
