@@ -6,48 +6,48 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
 const axiosCliente = axios.create({
-  baseURL: "http://192.168.1.8:3001/",
+  baseURL: "http://10.71.0.117:3001/",
 });
 
-interface Produto {
+interface Grupo {
   CodGrp: number;
   Grupo: string;
   Qtd: number;
 }
 
 export default function NavbarSite() {
-  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [grupo, setGrupo] = useState<Grupo[]>([]);
+  const [gruposTop, setGruposTop] = useState<Grupo[]>([]);
 
   useEffect(() => {
-    // Fazendo a chamada de API para obter os produtos
-    axiosCliente
-      .get("produtos/grupos")
-      .then((response) => {
-        // Atualiza o estado com os produtos retornados
-        setProdutos(response.data);
-      })
+    axios
+      .all([axiosCliente.get<Grupo[]>("produtos/grupos"), axiosCliente.get<Grupo[]>("produtos/grupos/top")])
+      .then(
+        axios.spread((responseGrupos, responseGruposTop) => {
+          // Atualiza os estados com os dados retornados
+          setGrupo(responseGrupos.data);
+          setGruposTop(responseGruposTop.data);
+        })
+      )
       .catch((error) => {
-        console.error("Erro ao obter os produtos:", error);
-        return [];
+        console.error("Erro ao obter os grupos:", error);
       });
   }, []);
 
   return (
-    <>
-      <Navbar bg="primary" data-bs-theme="dark" style={{ width: "100%", height: "40px" }}>
-        <Container>
-          <Navbar.Brand href="#home">Atl Sul</Navbar.Brand>
-          <Nav className="me-auto">
-            <NavDropdown title="Categorias" id="navbarScrollingDropdown">
-              {produtos.map((produto) => (
-                <NavDropdown.Item key={produto.CodGrp} href={`/produtos/${produto.CodGrp}`}>
-                  <strong>{produto.Grupo}</strong> - ({produto.Qtd})
-                </NavDropdown.Item>
-              ))}
-            </NavDropdown>
-          </Nav>
-        </Container>
-      </Navbar>
-    </>
+    <Navbar data-bs-theme="dark" style={{ width: "100%", height: "50px", backgroundColor: "#017402", fontWeight: "bold" }}>
+      <Nav style={{ display: "flex", width: "100%", margin: "0 50px", justifyContent: "space-around" }}>
+        <NavDropdown title="Categorias" id="navbarScrollingDropdown">
+          {grupo.map((grupo) => (
+            <NavDropdown.Item key={grupo.CodGrp} href={`/produtos/${grupo.CodGrp}`}>
+              <strong>{grupo.Grupo}</strong> - ({grupo.Qtd})
+            </NavDropdown.Item>
+          ))}
+        </NavDropdown>
+        {gruposTop.map((grupo) => (
+          <Nav.Link key={grupo.CodGrp}>{grupo.Grupo}</Nav.Link>
+        ))}
+      </Nav>
+    </Navbar>
   );
 }
