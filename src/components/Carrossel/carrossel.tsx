@@ -11,16 +11,16 @@ function Carrossel() {
     <div className="carroselContent">
       <Carousel className={styles.carrossel} fade>
         <Carousel.Item className={styles.imageContent}>
-          <Image src={Tv} alt="Imagem teste" fill />
+          <Image src={Tv} alt="Imagem teste" fill priority sizes="(max-width: 1920px) 100vw, (max-width: 1200px) 50vw, 33vw" />
         </Carousel.Item>
         <Carousel.Item className={styles.imageContent}>
-          <Image src={imagem} alt="Imagem teste" fill />
+          <Image src={imagem} alt="Imagem teste" fill priority sizes="(max-width: 1920px) 100vw, (max-width: 1200px) 50vw, 33vw" />
         </Carousel.Item>
         <Carousel.Item className={styles.imageContent}>
-          <Image src={imagemm} alt="Imagem teste" fill />
+          <Image src={imagemm} alt="Imagem teste" fill priority sizes="(max-width: 1920px) 100vw, (max-width: 1200px) 50vw, 33vw" />
         </Carousel.Item>
         <Carousel.Item className={styles.imageContent}>
-          <Image src={kabum} alt="Imagem teste" fill />
+          <Image src={kabum} alt="Imagem teste" fill priority sizes="(max-width: 1920px) 100vw, (max-width: 1200px) 50vw, 33vw" />
         </Carousel.Item>
       </Carousel>
     </div>
