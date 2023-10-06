@@ -4,6 +4,7 @@ import logo from "./logo-progjteo.png";
 import Navbar from "react-bootstrap/Navbar";
 import Image from "next/image";
 import Link from "next/link";
+import style from "./header.module.css";
 
 function Header() {
   return (
@@ -14,9 +15,12 @@ function Header() {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
-          <Form className="d-flex mx-auto ">
-            <Form.Control type="search" placeholder="E-commerce Softline Sistemas" className="me-2 form-control-lg" aria-label="Search" style={{ width: "700px", textAlign: "center" }} />
-          </Form>
+          <div className={style.searchBar}>
+            <Form className="d-flex mx-auto">
+              <Form.Control type="search" placeholder="E-commerce Softline Sistemas" className="me-2 form-control-lg textSearch " aria-label="Search" />
+            </Form>
+          </div>
+
           <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", width: "200px", margin: "0px 30px", padding: "4px" }}>
             <Link href="/minhaconta" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "13px", textDecoration: "none" }}>
               <svg style={{ width: "40px", margin: "0 4px 0 0 " }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
