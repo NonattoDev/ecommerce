@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import axiosCliente from "@/services/axiosCliente";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import axiosCliente from "@/services/axiosCliente";
 
 interface Grupo {
   CodGrp: number;
@@ -32,19 +32,25 @@ export default function NavbarSite() {
   }, []);
 
   return (
-    <Navbar data-bs-theme="dark" style={{ width: "100%", height: "50px", backgroundColor: "#017402", fontWeight: "bold" }}>
-      <Nav style={{ display: "flex", width: "100%", margin: "0 50px", justifyContent: "space-around" }}>
-        <NavDropdown title="Categorias" id="navbarScrollingDropdown">
-          {grupo.map((grupo) => (
-            <NavDropdown.Item key={grupo.CodGrp} href={`/produtos/${grupo.CodGrp}`}>
-              <strong>{grupo.Grupo}</strong> - ({grupo.Qtd})
-            </NavDropdown.Item>
-          ))}
-        </NavDropdown>
-        {gruposTop.map((grupo) => (
-          <Nav.Link key={grupo.CodGrp}>{grupo.Grupo}</Nav.Link>
-        ))}
-      </Nav>
+    <Navbar expand="lg" className="bg-success">
+      <Container>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <NavDropdown title="Categorias" id="basic-nav-dropdown">
+              {grupo.map((grupo) => (
+                <NavDropdown.Item key={grupo.CodGrp} href={`/produtos/${grupo.CodGrp}`}>
+                  <strong>{grupo.Grupo}</strong> - ({grupo.Qtd})
+                </NavDropdown.Item>
+              ))}
+            </NavDropdown>
+            {gruposTop.map((grupo) => (
+              <Nav.Link key={grupo.CodGrp}>{grupo.Grupo}</Nav.Link>
+            ))}
+            <NavDropdown.Divider />
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
     </Navbar>
   );
 }

@@ -6,23 +6,44 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Carrossel from "@/components/Carrossel/carrossel";
 import NavbarSite from "@/components/Navbar/Navbar";
-import axios from "axios";
 import axiosCliente from "@/services/axiosCliente";
+import Pagination from "@/components/Pagination/Pagination";
+import styles from "../styles/Home.module.css";
+
+interface Produto {
+  CodPro: number;
+  Produto: string;
+  Referencia: string;
+  Preco1: number;
+  PrecoPromocao: number | null;
+  PromocaoData: string | null;
+  Caminho: string;
+  Categoria: string;
+  Estoque: number;
+}
 
 export default function Home() {
-  const [produtos, setProdutos] = useState([]);
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(0);
 
   useEffect(() => {
-    obterProdutosPaginados(1); // Carrega a página inicial ao carregar o componente
-  }, []);
+    obterProdutosPaginados(paginaAtual);
+  }, [paginaAtual]);
 
-  const obterProdutosPaginados = async (pagina) => {
+  const obterProdutosPaginados = async (pagina: number) => {
     try {
-      const resposta = await axiosCliente.get(`/produtos?pagina=${pagina}&itensPorPagina=8`);
-      setProdutos(resposta.data);
+      const resposta = await axiosCliente.get(`/produtos/?pagina=${pagina}&itensPorPagina=20`);
+      const paginas = resposta.data.qtdProdutos / 20;
+      setProdutos(resposta.data.produtos);
+      setTotalPaginas(paginas);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handlePaginaSelecionada = (pagina: number) => {
+    setPaginaAtual(pagina);
   };
 
   return (
@@ -32,14 +53,31 @@ export default function Home() {
       </Head>
       <Carrossel />
       <NavbarSite />
+
       <Container>
-        <Row xs={1} md={2} lg={3} xl={4} className="g-4">
+        <div className={styles.paginationWrapper}>
+          <Pagination paginaAtual={paginaAtual} totalPaginas={totalPaginas} onPageChange={handlePaginaSelecionada} />
+        </div>
+        <Row xs={1} md={2} lg={3} xl={4} className={`g-4 ${styles.productRow}`}>
           {produtos.map((produto) => (
-            <Col key={produto.id}>
-              <ProdutoCard nome={produto.nome} preco={produto.preco} descricao={produto.descricao} />
+            <Col key={produto.CodPro}>
+              <ProdutoCard
+                CodPro={produto.CodPro}
+                Produto={produto.Produto}
+                Referencia={produto.Referencia}
+                Preco1={produto.Preco1}
+                PrecoPromocao={produto.PrecoPromocao}
+                PromocaoData={produto.PromocaoData}
+                Caminho={produto.Caminho}
+                Categoria={produto.Categoria}
+                Estoque={produto.Estoque}
+              />
             </Col>
           ))}
         </Row>
+        <div className={styles.paginationWrapper}>
+          <Pagination paginaAtual={paginaAtual} totalPaginas={totalPaginas} onPageChange={handlePaginaSelecionada} />
+        </div>
       </Container>
     </>
   );

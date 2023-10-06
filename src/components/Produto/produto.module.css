@@ -1,5 +1,18 @@
-.adicionarAoCarrinho {
-    display: flex;
-    justify-content: center;
-    align-items: space-between;
+.produto-card {
+    width: 18rem;
+    height: 100%;
+    flex-grow: 1;
+    position: relative;
+}
+
+@media (max-width: 767px) {
+    .produto-card {
+        width: 100%;
+        height: auto;
+    }
+
+    .produto-card img {
+        max-width: 100%;
+        height: auto;
+    }
 }

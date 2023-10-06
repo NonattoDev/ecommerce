@@ -1,3 +1,4 @@
+/* Estilos padrão para telas maiores */
 .container {
     background-color: #EEF;
     padding: 5px 80px;
@@ -29,13 +30,10 @@
     height: 17px;
 }
 
-
 .logo {
-    /* Mantem a proporçao da imagem */
     object-fit: contain;
-    display: flex
+    display: flex;
 }
-
 
 .loginContainer {
     width: 160px;
@@ -55,15 +53,12 @@
     border-radius: 7px;
     color: #fff;
     background-color: #20c65c;
-    transition: all 0.3s ease-in-out
+    transition: all 0.3s ease-in-out;
 }
-
-
 
 .login:hover {
     color: #fff;
     background-color: #0066ff;
-
 }
 
 .logout {
@@ -79,9 +74,40 @@
     transition: all 0.3s ease-in-out;
 }
 
-
-
 .logout:hover {
     color: #fff;
     background-color: #0066ff;
+}
+
+/* Estilos para dispositivos móveis */
+@media (max-width: 768px) {
+    .container {
+        padding: 5px 20px;
+        /* Reduza o espaçamento horizontal */
+    }
+
+    .textSearch {
+        width: 200px;
+        /* Reduza a largura do campo de pesquisa */
+    }
+
+    .lupaIcon {
+        left: 230px;
+        /* Ajuste a posição do ícone de pesquisa */
+    }
+
+    .loginContainer {
+        width: 120px;
+        /* Reduza a largura do contêiner de login */
+    }
+
+    .login,
+    .logout {
+        font-size: 12px;
+        /* Reduza o tamanho da fonte */
+        width: 60px;
+        /* Reduza a largura dos botões de login/logout */
+        height: 28px;
+        /* Reduza a altura dos botões de login/logout */
+    }
 }
