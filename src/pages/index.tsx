@@ -34,7 +34,8 @@ export default function Home() {
   const obterProdutosPaginados = async (pagina: number) => {
     try {
       const resposta = await axiosCliente.get(`/produtos/?pagina=${pagina}&itensPorPagina=20`);
-      const paginas = resposta.data.qtdProdutos / 20;
+      const paginas = Math.ceil(resposta.data.qtdProdutos / 20);
+
       setProdutos(resposta.data.produtos);
       setTotalPaginas(paginas);
     } catch (error) {

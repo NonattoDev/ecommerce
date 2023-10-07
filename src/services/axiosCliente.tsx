@@ -1,7 +1,20 @@
+import os from "os";
 import axios from "axios";
+
+const networkInterfaces = os.networkInterfaces();
+let ipAddress: string;
+
+if (networkInterfaces && networkInterfaces["Wi-Fi"]) {
+  ipAddress = networkInterfaces["Wi-Fi"][1].address;
+  console.log(ipAddress);
+} else {
+  ipAddress = "localhost";
+}
+
+console.log(ipAddress);
+
 const axiosCliente = axios.create({
-  // baseURL: "http://10.71.0.117:3001/",
-  baseURL: "http://192.168.1.10:3001/",
+  baseURL: `http://${ipAddress}:3001/`,
 });
 
 export default axiosCliente;

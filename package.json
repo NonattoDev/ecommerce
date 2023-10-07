@@ -20,7 +20,8 @@
     "react-dom": "latest"
   },
   "devDependencies": {
-    "@types/node": "latest",
+    "@types/axios": "^0.14.0",
+    "@types/node": "^20.8.3",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "typescript": "latest"
