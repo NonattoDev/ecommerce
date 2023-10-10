@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Header from "@/components/Header/header";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";

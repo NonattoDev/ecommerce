@@ -1,0 +1,142 @@
+.container {
+    margin: 15px auto 15px auto;
+    padding: 15px;
+}
+
+.tituloProduto {
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+}
+
+.descricaoTitulo {
+    display: flex;
+
+}
+
+.descricaoTitulo p {
+    margin-right: 10px;
+}
+
+.tituloProduto h1 {
+    font-size: 30px;
+}
+
+.tituloProduto p {
+    margin-top: -10px;
+}
+
+.descricao {
+    padding: 20px;
+}
+
+.descricao p {
+    font-size: 18px;
+}
+
+.link {
+    color: rgb(46, 46, 46);
+    text-decoration: none;
+}
+
+.botaoComprar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(0, 255, 76);
+    color: rgb(255, 255, 255);
+    width: 200px;
+    height: 40px;
+    border-radius: 4px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.botaoComprar:hover {
+    width: 200px;
+    height: 40px;
+    border-radius: 4px;
+    transform: scale(1.05);
+}
+
+.botoesCompra {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Produto.module.css */
+.selectInput {
+    margin-left: 10px;
+    font-size: 16px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    width: 80px;
+    height: 40px;
+    appearance: none;
+    margin-right: 10px;
+    /* Remove the default arrow in some browsers */
+}
+
+.selectInput:focus {
+    outline: none;
+    border-color: #00ff15;
+    box-shadow: 0 0 6px #00a100;
+}
+
+.selectInput option {
+    background-color: #fff;
+    color: #00962d;
+}
+
+
+
+.produtoIndisponivel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eaeaea;
+    border-radius: 5px;
+    padding: 10px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.produtoIndisponivel:hover {
+    background-color: #bd0909;
+    color: #fff;
+    cursor: not-allowed;
+    transform: scale(0.9);
+}
+
+/* Novo seletor de imagens */
+.imagensThumbnail {
+    display: flex;
+    margin-top: 20px;
+}
+
+.imagemThumbnail {
+    width: 82px;
+    height: 82px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.imagemThumbnail:hover {
+    border-color: #00ff15;
+}
+
+.imagemPrincipal {
+    width: 500px;
+    height: 500px;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+}
+
+.produtosSimilares {
+    display: flex;
+    margin-top: 15px;
+}

@@ -1,7 +1,15 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import axiosCliente from "@/services/axiosCliente";
+import NavbarSite from "@/components/Navbar/Navbar";
+import Container from "react-bootstrap/Container";
+import { Card, Col, Row } from "react-bootstrap";
+import styles from "./Produto.module.css";
+import Image from "next/image";
+import Link from "next/link";
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import imagemSubstituicao from "../../../public/fotosProdutos/erro/semProduto.png";
+import ProdutosSimilares from "@/components/ProdutosSimilares/produtosSimilares";
 
 interface Produto {
   CodPro: number;
@@ -13,19 +21,56 @@ interface Produto {
   Caminho: string;
   Categoria: string;
   Estoque: number;
+  Caracteristicas: string;
+  EstimativaChegada: string | null;
+  Caminho2: string | null;
+  Caminho3: string | null;
+  Caminho4: string | null;
+  Caminho5: string | null;
+  Caminho6: string | null;
+  Caminho7: string | null;
+  Caminho8: string | null;
+  Caminho9: string | null;
+  Caminho10: string | null;
+}
+
+interface ProdutosSimilares {
+  CodPro: number;
+  Produto: string;
+  Referencia: string;
+  Preco1: number;
+  PrecoPromocao: number;
+  Caminho: string;
+  Categoria: string;
+  Estoque: number;
+}
+
+interface ResponseData {
+  produto: Produto;
+  produtosSimilares: ProdutosSimilares[];
 }
 
 function Produto() {
   const router = useRouter();
   const { productId } = router.query;
   const [produto, setProduto] = useState<Produto>({} as Produto);
+  const [quantidade, setQuantidade] = useState(1);
+  const [mensagem, setMensagem] = useState("");
+  const [imagemCarregada, setImagemCarregada] = useState(true);
+  const [imagemPrincipal, setImagemPrincipal] = useState("");
+  const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilares[]>([]);
+
+  const handleImagemErro = () => {
+    setImagemCarregada(false);
+  };
 
   useEffect(() => {
     const fetchProduto = async () => {
       try {
-        const response = await axiosCliente.get<Produto>(`/produtos/produtoEspecifico/${productId}`);
-        setProduto(response.data);
-        console.log(response.data);
+        const response = await axiosCliente.get<ResponseData>(`/produtos/produtoEspecifico/${productId}`);
+        setProduto(response.data.produto);
+        setImagemPrincipal(response.data.produto.Caminho); // Define a primeira imagem como principal ao carregar o produto
+        setProdutosSimilares(response.data.produtosSimilares);
       } catch (error) {
         console.error(error);
       }
@@ -34,23 +79,133 @@ function Produto() {
     fetchProduto();
   }, [productId]);
 
+  const handleQuantidadeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedQuantidade = parseInt(event.target.value);
+    setQuantidade(selectedQuantidade);
+  };
+
+  const handleAdicionarCarrinho = () => {
+    if (produto.Estoque <= 0) {
+      return alert("Produto indisponível");
+    } else if (quantidade > produto.Estoque) {
+      return alert("Quantidade selecionada maior que o estoque disponível");
+    } else {
+      <Link href="/carrinho">
+        <button onClick={handleAdicionarCarrinho}>Adicionar ao carrinho</button>
+      </Link>;
+    }
+  };
+
+  const handleThumbnailClick = (caminho: string | null) => {
+    if (caminho) {
+      setImagemCarregada(true);
+      setImagemPrincipal(caminho);
+    }
+  };
+
   return (
     <div>
-      <h1>Página do produto: {productId}</h1>
-      {produto.Produto && (
-        <div>
-          <h2>Detalhes do produto</h2>
-          <p>Nome: {produto.Produto}</p>
-          <p>Referência: {produto.Referencia}</p>
-          <p>Preço: {produto.Preco1}</p>
-          {produto.PrecoPromocao && <p>Preço de Promoção: {produto.PrecoPromocao}</p>}
-          {produto.PromocaoData && <p>Data da Promoção: {produto.PromocaoData}</p>}
-          <img src={`/fotosProdutos/${produto.Caminho}`} alt="Imagem do produto" />
-          <p>Categoria: {produto.Categoria}</p>
-          <p>Estoque: {produto.Estoque}</p>
-          {/* Renderize outros detalhes do produto */}
-        </div>
-      )}
+      <NavbarSite />
+      <Container className={styles.container}>
+        {produto && produto.Produto ? (
+          <Row>
+            <Row>
+              <div className={styles.tituloProduto}>
+                <h1>{produto.Produto}</h1>
+                <div className={styles.descricaoTitulo}>
+                  <p className={styles.referencia}>Referência: {produto.Referencia}</p>
+                  <p>
+                    <Link href={`/categoria/produtos/${produto.Categoria}`} className={styles.link}>
+                      Categoria: {produto.Categoria}
+                    </Link>
+                  </p>
+                </div>
+              </div>
+            </Row>
+            <Row>
+              <Col sm={2}>
+                {produto.Caminho && (
+                  <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho)}>
+                    <Image src={`/fotosProdutos/${produto.Caminho}`} alt="Thumbnail 2" width={80} height={80} style={{ objectFit: "contain" }} />
+                  </div>
+                )}
+
+                <div className={styles.imagensThumbnail}>
+                  {produto.Caminho2 && (
+                    <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho2)}>
+                      <Image src={`/fotosProdutos/${produto.Caminho2}`} alt="Thumbnail 2" width={80} height={80} style={{ objectFit: "contain" }} />
+                    </div>
+                  )}
+                  {produto.Caminho3 && (
+                    <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho3)}>
+                      <Image src={`/fotosProdutos/${produto.Caminho3}`} alt="Thumbnail 3" width={80} height={80} style={{ objectFit: "contain" }} />
+                    </div>
+                  )}
+                  {produto.Caminho4 && (
+                    <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho4)}>
+                      <Image src={`/fotosProdutos/${produto.Caminho4}`} alt="Thumbnail 3" width={80} height={80} style={{ objectFit: "contain" }} />
+                    </div>
+                  )}
+                  {/* Adicione outros thumbnails aqui */}
+                </div>
+              </Col>
+              <Col>
+                {imagemCarregada ? (
+                  <Image src={`/fotosProdutos/${imagemPrincipal}`} alt="Imagem do produto" width={500} height={500} onError={handleImagemErro} style={{ objectFit: "contain" }} />
+                ) : (
+                  <Image src={imagemSubstituicao} alt="Imagem de substituição" width={500} height={500} />
+                )}
+              </Col>
+              <Col>
+                <Card>
+                  <div className={styles.descricao}>
+                    <p>
+                      Preço:{" "}
+                      {produto.Preco1.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </p>
+                    {produto.PrecoPromocao && <p>Preço de Promoção: {produto.PrecoPromocao}</p>}
+                    {produto.PromocaoData && <p>Data da Promoção: {produto.PromocaoData}</p>}
+                    {produto.Estoque <= 0 ? <p>Estoque: 😢</p> : <p>Estoque: {produto.Estoque}</p>}
+                    {/* Renderize outros detalhes do produto */}
+                    {produto.Caracteristicas && (
+                      <p>
+                        <strong>Características deste produto:</strong> {produto.Caracteristicas}
+                      </p>
+                    )}
+
+                    {produto.Estoque > 0 ? (
+                      <div className={styles.botoesCompra}>
+                        <input type="number" value={quantidade} min={1} max={produto.Estoque} onChange={handleQuantidadeChange} className={styles.selectInput} />
+                        <button onClick={handleAdicionarCarrinho} className={styles.botaoComprar}>
+                          <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
+                          Adicionar ao carrinho
+                        </button>
+                      </div>
+                    ) : (
+                      <div className={styles.produtoIndisponivel}>Produto Indisponível</div>
+                    )}
+                  </div>
+                </Card>
+              </Col>
+            </Row>
+            <Row>
+              {produtosSimilares.length > 0 && (
+                <div className={styles.produtosSimilares}>
+                  <ProdutosSimilares produtos={produtosSimilares} />
+                </div>
+              )}
+            </Row>
+          </Row>
+        ) : (
+          <div>
+            <h1>Produto não encontrado</h1>
+            {/* Exiba uma mensagem ou redirecione o usuário para uma página de erro */}
+          </div>
+        )}
+      </Container>
     </div>
   );
 }
