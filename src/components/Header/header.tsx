@@ -5,7 +5,6 @@ import Navbar from "react-bootstrap/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import style from "./header.module.css";
-import { useState } from "react";
 import Carrinho from "../Carrinho/Carrinho";
 
 function Header() {

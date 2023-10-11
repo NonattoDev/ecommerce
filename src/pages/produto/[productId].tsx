@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axiosCliente from "@/services/axiosCliente";
-import NavbarSite from "@/components/Navbar/Navbar";
 import Container from "react-bootstrap/Container";
 import { Card, Col, Row } from "react-bootstrap";
 import styles from "./Produto.module.css";
@@ -9,56 +8,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import imagemSubstituicao from "../../../public/fotosProdutos/erro/semProduto.png";
+import { Produto, ProdutosSimilaresType, ResponseData } from "@/Types/Produto";
 import ProdutosSimilares from "@/components/ProdutosSimilares/produtosSimilares";
-
-interface Produto {
-  CodPro: number;
-  Produto: string;
-  Referencia: string;
-  Preco1: number;
-  PrecoPromocao: number | null;
-  PromocaoData: string | null;
-  Caminho: string;
-  Categoria: string;
-  Estoque: number;
-  Caracteristicas: string;
-  EstimativaChegada: string | null;
-  Caminho2: string | null;
-  Caminho3: string | null;
-  Caminho4: string | null;
-  Caminho5: string | null;
-  Caminho6: string | null;
-  Caminho7: string | null;
-  Caminho8: string | null;
-  Caminho9: string | null;
-  Caminho10: string | null;
-}
-
-interface ProdutosSimilares {
-  CodPro: number;
-  Produto: string;
-  Referencia: string;
-  Preco1: number;
-  PrecoPromocao: number;
-  Caminho: string;
-  Categoria: string;
-  Estoque: number;
-}
-
-interface ResponseData {
-  produto: Produto;
-  produtosSimilares: ProdutosSimilares[];
-}
+import { useCarrinhoContext } from "@/context/CarrinhoContext";
 
 function Produto() {
   const router = useRouter();
   const { productId } = router.query;
   const [produto, setProduto] = useState<Produto>({} as Produto);
   const [quantidade, setQuantidade] = useState(1);
-  const [mensagem, setMensagem] = useState("");
   const [imagemCarregada, setImagemCarregada] = useState(true);
   const [imagemPrincipal, setImagemPrincipal] = useState("");
-  const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilares[]>([]);
+  const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilaresType[]>([]);
+  const { produtosNoCarrinho, handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
 
   const handleImagemErro = () => {
     setImagemCarregada(false);
@@ -90,9 +52,11 @@ function Produto() {
     } else if (quantidade > produto.Estoque) {
       return alert("Quantidade selecionada maior que o estoque disponível");
     } else {
-      <Link href="/carrinho">
-        <button onClick={handleAdicionarCarrinho}>Adicionar ao carrinho</button>
-      </Link>;
+      const produtoNoCarrinho = {
+        ...produto,
+        Quantidade: quantidade,
+      };
+      handleAdicionarProdutosAoCarrinho(produtoNoCarrinho);
     }
   };
 
@@ -104,8 +68,7 @@ function Produto() {
   };
 
   return (
-    <div>
-      <NavbarSite />
+    <>
       <Container className={styles.container}>
         {produto && produto.Produto ? (
           <Row>
@@ -206,7 +169,7 @@ function Produto() {
           </div>
         )}
       </Container>
-    </div>
+    </>
   );
 }
 

@@ -2,20 +2,39 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import styles from "./Carrinho.module.css";
+import { useCarrinhoContext } from "../../context/CarrinhoContext";
 
 function Carrinho() {
+  const { produtosNoCarrinho, handleAdicionarProdutosAoCarrinho, handleRemoverProduto } = useCarrinhoContext();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const itens = [{ nome: "Produto1" }, { nome: "Produto2" }];
+  const calcularTotalCompra = () => {
+    let total = 0;
+    produtosNoCarrinho.forEach((produto) => {
+      total += produto.Quantidade * produto.Preco1;
+    });
+    return total;
+  };
+
+  const calcularQuantidadeTotal = () => {
+    let quantidadeTotal = 0;
+    produtosNoCarrinho.forEach((produto) => {
+      quantidadeTotal += produto.Quantidade;
+    });
+    return quantidadeTotal;
+  };
 
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 15l7-7 3 3-7 7-3-3z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 11l3-3 7 7-3 3-7-7z" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6" style={{ width: "1em", height: "1em" }}>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+          />
         </svg>
       </Button>
 
@@ -25,14 +44,43 @@ function Carrinho() {
         </Offcanvas.Header>
         <Offcanvas.Body>
           <div className={styles.itensCarrinho}>
-            {itens.map((i) => (
-              <p>{i.nome}</p>
-            ))}
+            {produtosNoCarrinho.length === 0 ? (
+              <div className={styles.carrinhoVazio}>Você ainda não tem itens no carrinho, inicie as compras</div>
+            ) : (
+              produtosNoCarrinho.map((produto) => (
+                <div className={styles.itemCarrinho}>
+                <img src={`/fotosProdutos/${produto.Caminho}`} alt={produto.Produto} className={styles.imagemProduto} />
+                <div className={styles.detalhesProduto}>
+                  <div className={styles.detalhesProdutoRow}>
+                    <p>{produto.Produto}</p>
+                    <button className={styles.botaoRemover} onClick={() => handleRemoverProduto(produto.CodPro)}>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className={styles.detalhesProdutoRow}>
+                    <p>R$ {produto.Preco1.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+                    <p>Quantidade: {produto.Quantidade}</p>
+                  </div>
+                </div>
+              </div>
+              ))
+            )}
           </div>
-
-          <h6>
-            Resumo do carrinho: <strong>R$:1000,00</strong>
-          </h6>
+          {produtosNoCarrinho.length > 0 && (
+            <div className={styles.resumoCarrinho}>
+              <h6>
+                Quantidade total de itens no carrinho: <strong>{calcularQuantidadeTotal()}</strong>
+              </h6>
+              <h6>
+                Total da compra: <strong>R$ {calcularTotalCompra().toLocaleString("pt-br")}</strong>
+              </h6>
+              <Button variant="primary" className={styles.botaoFinalizarCompra}>
+                Finalizar Compra
+              </Button>
+            </div>
+          )}
         </Offcanvas.Body>
       </Offcanvas>
     </>
