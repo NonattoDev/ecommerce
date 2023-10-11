@@ -11,9 +11,12 @@ function Header() {
   return (
     <Navbar expand="lg" className="bg-body-tertiary" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <Container fluid>
-        <Navbar.Brand href="/" style={{ margin: "0px 30px" }}>
-          <Image src={logo} alt="Logo" width={160} height={70} />
-        </Navbar.Brand>
+        <Link href="/">
+          <Navbar.Brand style={{ margin: "0px 30px" }}>
+            <Image src={logo} alt="Logo" priority width={160} height={70} />
+          </Navbar.Brand>
+        </Link>
+
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <div className={style.searchBar}>
@@ -23,7 +26,7 @@ function Header() {
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", width: "250px", margin: "0px 30px", padding: "4px" }}>
-            <Link href="/minhaconta" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "13px", textDecoration: "none" }}>
+            <Link href="/autenticacao/usuario" style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "13px", textDecoration: "none" }}>
               <svg style={{ width: "40px", margin: "0 4px 0 0 " }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path
                   strokeLinecap="round"

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Link from "next/link";
 import styles from "./produto.module.css";
+import Loading from "../Loading/Loading";
 
 export type ProdutoComponenteProps = {
   CodPro: number;
@@ -17,14 +18,27 @@ export type ProdutoComponenteProps = {
 };
 
 function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, PromocaoData, Caminho, Categoria, Estoque }: ProdutoComponenteProps) {
+  const [isLoading, setIsLoading] = useState(true);
   const preco = Preco1.toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 
+  useEffect(() => {
+    const image = new Image();
+    image.src = `/fotosProdutos/${Caminho}`;
+    image.onload = () => {
+      setIsLoading(false);
+    };
+    image.onerror = () => {
+      setIsLoading(false);
+    };
+  }, [Caminho]);
+
   return (
     <Link href={`/produto/${CodPro}`} style={{ textDecoration: "none" }}>
       <Card className={`${styles["produto-card"]} ${Estoque <= 0 ? styles.unavailable : ""}`}>
+        {isLoading && <Loading />}
         <div className={styles["produto-card-img-container"]}>
           {Estoque <= 0 && (
             <div className={styles["produto-card-unavailable"]}>
@@ -35,9 +49,13 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
             src={`/fotosProdutos/${Caminho}`}
             alt={Produto}
             className={styles["produto-card-img"]}
+            style={{ display: isLoading ? "none" : "block" }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = "fotosProdutos/erro/semProduto.png";
+            }}
+            onLoad={() => {
+              setIsLoading(false);
             }}
           />
         </div>

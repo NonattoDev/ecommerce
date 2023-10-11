@@ -17,6 +17,7 @@ function Produto() {
   const { productId } = router.query;
   const [produto, setProduto] = useState<Produto>({} as Produto);
   const [quantidade, setQuantidade] = useState(1);
+  const [frete, setFreteGratis] = useState(0);
   const [imagemCarregada, setImagemCarregada] = useState(true);
   const [imagemPrincipal, setImagemPrincipal] = useState("");
   const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilaresType[]>([]);
@@ -55,6 +56,7 @@ function Produto() {
       const produtoNoCarrinho = {
         ...produto,
         Quantidade: quantidade,
+        FreteGratis: frete,
       };
       handleAdicionarProdutosAoCarrinho(produtoNoCarrinho);
     }
@@ -114,9 +116,9 @@ function Produto() {
               </Col>
               <Col>
                 {imagemCarregada ? (
-                  <Image src={`/fotosProdutos/${imagemPrincipal}`} alt="Imagem do produto" width={500} height={500} onError={handleImagemErro} style={{ objectFit: "contain" }} />
+                  <Image src={`/fotosProdutos/${imagemPrincipal}`} alt="Imagem do produto" width={500} height={500} onError={handleImagemErro} style={{ objectFit: "contain" }} priority />
                 ) : (
-                  <Image src={imagemSubstituicao} alt="Imagem de substituição" width={500} height={500} />
+                  <Image src={imagemSubstituicao} alt="Imagem de substituição" width={500} height={500} priority />
                 )}
               </Col>
               <Col>

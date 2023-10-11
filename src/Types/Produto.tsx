@@ -36,4 +36,5 @@ export interface ProdutosSimilaresType {
 export interface ResponseData {
   produto: Produto;
   produtosSimilares: ProdutosSimilaresType[];
+  freteGratis: number;
 }
