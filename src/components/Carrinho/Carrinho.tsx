@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import styles from "./Carrinho.module.css";
 import { useCarrinhoContext } from "../../context/CarrinhoContext";
 import { Form } from "react-bootstrap";
+import { Produto } from "@/Types/Produto";
 
 function Carrinho() {
+  const [quantidadeTotal, setQuantidadeTotal] = useState(0); // Declare quantidadeTotal state
   const { produtosNoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto } = useCarrinhoContext();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -17,14 +19,6 @@ function Carrinho() {
       total += produto.Quantidade * produto.Preco1;
     });
     return total;
-  };
-
-  const calcularQuantidadeTotal = () => {
-    let quantidadeTotal = 0;
-    produtosNoCarrinho.forEach((produto) => {
-      quantidadeTotal += produto.Quantidade;
-    });
-    return quantidadeTotal;
   };
 
   const calcularValorFrete = () => {
@@ -46,9 +40,27 @@ function Carrinho() {
     handleAtualizarQuantidadeProduto(CodPro, novaQuantidade);
   };
 
+  const calcularQuantidadeTotal = () => {
+    if (typeof window !== "undefined") {
+      const carrinho = localStorage.getItem("carrinho");
+      const produtosNoCarrinho = carrinho ? JSON.parse(carrinho) : [];
+      let quantidadeTotal = 0;
+      produtosNoCarrinho.forEach((produto: Produto) => {
+        quantidadeTotal += produto.Quantidade;
+      });
+      return quantidadeTotal;
+    }
+    return 0;
+  };
+
+  useEffect(() => {
+    const total = calcularQuantidadeTotal();
+    setQuantidadeTotal(total);
+  }, [produtosNoCarrinho]);
+
   return (
     <>
-      <div className={styles.BotaoCarrinho} data-count={calcularQuantidadeTotal()}>
+      <div className={styles.BotaoCarrinho} data-count={quantidadeTotal}>
         <svg
           onClick={handleShow}
           xmlns="http://www.w3.org/2000/svg"
