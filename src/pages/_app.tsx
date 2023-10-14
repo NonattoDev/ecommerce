@@ -5,10 +5,11 @@ import Head from "next/head";
 import { CarrinhoProvider } from "@/context/CarrinhoContext";
 import Footer from "@/components/Footer/footer";
 import Header from "@/components/Header/header";
+import { SessionProvider } from "next-auth/react";
 
-export default function App({ Component, pageProps: { ...pageProps } }: AppProps) {
+export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <>
+    <SessionProvider session={session}>
       <Head>
         <title>E-commerce Soft Line</title>
       </Head>
@@ -17,6 +18,6 @@ export default function App({ Component, pageProps: { ...pageProps } }: AppProps
         <Component {...pageProps} />
         <Footer />
       </CarrinhoProvider>
-    </>
+    </SessionProvider>
   );
 }
