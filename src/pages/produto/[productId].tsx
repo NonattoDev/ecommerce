@@ -11,6 +11,7 @@ import imagemSubstituicao from "../../../public/fotosProdutos/erro/semProduto.pn
 import { Produto, ProdutosSimilaresType, ResponseData } from "@/Types/Produto";
 import ProdutosSimilares from "@/components/ProdutosSimilares/produtosSimilares";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
+import { useSession } from "next-auth/react";
 
 function Produto() {
   const router = useRouter();
@@ -22,6 +23,7 @@ function Produto() {
   const [imagemPrincipal, setImagemPrincipal] = useState("");
   const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilaresType[]>([]);
   const { produtosNoCarrinho, handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
+  const { data: session, status } = useSession();
 
   const handleImagemErro = () => {
     setImagemCarregada(false);
@@ -144,10 +146,17 @@ function Produto() {
                     {produto.Estoque > 0 ? (
                       <div className={styles.botoesCompra}>
                         <input type="number" value={quantidade} min={1} max={produto.Estoque} onChange={handleQuantidadeChange} className={styles.selectInput} />
-                        <button onClick={handleAdicionarCarrinho} className={styles.botaoComprar}>
-                          <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
-                          Adicionar ao carrinho
-                        </button>
+                        {status === "unauthenticated" ? (
+                          <button disabled className={styles.produtoIndisponivel}>
+                            <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
+                            Logue para comprar
+                          </button>
+                        ) : (
+                          <button onClick={handleAdicionarCarrinho} className={styles.botaoComprar}>
+                            <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
+                            Adicionar ao carrinho
+                          </button>
+                        )}
                       </div>
                     ) : (
                       <div className={styles.produtoIndisponivel}>Produto Indisponível</div>

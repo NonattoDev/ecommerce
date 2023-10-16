@@ -5,6 +5,7 @@ import styles from "./Carrinho.module.css";
 import { useCarrinhoContext } from "../../context/CarrinhoContext";
 import { Form } from "react-bootstrap";
 import { Produto } from "@/Types/Produto";
+import { getSession } from "next-auth/react";
 
 function Carrinho() {
   const [quantidadeTotal, setQuantidadeTotal] = useState(0); // Declare quantidadeTotal state
@@ -12,6 +13,19 @@ function Carrinho() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [session, setSession] = useState({});
+
+  useEffect(() => {
+    async function fetchSession() {
+      const session = await getSession();
+      if (!session) {
+        return {};
+      }
+      setSession(session);
+    }
+
+    fetchSession();
+  }, []);
 
   const calcularTotalCompra = () => {
     let total = 0;
@@ -40,23 +54,17 @@ function Carrinho() {
     handleAtualizarQuantidadeProduto(CodPro, novaQuantidade);
   };
 
-  const calcularQuantidadeTotal = () => {
-    if (typeof window !== "undefined") {
-      const carrinho = localStorage.getItem("carrinho");
-      const produtosNoCarrinho = carrinho ? JSON.parse(carrinho) : [];
-      let quantidadeTotal = 0;
-      produtosNoCarrinho.forEach((produto: Produto) => {
-        quantidadeTotal += produto.Quantidade;
-      });
-      return quantidadeTotal;
-    }
-    return 0;
-  };
-
   useEffect(() => {
-    const total = calcularQuantidadeTotal();
-    setQuantidadeTotal(total);
+    setQuantidadeTotal(calcularQuantidadeTotal());
   }, [produtosNoCarrinho]);
+
+  const calcularQuantidadeTotal = () => {
+    let quantidadeTotal = 0;
+    produtosNoCarrinho.forEach((produto: Produto) => {
+      quantidadeTotal += produto.Quantidade;
+    });
+    return quantidadeTotal;
+  };
 
   return (
     <>

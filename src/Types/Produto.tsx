@@ -20,6 +20,7 @@ export interface Produto {
   Caminho9: string | null;
   Caminho10: string | null;
   Quantidade: number;
+  CodCli: number;
 }
 
 export interface ProdutosSimilaresType {

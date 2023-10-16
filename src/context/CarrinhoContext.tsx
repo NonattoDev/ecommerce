@@ -1,6 +1,7 @@
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
 import { Produto } from "@/Types/Produto";
 import axiosCliente from "@/services/axiosCliente";
-import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
+import { getSession } from "next-auth/react";
 
 interface CarrinhoContextData {
   produtosNoCarrinho: Produto[];
@@ -13,8 +14,23 @@ interface CarrinhoContextData {
 const CarrinhoContext = createContext<CarrinhoContextData>({} as CarrinhoContextData);
 
 export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [produtosNoCarrinho, setProdutosNoCarrinho] = useState<Produto[]>(getCarrinhoFromLocalStorage());
+  const [produtosNoCarrinho, setProdutosNoCarrinho] = useState<Produto[]>([]);
   const [valorMinimoFreteGratis, setValorMinimoFreteGratis] = useState<number>(0);
+  const [session, setSession] = useState({});
+
+  useEffect(() => {
+    async function fetchCarrinho() {
+      const currentSession = await getSession();
+      if (currentSession) {
+        setSession(currentSession);
+        const userId = currentSession.user.id;
+        const carrinho = getCarrinhoFromLocalStorage(userId);
+        setProdutosNoCarrinho(carrinho);
+      }
+    }
+
+    fetchCarrinho();
+  }, []);
 
   useEffect(() => {
     async function fetchValorMinimo() {
@@ -29,33 +45,36 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
     fetchValorMinimo();
   }, []);
 
-  const handleAdicionarProdutosAoCarrinho = useCallback((produto: Produto) => {
-    setProdutosNoCarrinho((prevProdutos) => {
-      let carrinhoAtualizado = [...prevProdutos];
-      let produtoExistente = false;
+  const handleAdicionarProdutosAoCarrinho = useCallback(
+    (produto: Produto) => {
+      setProdutosNoCarrinho((prevProdutos) => {
+        let carrinhoAtualizado = [...prevProdutos];
+        let produtoExistente = false;
 
-      carrinhoAtualizado = carrinhoAtualizado.map((p) => {
-        if (p.CodPro === produto.CodPro) {
-          produtoExistente = true;
-          return {
-            ...p,
-            Quantidade: p.Quantidade + produto.Quantidade,
-          };
+        carrinhoAtualizado = carrinhoAtualizado.map((p) => {
+          if (p.CodPro === produto.CodPro) {
+            produtoExistente = true;
+            return {
+              ...p,
+              Quantidade: p.Quantidade + produto.Quantidade,
+            };
+          }
+          return p;
+        });
+
+        if (!produtoExistente) {
+          carrinhoAtualizado.push(produto);
         }
-        return p;
+
+        if (typeof window !== "undefined") {
+          localStorage.setItem(`carrinho_${session?.user.id}`, JSON.stringify(carrinhoAtualizado));
+        }
+
+        return carrinhoAtualizado;
       });
-
-      if (!produtoExistente) {
-        carrinhoAtualizado.push(produto);
-      }
-
-      if (typeof window !== "undefined") {
-        localStorage.setItem("carrinho", JSON.stringify(carrinhoAtualizado));
-      }
-
-      return carrinhoAtualizado;
-    });
-  }, []);
+    },
+    [session]
+  );
 
   const handleRemoverProduto = (CodPro: number) => {
     // Filtra os produtos removendo o produto com o ID correspondente
@@ -66,28 +85,32 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     // Atualiza o localStorage com os novos produtos
     if (typeof window !== "undefined") {
-      localStorage.setItem("carrinho", JSON.stringify(novosProdutos));
+      localStorage.setItem(`carrinho_${session?.user.id}`, JSON.stringify(novosProdutos));
     }
   };
-  const handleAtualizarQuantidadeProduto = useCallback((CodPro: number, novaQuantidade: number) => {
-    setProdutosNoCarrinho((prevProdutos) => {
-      const carrinhoAtualizado = prevProdutos.map((p) => {
-        if (p.CodPro === CodPro) {
-          return {
-            ...p,
-            Quantidade: novaQuantidade,
-          };
+
+  const handleAtualizarQuantidadeProduto = useCallback(
+    (CodPro: number, novaQuantidade: number) => {
+      setProdutosNoCarrinho((prevProdutos) => {
+        const carrinhoAtualizado = prevProdutos.map((p) => {
+          if (p.CodPro === CodPro) {
+            return {
+              ...p,
+              Quantidade: novaQuantidade,
+            };
+          }
+          return p;
+        });
+
+        if (typeof window !== "undefined") {
+          localStorage.setItem(`carrinho_${session?.user.id}`, JSON.stringify(carrinhoAtualizado));
         }
-        return p;
+
+        return carrinhoAtualizado;
       });
-
-      if (typeof window !== "undefined") {
-        localStorage.setItem("carrinho", JSON.stringify(carrinhoAtualizado));
-      }
-
-      return carrinhoAtualizado;
-    });
-  }, []);
+    },
+    [session]
+  );
 
   return (
     <CarrinhoContext.Provider value={{ produtosNoCarrinho, handleAdicionarProdutosAoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto }}>
@@ -100,9 +123,9 @@ export function useCarrinhoContext() {
   return useContext(CarrinhoContext);
 }
 
-export const getCarrinhoFromLocalStorage = (): Produto[] => {
+export const getCarrinhoFromLocalStorage = (userId: string): Produto[] => {
   if (typeof window !== "undefined") {
-    const carrinhoString = localStorage.getItem("carrinho");
+    const carrinhoString = localStorage.getItem(`carrinho_${userId}`);
     if (carrinhoString) {
       return JSON.parse(carrinhoString);
     }
