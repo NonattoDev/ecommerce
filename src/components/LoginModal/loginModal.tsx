@@ -24,7 +24,6 @@ export default function MyVerticallyCenteredModal(props) {
     signIn("credentials", {
       email,
       password,
-      callbackUrl: "/", // Define as "true" if you want NextAuth to redirect after successful login
     });
 
     // Clear the login and password fields
@@ -53,9 +52,6 @@ export default function MyVerticallyCenteredModal(props) {
           </Button>
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={props.onHide}>Fechar</Button>
-      </Modal.Footer>
     </Modal>
   );
 }
