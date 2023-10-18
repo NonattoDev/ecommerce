@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
 import { Produto } from "@/Types/Produto";
 import axiosCliente from "@/services/axiosCliente";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+import Loading from "@/components/Loading/Loading";
 
 interface CarrinhoContextData {
   produtosNoCarrinho: Produto[];
@@ -9,6 +10,7 @@ interface CarrinhoContextData {
   handleRemoverProduto: (CodPro: number) => void;
   valorMinimoFreteGratis: number;
   handleAtualizarQuantidadeProduto: (CodPro: number, novaQuantidade: number) => void;
+  fetchCarrinho: () => Promise<void>;
 }
 
 const CarrinhoContext = createContext<CarrinhoContextData>({} as CarrinhoContextData);
@@ -19,20 +21,7 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [session, setSession] = useState({});
 
   useEffect(() => {
-    async function fetchCarrinho() {
-      const currentSession = await getSession();
-      if (currentSession) {
-        setSession(currentSession);
-        const userId = currentSession.user.id;
-        const carrinho = getCarrinhoFromLocalStorage(userId);
-        setProdutosNoCarrinho(carrinho);
-      }
-    }
-
     fetchCarrinho();
-  }, []);
-
-  useEffect(() => {
     async function fetchValorMinimo() {
       try {
         const response = await axiosCliente.get("/empresa/compras");
@@ -66,8 +55,8 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
           carrinhoAtualizado.push(produto);
         }
 
-        if (typeof window !== "undefined") {
-          localStorage.setItem(`carrinho_${session?.user.id}`, JSON.stringify(carrinhoAtualizado));
+        if (typeof window !== "undefined" && session?.user) {
+          localStorage.setItem(`carrinho_${session.user.id}`, JSON.stringify(carrinhoAtualizado));
         }
 
         return carrinhoAtualizado;
@@ -84,7 +73,7 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
     setProdutosNoCarrinho(novosProdutos);
 
     // Atualiza o localStorage com os novos produtos
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && session?.user) {
       localStorage.setItem(`carrinho_${session?.user.id}`, JSON.stringify(novosProdutos));
     }
   };
@@ -102,7 +91,7 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
           return p;
         });
 
-        if (typeof window !== "undefined") {
+        if (typeof window !== "undefined" && session?.user) {
           localStorage.setItem(`carrinho_${session?.user.id}`, JSON.stringify(carrinhoAtualizado));
         }
 
@@ -112,8 +101,19 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
     [session]
   );
 
+  async function fetchCarrinho() {
+    const currentSession = await getSession();
+    if (currentSession) {
+      console.log(currentSession);
+      setSession(currentSession);
+      const userId = await currentSession.user.id;
+      const carrinho = getCarrinhoFromLocalStorage(userId);
+      setProdutosNoCarrinho(carrinho);
+    }
+  }
+
   return (
-    <CarrinhoContext.Provider value={{ produtosNoCarrinho, handleAdicionarProdutosAoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto }}>
+    <CarrinhoContext.Provider value={{ fetchCarrinho, produtosNoCarrinho, handleAdicionarProdutosAoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto }}>
       {children}
     </CarrinhoContext.Provider>
   );
@@ -130,5 +130,6 @@ export const getCarrinhoFromLocalStorage = (userId: string): Produto[] => {
       return JSON.parse(carrinhoString);
     }
   }
+
   return [];
 };

@@ -3,7 +3,6 @@ import ProdutoCard from "@/components/Produto/produto";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Carrossel from "@/components/Carrossel/carrossel";
 import axiosCliente from "@/services/axiosCliente";
 import Pagination from "@/components/Pagination/Pagination";
 import styles from "./TodosProdutos.module.css";

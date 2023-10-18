@@ -24,8 +24,7 @@ function Header() {
               <Form.Control type="search" placeholder="E-commerce Softline Sistemas" className="me-2 form-control-lg textSearch " aria-label="Search" />
             </Form>
           </div>
-
-          <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", width: "250px", margin: "0px 30px", padding: "4px" }}>
+          <div style={{ margin: "20px" }}>
             <UsuarioOptions />
           </div>
         </Navbar.Collapse>

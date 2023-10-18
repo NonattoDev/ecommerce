@@ -1,0 +1,26 @@
+.label {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.formButton {
+    background-color: #e0dddd;
+    border: none;
+    border-radius: 5px;
+    color: #333333;
+    cursor: pointer;
+    padding: 12px 24px;
+    /* Ajuste o valor do padding conforme necessário */
+}
+
+.active {
+    background-color: #049884;
+    color: #ffffff;
+}

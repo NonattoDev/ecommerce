@@ -1,0 +1,13 @@
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+    /* Espaçamento entre os inputs */
+}
+
+.label {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 4px;
+}

@@ -12,13 +12,13 @@ import { Produto, ProdutosSimilaresType, ResponseData } from "@/Types/Produto";
 import ProdutosSimilares from "@/components/ProdutosSimilares/produtosSimilares";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
 import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 function Produto() {
   const router = useRouter();
   const { productId } = router.query;
   const [produto, setProduto] = useState<Produto>({} as Produto);
   const [quantidade, setQuantidade] = useState(1);
-  const [frete, setFreteGratis] = useState(0);
   const [imagemCarregada, setImagemCarregada] = useState(true);
   const [imagemPrincipal, setImagemPrincipal] = useState("");
   const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilaresType[]>([]);
@@ -51,14 +51,15 @@ function Produto() {
 
   const handleAdicionarCarrinho = () => {
     if (produto.Estoque <= 0) {
-      return alert("Produto indisponível");
+      return toast.warn("Produto indisponível");
     } else if (quantidade > produto.Estoque) {
-      return alert("Quantidade selecionada maior que o estoque disponível");
+      return toast.warn("Quantidade selecionada maior que o estoque disponível");
+    } else if (quantidade === 0) {
+      return toast.warn("Quantidade selecionada inválida!");
     } else {
       const produtoNoCarrinho = {
         ...produto,
         Quantidade: quantidade,
-        FreteGratis: frete,
       };
       handleAdicionarProdutosAoCarrinho(produtoNoCarrinho);
     }

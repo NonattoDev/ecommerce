@@ -77,7 +77,7 @@ function Carrinho() {
           strokeWidth={1.5}
           stroke="currentColor"
           className="w-6 h-6"
-          style={{ width: "40px", height: "40px", color: "blue" }}
+          style={{ width: "35px", color: "blue" }}
         >
           <path
             strokeLinecap="round"
