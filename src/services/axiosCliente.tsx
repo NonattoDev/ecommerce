@@ -1,9 +1,7 @@
 import axios from "axios";
 
-const meuIP = "10.71.0.119";
-
 const axiosCliente = axios.create({
-  baseURL: `http://${meuIP}:3001/`,
+  baseURL: process.env.BASE_URL_DB || "http://localhost:3001",
 });
 
 export default axiosCliente;

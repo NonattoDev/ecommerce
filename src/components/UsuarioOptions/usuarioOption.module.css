@@ -1,8 +1,9 @@
 .container {
-    width: 400px;
+    width: 230px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
+    margin-right: 10px;
 }
 
 .iconContainer {

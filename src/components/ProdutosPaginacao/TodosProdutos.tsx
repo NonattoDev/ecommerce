@@ -31,6 +31,7 @@ export default function MostrarTodosOsProdutos() {
   const obterProdutosPaginados = async (pagina: number) => {
     try {
       const resposta = await axiosCliente.get(`/produtos/?pagina=${pagina}&itensPorPagina=20`);
+
       const paginas = Math.ceil(resposta.data.qtdProdutos / 20);
 
       setProdutos(resposta.data.produtos);

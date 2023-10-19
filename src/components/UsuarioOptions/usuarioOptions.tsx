@@ -35,12 +35,13 @@ function UsuarioOptions() {
               color: "blue",
               display: "flex",
               alignItems: "center",
+              marginRight: "20px",
             }}
           >
             <svg
               style={{
                 width: "40px",
-                margin: "0 4px 0 0",
+                margin: "0 8px 0 0",
               }}
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

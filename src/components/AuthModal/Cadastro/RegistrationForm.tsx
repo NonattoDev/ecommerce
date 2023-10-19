@@ -80,21 +80,24 @@ const RegistrationForm = () => {
           const CNPJDados = await response.data;
 
           // Atualizar os campos do formulário com os dados do CNPJ
-          setFormValues((prevValues) => ({
-            ...prevValues,
-            cgc: formValues.cgc.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5"),
-            razao: CNPJDados.nome,
-            cliente: CNPJDados.fantasia,
-            endereco: CNPJDados.logradouro,
-            complementoEndereco: CNPJDados.complemento,
-            numero: CNPJDados.numero,
-            bairro: CNPJDados.bairro,
-            cidade: CNPJDados.municipio,
-            estado: CNPJDados.uf,
-            cep: formatarCep(CNPJDados.cep),
-            email: CNPJDados.email,
-            // ...resto dos campos do formulário
-          }));
+          setFormValues((prevValues) => {
+            const formattedCep = CNPJDados.cep ? formatarCep(CNPJDados.cep) : "";
+            return {
+              ...prevValues,
+              cgc: formValues.cgc.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5"),
+              razao: CNPJDados.nome,
+              cliente: CNPJDados.fantasia,
+              endereco: CNPJDados.logradouro,
+              complementoEndereco: CNPJDados.complemento,
+              numero: CNPJDados.numero,
+              bairro: CNPJDados.bairro,
+              cidade: CNPJDados.municipio,
+              estado: CNPJDados.uf,
+              cep: formattedCep,
+              email: CNPJDados.email,
+              // ...resto dos campos do formulário
+            };
+          });
         }
       } catch (error) {
         setFormValues((prevValues) => ({

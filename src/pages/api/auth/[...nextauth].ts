@@ -34,6 +34,10 @@ export default NextAuth({
     }),
   ],
   callbacks: {
+    redirect: async ({ url, baseUrl }) => {
+      return (baseUrl = process.env.BASE_URL || "http://localhost:3000");
+    },
+
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.CodCli;

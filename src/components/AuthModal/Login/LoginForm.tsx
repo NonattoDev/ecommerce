@@ -5,6 +5,7 @@ import { Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import style from "./loginForm.module.css";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
+import axios from "axios";
 
 export default function LoginForm() {
   const { fetchCarrinho } = useCarrinhoContext();
@@ -23,23 +24,34 @@ export default function LoginForm() {
 
   const handleFormSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    signIn("credentials", {
-      email,
-      password,
-      callbackUrl: "/",
-      redirect: false,
-    })
-      .then((response) => {
-        if (response?.status === 200) {
-          toast.success("Logado com sucesso!");
-          fetchCarrinho();
-        }
-        if (response?.status === 401) {
-          toast.warn("Verifique as credenciais!");
-        }
+
+    // Obtenha o endereço IP do usuário no lado do servidor
+    const response = axios
+      .get("https://api.ipify.org?format=json")
+      .then((result) => {
+        const ip = result.data.ip;
+        signIn("credentials", {
+          email,
+          password,
+          ip,
+          callbackUrl: "/",
+          redirect: false,
+        })
+          .then((response) => {
+            if (response?.status === 200) {
+              toast.success("Logado com sucesso!");
+              fetchCarrinho();
+            }
+            if (response?.status === 401) {
+              toast.warn("Verifique as credenciais!");
+            }
+          })
+          .catch((error) => {
+            toast.error(error.message);
+          });
       })
-      .catch((error) => {
-        toast.error(error.message);
+      .catch((err) => {
+        toast.warn(err.message);
       });
   };
 

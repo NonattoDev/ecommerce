@@ -26,7 +26,7 @@ function Carrossel() {
       <Carousel className={styles.carrossel} fade>
         {fileNames.map((fileName, index) => (
           <Carousel.Item key={index} className={styles.imageContent}>
-            <Image src={fileName} alt={`Imagem ${index}`} fill priority sizes="(max-width: 1920px) 100vw, (max-width: 1080px) 50vw, 33vw" />
+            <Image src={fileName} alt={`Imagem ${index}`} fill priority sizes="(max-width: 1920px) 100vw, (max-width: 1080px) 50vw, 33vw" loading="eager" />
           </Carousel.Item>
         ))}
       </Carousel>

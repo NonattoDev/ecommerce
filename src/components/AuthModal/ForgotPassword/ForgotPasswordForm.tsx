@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
 import axiosCliente from "@/services/axiosCliente";
+import { FloatingLabel } from "react-bootstrap";
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
@@ -30,10 +31,11 @@ const ForgotPasswordForm = () => {
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group controlId="email">
-        <Form.Label>Email</Form.Label>
-        <Form.Control type="email" name="email" value={email} onChange={handleChange} />
+        <FloatingLabel controlId="email" label="Digite um email para recuperação">
+          <Form.Control type="email" name="email" value={email} onChange={handleChange} />
+        </FloatingLabel>
       </Form.Group>
-      <Button variant="primary" type="submit">
+      <Button variant="primary" type="submit" style={{ marginTop: "10px" }}>
         Enviar
       </Button>
     </Form>

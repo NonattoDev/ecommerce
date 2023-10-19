@@ -104,7 +104,6 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
   async function fetchCarrinho() {
     const currentSession = await getSession();
     if (currentSession) {
-      console.log(currentSession);
       setSession(currentSession);
       const userId = await currentSession.user.id;
       const carrinho = getCarrinhoFromLocalStorage(userId);

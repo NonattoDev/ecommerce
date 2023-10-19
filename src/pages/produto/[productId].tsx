@@ -51,11 +51,11 @@ function Produto() {
 
   const handleAdicionarCarrinho = () => {
     if (produto.Estoque <= 0) {
-      return toast.warn("Produto indisponível");
+      return toast.warn("Produto indisponível", { pauseOnHover: false });
     } else if (quantidade > produto.Estoque) {
-      return toast.warn("Quantidade selecionada maior que o estoque disponível");
+      return toast.warn("Quantidade selecionada maior que o estoque disponível", { pauseOnHover: false });
     } else if (quantidade === 0) {
-      return toast.warn("Quantidade selecionada inválida!");
+      return toast.warn("Quantidade selecionada inválida!", { pauseOnHover: false });
     } else {
       const produtoNoCarrinho = {
         ...produto,
