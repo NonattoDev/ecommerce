@@ -6,6 +6,7 @@ import { useCarrinhoContext } from "../../context/CarrinhoContext";
 import { Form } from "react-bootstrap";
 import { Produto } from "@/Types/Produto";
 import { getSession } from "next-auth/react";
+import Link from "next/link";
 
 function Carrinho() {
   const [quantidadeTotal, setQuantidadeTotal] = useState(0); // Declare quantidadeTotal state
@@ -111,6 +112,7 @@ function Carrinho() {
                     <div className={styles.detalhesProdutoRow}>
                       <p>R$ {produto.Preco1.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
                       <Form.Control
+                        name="quantidadeProduto"
                         type="number"
                         value={produto.Quantidade || 0}
                         onChange={(e) => {
@@ -143,9 +145,11 @@ function Carrinho() {
               <h6>
                 Total da compra com frete: <strong>R$ {calcularTotalCompraComFrete().toLocaleString("pt-br")}</strong>
               </h6>
-              <Button variant="primary" className={styles.botaoFinalizarCompra}>
-                Finalizar Compra
-              </Button>
+              <Link href={"/finalizarcompra"}>
+                <Button variant="primary" className={styles.botaoFinalizarCompra}>
+                  Finalizar Compra
+                </Button>
+              </Link>
             </div>
           )}
         </Offcanvas.Body>

@@ -1,34 +1,30 @@
+/* navbar.module.css */
+
 .navbar {
-    width: 100%;
-    height: 50px;
-    background-color: #017402;
-    font-weight: bold;
-  }
-  
-  .responsiveNavbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  @media (min-width: 768px) {
-    .responsiveNavbar {
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-  
-  .nav {
-    display: flex;
-    width: 100%;
-    margin: 0 50px;
-    justify-content: space-around;
-  }
-  
-  @media (max-width: 767px) {
-    .nav {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  }
-  
-  /* Resto do código CSS... */
+  background-color: #123456;
+}
+
+.navLink {
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.navLink:hover {
+  color: #eba2a2;
+  transform: scale(1.1);
+}
+
+.navDropDown {
+  color: #ffffff;
+}
+
+.navDropdownItem {
+  color: #000000;
+  transition: color 0.5s ease, background-color 0.5s ease;
+}
+
+.navDropdownItem:hover {
+  color: #000000;
+  background-color: #ffd9b4;
+  transform: translateX(5px);
+}

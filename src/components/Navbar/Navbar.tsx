@@ -1,3 +1,5 @@
+// Navbar.tsx
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import axiosCliente from "@/services/axiosCliente";
@@ -5,6 +7,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import styles from "./navbar.module.css";
 
 interface Grupo {
   CodGrp: number;
@@ -32,20 +35,22 @@ export default function NavbarSite() {
   }, []);
 
   return (
-    <Navbar expand="lg" className="bg-success">
+    <Navbar expand="lg" bg="primary" >
       <Container>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <NavDropdown title="Categorias" id="basic-nav-dropdown">
+            <NavDropdown title="Categorias" id="basic-nav-dropdown" className={styles.navDropDown}>
               {grupo.map((grupo) => (
-                <NavDropdown.Item key={grupo.CodGrp} href={`/produtos/${grupo.CodGrp}`}>
+                <NavDropdown.Item key={grupo.CodGrp} href={`/grupo/${grupo.CodGrp}`} className={styles.navDropdownItem}>
                   <strong>{grupo.Grupo}</strong> - ({grupo.Qtd})
                 </NavDropdown.Item>
               ))}
             </NavDropdown>
             {gruposTop.map((grupo) => (
-              <Nav.Link key={grupo.CodGrp}>{grupo.Grupo}</Nav.Link>
+              <Nav.Link key={grupo.CodGrp} href={`/grupo/${grupo.CodGrp}`} className={styles.navLink}>
+                {grupo.Grupo}
+              </Nav.Link>
             ))}
             <NavDropdown.Divider />
           </Nav>

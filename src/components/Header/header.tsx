@@ -21,7 +21,7 @@ function Header() {
         <Navbar.Collapse id="navbarScroll">
           <div className={style.searchBar}>
             <Form className="d-flex mx-auto">
-              <Form.Control type="search" placeholder="E-commerce Softline Sistemas" className="me-2 form-control-lg textSearch " aria-label="Search" />
+              <Form.Control autoComplete="false" name="searchEngine" type="search" placeholder="E-commerce Softline Sistemas" className="me-2 form-control-lg textSearch " aria-label="Search" />
             </Form>
           </div>
           <div style={{ margin: "20px" }}>

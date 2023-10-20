@@ -15,6 +15,10 @@ const ForgotPasswordForm = () => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (!email) {
+      return toast.info("Informe um email!");
+    }
+
     axiosCliente
       .post("/usuarios/recuperar-senha", { email })
       .then((response) => {
@@ -32,7 +36,7 @@ const ForgotPasswordForm = () => {
     <Form onSubmit={handleSubmit}>
       <Form.Group controlId="email">
         <FloatingLabel controlId="email" label="Digite um email para recuperação">
-          <Form.Control type="email" name="email" value={email} onChange={handleChange} />
+          <Form.Control autoComplete="true" type="email" name="email" value={email} onChange={handleChange} />
         </FloatingLabel>
       </Form.Group>
       <Button variant="primary" type="submit" style={{ marginTop: "10px" }}>

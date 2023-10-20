@@ -52,7 +52,7 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
             style={{ display: isLoading ? "none" : "block" }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = "fotosProdutos/erro/semProduto.png";
+              target.src = "../fotosProdutos/erro/semProduto.png";
             }}
             onLoad={() => {
               setIsLoading(false);

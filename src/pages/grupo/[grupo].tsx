@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import ProdutoCard from "@/components/Produto/produto";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import axiosCliente from "@/services/axiosCliente";
 import Pagination from "@/components/Pagination/Pagination";
-import styles from "./TodosProdutos.module.css";
+import styles from "./grupo.module.css";
+import NavbarSite from "@/components/Navbar/Navbar";
+import Carrossel from "@/components/Carrossel/carrossel";
 
 interface Produto {
   CodPro: number;
@@ -19,25 +22,28 @@ interface Produto {
   Estoque: number;
 }
 
-export default function MostrarTodosOsProdutos() {
+export default function Grupo() {
+  const router = useRouter();
+  const { grupo } = router.query;
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(0);
 
   useEffect(() => {
-    obterProdutosPaginados(paginaAtual);
-  }, [paginaAtual]);
+    if (grupo) {
+      obterProdutosPaginados(paginaAtual, grupo);
+    }
+  }, [grupo, paginaAtual]);
 
-  const obterProdutosPaginados = async (pagina: number) => {
+  const obterProdutosPaginados = async (pagina: number, grupo) => {
     try {
-      const resposta = await axiosCliente.get(`/produtos/?pagina=${pagina}&itensPorPagina=20`);
+      const resposta = await axiosCliente.get(`/produtos/grupo/?grupo=${grupo}&pagina=${pagina}&itensPorPagina=20`);
+
       const paginas = Math.ceil(resposta.data.qtdProdutos / 20);
 
       setProdutos(resposta.data.produtos);
       setTotalPaginas(paginas);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const handlePaginaSelecionada = (pagina: number) => {
@@ -46,6 +52,7 @@ export default function MostrarTodosOsProdutos() {
 
   return (
     <>
+      <NavbarSite />
       <Container>
         <div className={styles.paginationWrapper}>
           <Pagination paginaAtual={paginaAtual} totalPaginas={totalPaginas} onPageChange={handlePaginaSelecionada} />

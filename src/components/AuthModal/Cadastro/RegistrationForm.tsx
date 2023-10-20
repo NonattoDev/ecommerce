@@ -7,8 +7,11 @@ import axiosCliente from "@/services/axiosCliente";
 import { toast } from "react-toastify";
 // @ts-ignore
 import InputMask from "react-input-mask";
+import Loading from "@/components/Loading/Loading";
 
 const RegistrationForm = () => {
+  const [loading, setLoading] = useState(false); // Estado para controlar o indicador de carregamento
+  const [loadingCNPJ, setLoadingCNPJ] = useState(false); // Estado para controlar o indicador de carregamento
   const [formValues, setFormValues] = useState({
     endereco: "",
     numero: "",
@@ -35,7 +38,7 @@ const RegistrationForm = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    setLoading(true);
     const response = axiosCliente
       .post("/usuarios/cadastro", formValues)
       .then((response) => {
@@ -63,8 +66,57 @@ const RegistrationForm = () => {
         if (error.response.data.message) {
           return toast.error(error.response.data.message);
         }
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
+
+  function validarCNPJ(cnpj: string) {
+    // Remover caracteres não numéricos do CNPJ
+    cnpj = cnpj.replace(/[^\d]+/g, "");
+
+    // Verificar se o CNPJ possui 14 dígitos
+    if (cnpj.length !== 14) {
+      return false;
+    }
+
+    // Verificar se todos os dígitos do CNPJ são iguais
+    if (/^(\d)\1+$/.test(cnpj)) {
+      return false;
+    }
+
+    // Calcular o primeiro dígito verificador
+    let soma = 0;
+    let peso = 2;
+    for (let i = 11; i >= 0; i--) {
+      soma += parseInt(cnpj.charAt(i)) * peso;
+      peso = peso === 9 ? 2 : peso + 1;
+    }
+    let digitoVerificador1 = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+
+    // Verificar o primeiro dígito verificador
+    if (parseInt(cnpj.charAt(12)) !== digitoVerificador1) {
+      return false;
+    }
+
+    // Calcular o segundo dígito verificador
+    soma = 0;
+    peso = 2;
+    for (let i = 12; i >= 0; i--) {
+      soma += parseInt(cnpj.charAt(i)) * peso;
+      peso = peso === 9 ? 2 : peso + 1;
+    }
+    let digitoVerificador2 = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+
+    // Verificar o segundo dígito verificador
+    if (parseInt(cnpj.charAt(13)) !== digitoVerificador2) {
+      return false;
+    }
+
+    // CNPJ válido
+    return true;
+  }
 
   useEffect(() => {
     function formatarCep(cep: string) {
@@ -74,11 +126,15 @@ const RegistrationForm = () => {
     }
     const fetchCnpjData = async () => {
       try {
-        if (formValues.cgc && formValues.cgc.length === 14) {
-          const response = await axios.get(`https://cors-anywhere.herokuapp.com/https://www.receitaws.com.br/v1/cnpj/${formValues.cgc}`);
+        if ((formValues.cgc && formValues.cgc.length === 14) || formValues.cgc.length === 18) {
+          if (validarCNPJ(formValues.cgc) === false) return toast.info("CNPJ Inválido");
 
+          setLoadingCNPJ(true);
+          // Remover a pontuação do CNPJ
+          const cnpj = formValues.cgc.replace(/[^\d]+/g, "");
+
+          const response = await axios.get(`https://cors-anywhere.herokuapp.com/https://www.receitaws.com.br/v1/cnpj/${cnpj}`);
           const CNPJDados = await response.data;
-
           // Atualizar os campos do formulário com os dados do CNPJ
           setFormValues((prevValues) => {
             const formattedCep = CNPJDados.cep ? formatarCep(CNPJDados.cep) : "";
@@ -99,6 +155,7 @@ const RegistrationForm = () => {
             };
           });
         }
+        setLoadingCNPJ(false);
       } catch (error) {
         setFormValues((prevValues) => ({
           ...prevValues,
@@ -106,6 +163,7 @@ const RegistrationForm = () => {
         }));
 
         console.log(error);
+        setLoadingCNPJ(false);
       }
     };
     fetchCnpjData();
@@ -115,11 +173,14 @@ const RegistrationForm = () => {
     <Form onSubmit={handleSubmit} className={styles.form}>
       <Form.Group controlId="cgc">
         <Form.Label className={styles.label}>CNPJ</Form.Label>
-        <Form.Control type="text" name="cgc" value={formValues.cgc} onChange={handleChange} className={styles.input} required={true} maxLength={18} />
+        <InputMask mask="99.999.999/9999-99" maskChar="" value={formValues.cgc} onChange={handleChange}>
+          {(inputProps: any) => <Form.Control type="text" name="cgc" className={styles.input} required={true} maxLength={18} {...inputProps} />}
+        </InputMask>
+        {loadingCNPJ && <Loading />}
       </Form.Group>
       <Form.Group controlId="email">
         <Form.Label className={styles.label}>Email</Form.Label>
-        <Form.Control type="email" name="email" value={formValues.email} onChange={handleChange} className={styles.input} required={true} />
+        <Form.Control autoComplete="true" type="email" name="email" value={formValues.email} onChange={handleChange} className={styles.input} required={true} />
       </Form.Group>
       <Form.Group controlId="chave">
         <Form.Label className={styles.label}>Crie uma senha de acesso</Form.Label>
@@ -169,9 +230,13 @@ const RegistrationForm = () => {
         <Form.Label className={styles.label}>Referencia</Form.Label>
         <Form.Control type="text" name="campoLivre" value={formValues.campoLivre} onChange={handleChange} className={styles.input} />
       </Form.Group>
-      <Button variant="primary" type="submit" className={styles.button}>
-        Enviar
-      </Button>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Button variant="primary" type="submit" className={styles.button}>
+          Enviar
+        </Button>
+      )}
     </Form>
   );
 };

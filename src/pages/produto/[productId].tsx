@@ -146,7 +146,7 @@ function Produto() {
 
                     {produto.Estoque > 0 ? (
                       <div className={styles.botoesCompra}>
-                        <input type="number" value={quantidade} min={1} max={produto.Estoque} onChange={handleQuantidadeChange} className={styles.selectInput} />
+                        <input name="quantidadeProduto" type="number" value={quantidade} min={1} max={produto.Estoque} onChange={handleQuantidadeChange} className={styles.selectInput} />
                         {status === "unauthenticated" ? (
                           <button disabled className={styles.produtoIndisponivel}>
                             <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
