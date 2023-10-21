@@ -64,24 +64,24 @@ export default function LoginForm() {
 
   return (
     <Form>
-      <Form.Group controlId="email">
+      <Form.Group controlId="emailLogin">
         <div className={style.inputGroup}>
           <Form.Label className={style.label}>Email</Form.Label>
-          <Form.Control autoComplete="true" type="email" value={email} onChange={handleEmailChange} required placeholder="email@exemplo.com" />
+          <Form.Control name="emailLogin" autoComplete="true" type="email" value={email} onChange={handleEmailChange} required placeholder="email@exemplo.com" />
         </div>
         <Form.Control.Feedback type="invalid">Por favor, entre um email válido!</Form.Control.Feedback>
       </Form.Group>
-      <Form.Group controlId="password">
+      <Form.Group controlId="passwordLogin">
         <div className={style.inputGroup}>
           <Form.Label className={style.label}>Senha</Form.Label>
-          <Form.Control type="password" value={password} onChange={handlePasswordChange} required placeholder="*********" />
+          <Form.Control autoComplete="true" name="passwordLogin" type="password" value={password} onChange={handlePasswordChange} required placeholder="*********" />
         </div>
       </Form.Group>
       <div className="text-center">
         {loading ? (
           <Loading />
         ) : (
-          <Button variant="primary" onClick={handleFormSubmit}>
+          <Button type="submit" variant="primary" onClick={handleFormSubmit}>
             Entrar
           </Button>
         )}

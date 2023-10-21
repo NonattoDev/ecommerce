@@ -8,7 +8,6 @@ import axiosCliente from "@/services/axiosCliente";
 import Pagination from "@/components/Pagination/Pagination";
 import styles from "./grupo.module.css";
 import NavbarSite from "@/components/Navbar/Navbar";
-import Carrossel from "@/components/Carrossel/carrossel";
 
 interface Produto {
   CodPro: number;
@@ -35,7 +34,7 @@ export default function Grupo() {
     }
   }, [grupo, paginaAtual]);
 
-  const obterProdutosPaginados = async (pagina: number, grupo) => {
+  const obterProdutosPaginados = async (pagina: number, grupo: any) => {
     try {
       const resposta = await axiosCliente.get(`/produtos/grupo/?grupo=${grupo}&pagina=${pagina}&itensPorPagina=20`);
 

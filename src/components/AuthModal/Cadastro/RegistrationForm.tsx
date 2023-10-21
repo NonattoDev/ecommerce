@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 // @ts-ignore
 import InputMask from "react-input-mask";
 import Loading from "@/components/Loading/Loading";
+import { Spinner } from "react-bootstrap";
 
 const RegistrationForm = () => {
   const [loading, setLoading] = useState(false); // Estado para controlar o indicador de carregamento
@@ -174,17 +175,21 @@ const RegistrationForm = () => {
       <Form.Group controlId="cgc">
         <Form.Label className={styles.label}>CNPJ</Form.Label>
         <InputMask mask="99.999.999/9999-99" maskChar="" value={formValues.cgc} onChange={handleChange}>
-          {(inputProps: any) => <Form.Control type="text" name="cgc" className={styles.input} required={true} maxLength={18} {...inputProps} />}
+          {(inputProps: any) => (
+            <div className="position-relative">
+              <Form.Control type="text" name="cgc" className={styles.input} required={true} maxLength={18} {...inputProps} />
+              {loadingCNPJ && <Spinner animation="border" className="position-absolute top-50 start-100 translate-middle" />}
+            </div>
+          )}
         </InputMask>
-        {loadingCNPJ && <Loading />}
       </Form.Group>
-      <Form.Group controlId="email">
+      <Form.Group controlId="emailRegistro">
         <Form.Label className={styles.label}>Email</Form.Label>
-        <Form.Control autoComplete="true" type="email" name="email" value={formValues.email} onChange={handleChange} className={styles.input} required={true} />
+        <Form.Control autoComplete="true" type="email" name="emailRegistro" value={formValues.email} onChange={handleChange} className={styles.input} required={true} />
       </Form.Group>
-      <Form.Group controlId="chave">
+      <Form.Group controlId="chaveRegistro">
         <Form.Label className={styles.label}>Crie uma senha de acesso</Form.Label>
-        <Form.Control type="password" name="chave" value={formValues.chave} onChange={handleChange} className={styles.input} required={true} />
+        <Form.Control autoComplete="true" type="password" name="chaveRegistro" value={formValues.chave} onChange={handleChange} className={styles.input} required={true} />
       </Form.Group>
       <Form.Group controlId="ie">
         <Form.Label className={styles.label}>(IE) - Inscrição Estadual </Form.Label>

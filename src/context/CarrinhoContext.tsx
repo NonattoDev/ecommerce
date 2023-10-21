@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
 import { Produto } from "@/Types/Produto";
 import axiosCliente from "@/services/axiosCliente";
-import { getSession, useSession } from "next-auth/react";
-import Loading from "@/components/Loading/Loading";
+import { getSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 interface CarrinhoContextData {
   produtosNoCarrinho: Produto[];
@@ -18,10 +18,9 @@ const CarrinhoContext = createContext<CarrinhoContextData>({} as CarrinhoContext
 export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [produtosNoCarrinho, setProdutosNoCarrinho] = useState<Produto[]>([]);
   const [valorMinimoFreteGratis, setValorMinimoFreteGratis] = useState<number>(0);
-  const [session, setSession] = useState({});
+  const [session, setSession] = useState<Session>();
 
   useEffect(() => {
-    fetchCarrinho();
     async function fetchValorMinimo() {
       try {
         const response = await axiosCliente.get("/empresa/compras");
@@ -30,7 +29,7 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
         console.error("Erro ao obter o valor mínimo:", error);
       }
     }
-
+    fetchCarrinho();
     fetchValorMinimo();
   }, []);
 
@@ -105,7 +104,7 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
     const currentSession = await getSession();
     if (currentSession) {
       setSession(currentSession);
-      const userId = await currentSession.user.id;
+      const userId = currentSession.user.id;
       const carrinho = getCarrinhoFromLocalStorage(userId);
       setProdutosNoCarrinho(carrinho);
     }

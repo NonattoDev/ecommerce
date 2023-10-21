@@ -22,7 +22,7 @@ function Produto() {
   const [imagemCarregada, setImagemCarregada] = useState(true);
   const [imagemPrincipal, setImagemPrincipal] = useState("");
   const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilaresType[]>([]);
-  const { produtosNoCarrinho, handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
+  const { handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
   const { data: session, status } = useSession();
 
   const handleImagemErro = () => {

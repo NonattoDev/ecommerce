@@ -5,11 +5,14 @@ import type { DefaultSession } from "next-auth";
 import { Session } from "next-auth";
 import Loading from "@/components/Loading/Loading";
 import { toast } from "react-toastify";
+import { Alert, Container } from "react-bootstrap";
+import TabsPagamentoFinal from "./Components/Tabs/TabsPagamentoFinal";
 
 declare module "next-auth" {
   interface Session {
     user: DefaultSession["user"] & {
       id: string;
+      cliente: string;
     };
   }
 }
@@ -21,13 +24,14 @@ const finalizarCompra = () => {
 
   useEffect(() => {
     const recuperarSessaoDoUsuario = async () => {
-      setLoading(true);
       const session = await getSession();
+      setLoading(true);
       if (session && session.user && session.user.id) {
         setSession(session);
         setLoading(false);
       }
       if (!session) {
+        setLoading(false);
         return toast.warn("Por favor, faça login para continuar");
       }
     };
@@ -37,9 +41,11 @@ const finalizarCompra = () => {
 
   if (!session) {
     return (
-      <div className="container">
-        <div className="notification is-warning">Esta rota é apenas para usuários logados.</div>
-      </div>
+      <Container>
+        <div style={{ height: "287px", margin: "50px" }}>
+          <Alert variant="warning">Esta rota é apenas para usuários logados.</Alert>
+        </div>
+      </Container>
     );
   }
 
@@ -48,18 +54,18 @@ const finalizarCompra = () => {
       {loading === true ? (
         <Loading />
       ) : (
-        <div>
-          {session ? "Com Sessão" : "Sem sessão"}
-          {produtosNoCarrinho.map((produto, index) => (
-            <div key={index}>
-              <h3>{produto.Produto}</h3>
-              <p>Preço: R${produto.Preco1}</p>
-              <p>Quantidade: {produto.Quantidade}</p>
-              <p>Categoria: {produto.Categoria}</p>
-              {/* Exibir outras informações do produto aqui */}
-            </div>
-          ))}
-        </div>
+        <Container>
+          <div style={{ marginTop: "20px" }}>
+            {session && <h4>Olá {session.user.cliente}, esse é o resumo do seu carrinho </h4>}
+            {produtosNoCarrinho.length === 0 ? (
+              <p>Você ainda não tem itens no carrinho, inicie as compras</p>
+            ) : (
+              <>
+                <TabsPagamentoFinal id={session.user.id} />
+              </>
+            )}
+          </div>
+        </Container>
       )}
     </>
   );

@@ -137,7 +137,7 @@ function Carrinho() {
                 Quantidade total de itens no carrinho: <strong>{calcularQuantidadeTotal()}</strong>
               </h6>
               <h6>
-                Total da compra: <strong>R$ {calcularTotalCompra().toLocaleString("pt-br")}</strong>
+                Total da compra: <strong>R$ {calcularTotalCompra().toLocaleString("pt-br", { minimumIntegerDigits: 2 })}</strong>
               </h6>
               <h6>
                 Valor do frete: <strong>R$ {calcularValorFrete().toLocaleString("pt-br")}</strong>
