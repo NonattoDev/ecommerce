@@ -14,10 +14,10 @@ const TabsPagamentoFinal: React.FC<TabsPagamentoFinalProps> = ({ id }) => {
       <Tab eventKey="resumo" title="Resumo carrinho">
         <Resumo />
       </Tab>
-      <Tab eventKey="endereço" title="Endereço">
+      <Tab eventKey="endereço" title="Endereco de Entrega">
         <Endereco id={id} />
       </Tab>
-      <Tab eventKey="DadosPagamento" title="DadosPagamento">
+      <Tab eventKey="DadosPagamento" title="Dados de Pagamento">
         Dados de Pagamento
       </Tab>
     </Tabs>

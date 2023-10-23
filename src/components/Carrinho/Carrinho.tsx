@@ -110,7 +110,7 @@ function Carrinho() {
                       </button>
                     </div>
                     <div className={styles.detalhesProdutoRow}>
-                      <p>R$ {produto.Preco1.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+                      <p>R$ {produto.Preco1.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                       <Form.Control
                         name="quantidadeProduto"
                         type="number"
@@ -137,13 +137,13 @@ function Carrinho() {
                 Quantidade total de itens no carrinho: <strong>{calcularQuantidadeTotal()}</strong>
               </h6>
               <h6>
-                Total da compra: <strong>R$ {calcularTotalCompra().toLocaleString("pt-br", { minimumIntegerDigits: 2 })}</strong>
+                Total da compra: <strong>R$ {calcularTotalCompra().toLocaleString("pt-br", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</strong>
               </h6>
               <h6>
-                Valor do frete: <strong>R$ {calcularValorFrete().toLocaleString("pt-br")}</strong>
+                Valor do frete: <strong>R$ {calcularValorFrete().toLocaleString("pt-br", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</strong>
               </h6>
               <h6>
-                Total da compra com frete: <strong>R$ {calcularTotalCompraComFrete().toLocaleString("pt-br")}</strong>
+                Total da compra com frete: <strong>R$ {calcularTotalCompraComFrete().toLocaleString("pt-br", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</strong>
               </h6>
               <Link href={"/finalizarcompra"}>
                 <Button variant="primary" className={styles.botaoFinalizarCompra}>

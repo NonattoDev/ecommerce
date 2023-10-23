@@ -183,13 +183,13 @@ const RegistrationForm = () => {
           )}
         </InputMask>
       </Form.Group>
-      <Form.Group controlId="emailRegistro">
+      <Form.Group controlId="email">
         <Form.Label className={styles.label}>Email</Form.Label>
-        <Form.Control autoComplete="true" type="email" name="emailRegistro" value={formValues.email} onChange={handleChange} className={styles.input} required={true} />
+        <Form.Control autoComplete="true" type="email" name="email" value={formValues.email} onChange={handleChange} className={styles.input} required={true} />
       </Form.Group>
-      <Form.Group controlId="chaveRegistro">
+      <Form.Group controlId="chave">
         <Form.Label className={styles.label}>Crie uma senha de acesso</Form.Label>
-        <Form.Control autoComplete="true" type="password" name="chaveRegistro" value={formValues.chave} onChange={handleChange} className={styles.input} required={true} />
+        <Form.Control autoComplete="true" type="password" name="chave" value={formValues.chave} onChange={handleChange} className={styles.input} required={true} />
       </Form.Group>
       <Form.Group controlId="ie">
         <Form.Label className={styles.label}>(IE) - Inscrição Estadual </Form.Label>
