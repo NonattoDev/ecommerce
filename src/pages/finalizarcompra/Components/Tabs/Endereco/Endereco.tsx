@@ -3,12 +3,15 @@ import { useState } from "react";
 import { useEffect } from "react";
 import axiosCliente from "@/services/axiosCliente";
 import { toast } from "react-toastify";
+import axios from "axios";
+import InputMask from "react-input-mask";
 
 const Endereco = ({ id }) => {
   const [novoEndereco, setNovoEndereco] = useState(false);
   const [enderecoPrincipal, setEnderecoPrincipal] = useState({});
   const [enderecosCadastrados, setEnderecosCadastrado] = useState([]);
   const [redefinir, setRedefinir] = useState(false);
+  const [cepDinamico, setCepDinamico] = useState("");
 
   useEffect(() => {
     setNovoEndereco(false);
@@ -18,7 +21,6 @@ const Endereco = ({ id }) => {
         const response = await axiosCliente.get(`/usuarios/endereco/${id}`);
         setEnderecoPrincipal(response.data.enderecoPrincipal);
         setEnderecosCadastrado(response.data.enderecosEntrega);
-        console.log(response.data.enderecoPrincipal);
       } catch (error) {
         toast.warn(error.message);
       }
@@ -43,7 +45,7 @@ const Endereco = ({ id }) => {
 
   const adicionarNovoEndereco = async () => {
     if (Object.keys(enderecoPrincipal).length === 0) return toast.warn("Preencha os dados de endereço");
-    if (!enderecoPrincipal.CEP) return toast.warn("Informe o CEP");
+    if (!cepDinamico) return toast.warn("Informe o CEP");
     if (!enderecoPrincipal.Endereco) return toast.warn("Informe o Endereço");
     if (!enderecoPrincipal.Cidade) return toast.warn("Informe a Cidade");
     if (!enderecoPrincipal.Estado) return toast.warn("Informe o Estado");
@@ -53,13 +55,33 @@ const Endereco = ({ id }) => {
 
     try {
       const response = await axiosCliente.post(`usuarios/endereco/${id}`, enderecoPrincipal);
-
       setRedefinir(true);
+      return toast.success(`Novo endereço cadastrado`);
     } catch (error) {
       return toast.warn(error.message);
     }
+  };
 
-    return toast.success(`Novo endereco para envio, cadastrado`);
+  const fetchCEP = async () => {
+    const cepFormatado = cepDinamico.replace(/\D/g, ""); // Remove pontos e dígitos usando regex
+    if (cepFormatado.length === 8) {
+      try {
+        const resposta = await axios.get(`https://viacep.com.br/ws/${cepFormatado}/json/`);
+
+        const cep = resposta.data;
+
+        setEnderecoPrincipal((prevEndereco) => ({
+          ...prevEndereco,
+          CEP: cepDinamico,
+          Endereco: cep.logradouro,
+          Bairro: cep.bairro,
+          Cidade: cep.localidade,
+          Estado: cep.uf,
+        }));
+      } catch (error) {
+        toast.warn(error.message);
+      }
+    }
   };
 
   return (
@@ -89,7 +111,9 @@ const Endereco = ({ id }) => {
           <Form>
             <Form.Group controlId="CEP">
               <Form.Label>CEP</Form.Label>
-              <Form.Control type="text" name="CEP" value={enderecoPrincipal?.CEP || ""} onChange={handleInputChange} />
+              <InputMask mask="99999-999" maskChar="" value={enderecoPrincipal?.CEP} onChange={(e) => setCepDinamico(e.target.value)} onBlur={fetchCEP}>
+                {(inputProps: any) => <Form.Control type="text" name="CEP" {...inputProps} />}
+              </InputMask>
             </Form.Group>
             <Form.Group controlId="Endereco">
               <Form.Label>Endereço</Form.Label>
@@ -101,7 +125,7 @@ const Endereco = ({ id }) => {
             </Form.Group>
             <Form.Group controlId="Estado">
               <Form.Label>Estado</Form.Label>
-              <Form.Control type="text" name="Estado" value={enderecoPrincipal?.Estado || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="Estado" value={enderecoPrincipal?.Estado || ""} onChange={handleInputChange} maxLength={2} minLength={2} />
             </Form.Group>
             <Form.Group controlId="Bairro">
               <Form.Label>Bairro</Form.Label>
@@ -109,17 +133,21 @@ const Endereco = ({ id }) => {
             </Form.Group>
             <Form.Group controlId="Tel">
               <Form.Label>Telefone</Form.Label>
-              <Form.Control type="text" name="Tel" value={enderecoPrincipal?.Tel || ""} onChange={handleInputChange} />
+              <InputMask mask="(99)99999-9999" maskChar="" value={enderecoPrincipal?.Tel || ""} onChange={handleInputChange}>
+                {(inputProps: any) => <Form.Control type="text" name="Tel" {...inputProps} />}
+              </InputMask>
             </Form.Group>
 
             <Form.Group controlId="tel2">
               <Form.Label>Telefone 2</Form.Label>
-              <Form.Control type="text" name="tel2" value={enderecoPrincipal?.tel2 || ""} onChange={handleInputChange} required />
+              <InputMask mask="(99) 9999-9999" maskChar="" value={enderecoPrincipal?.Tel2 || ""} onChange={handleInputChange} required>
+                {(inputProps: any) => <Form.Control type="text" name="tel2" {...inputProps} />}
+              </InputMask>
             </Form.Group>
 
             <Form.Group controlId="campoLivre">
               <Form.Label>Campo Livre</Form.Label>
-              <Form.Control type="text" name="campoLivre" value={enderecoPrincipal?.campoLivre || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="campoLivre" value={enderecoPrincipal?.CampoLivre || ""} onChange={handleInputChange} />
             </Form.Group>
 
             <Form.Group controlId="ComplementoEndereco">

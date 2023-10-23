@@ -3,6 +3,7 @@ import Tabs from "react-bootstrap/Tabs";
 import Resumo from "./Resumo/Resumo";
 import Endereco from "./Endereco/Endereco";
 import { useEffect } from "react";
+import Pagamento from "./Pagamento/Pagamento";
 
 type TabsPagamentoFinalProps = {
   id: number;
@@ -18,7 +19,7 @@ const TabsPagamentoFinal: React.FC<TabsPagamentoFinalProps> = ({ id }) => {
         <Endereco id={id} />
       </Tab>
       <Tab eventKey="DadosPagamento" title="Dados de Pagamento">
-        Dados de Pagamento
+        <Pagamento />
       </Tab>
     </Tabs>
   );
