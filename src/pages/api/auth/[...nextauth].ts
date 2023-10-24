@@ -59,5 +59,6 @@ export default NextAuth({
   jwt: {
     secret: "secret",
     encryption: true,
+    expires: 1 * 60 * 60, // Define a expiração do token para 1 hora (1 hora * 60 minutos * 60 segundos)
   },
 });

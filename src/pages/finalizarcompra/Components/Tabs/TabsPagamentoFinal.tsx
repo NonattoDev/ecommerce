@@ -2,7 +2,6 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import Resumo from "./Resumo/Resumo";
 import Endereco from "./Endereco/Endereco";
-import { useEffect } from "react";
 import Pagamento from "./Pagamento/Pagamento";
 
 type TabsPagamentoFinalProps = {

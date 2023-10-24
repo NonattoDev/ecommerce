@@ -1,5 +1,5 @@
 import { Button, Card, Form } from "react-bootstrap";
-import { useState } from "react";
+import { createContext, useState } from "react";
 import { useEffect } from "react";
 import axiosCliente from "@/services/axiosCliente";
 import { toast } from "react-toastify";
@@ -56,6 +56,7 @@ const Endereco = ({ id }) => {
     try {
       const response = await axiosCliente.post(`usuarios/endereco/${id}`, enderecoPrincipal);
       setRedefinir(true);
+      setCepDinamico("");
       return toast.success(`Novo endereço cadastrado`);
     } catch (error) {
       return toast.warn(error.message);
@@ -111,7 +112,7 @@ const Endereco = ({ id }) => {
           <Form>
             <Form.Group controlId="CEP">
               <Form.Label>CEP</Form.Label>
-              <InputMask mask="99999-999" maskChar="" value={enderecoPrincipal?.CEP} onChange={(e) => setCepDinamico(e.target.value)} onBlur={fetchCEP}>
+              <InputMask mask="99999-999" maskChar="" value={cepDinamico} onChange={(e) => setCepDinamico(e.target.value)} onBlur={fetchCEP}>
                 {(inputProps: any) => <Form.Control type="text" name="CEP" {...inputProps} />}
               </InputMask>
             </Form.Group>
@@ -138,16 +139,16 @@ const Endereco = ({ id }) => {
               </InputMask>
             </Form.Group>
 
-            <Form.Group controlId="tel2">
+            <Form.Group controlId="Tel2">
               <Form.Label>Telefone 2</Form.Label>
               <InputMask mask="(99) 9999-9999" maskChar="" value={enderecoPrincipal?.Tel2 || ""} onChange={handleInputChange} required>
-                {(inputProps: any) => <Form.Control type="text" name="tel2" {...inputProps} />}
+                {(inputProps: any) => <Form.Control type="text" name="Tel2" {...inputProps} />}
               </InputMask>
             </Form.Group>
 
-            <Form.Group controlId="campoLivre">
+            <Form.Group controlId="CampoLivre">
               <Form.Label>Campo Livre</Form.Label>
-              <Form.Control type="text" name="campoLivre" value={enderecoPrincipal?.CampoLivre || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="CampoLivre" value={enderecoPrincipal?.CampoLivre || ""} onChange={handleInputChange} />
             </Form.Group>
 
             <Form.Group controlId="ComplementoEndereco">
