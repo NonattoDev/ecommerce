@@ -7,6 +7,7 @@ import Loading from "@/components/Loading/Loading";
 import { toast } from "react-toastify";
 import { Alert, Container } from "react-bootstrap";
 import TabsPagamentoFinal from "./Components/Tabs/TabsPagamentoFinal";
+import { EnderecoProvider } from "@/context/EnderecoContexto";
 
 declare module "next-auth" {
   interface Session {
@@ -61,7 +62,9 @@ const finalizarCompra = () => {
               <p>Você ainda não tem itens no carrinho, inicie as compras</p>
             ) : (
               <>
-                <TabsPagamentoFinal id={session.user.id} />
+                <EnderecoProvider>
+                  <TabsPagamentoFinal id={session.user.id} />
+                </EnderecoProvider>
               </>
             )}
           </div>

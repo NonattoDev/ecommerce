@@ -1,17 +1,18 @@
 import { Button, Card, Form } from "react-bootstrap";
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { useEffect } from "react";
 import axiosCliente from "@/services/axiosCliente";
 import { toast } from "react-toastify";
 import axios from "axios";
 import InputMask from "react-input-mask";
+import { EnderecoContext } from "@/context/EnderecoContexto";
 
 const Endereco = ({ id }) => {
   const [novoEndereco, setNovoEndereco] = useState(false);
-  const [enderecoPrincipal, setEnderecoPrincipal] = useState({});
   const [enderecosCadastrados, setEnderecosCadastrado] = useState([]);
   const [redefinir, setRedefinir] = useState(false);
   const [cepDinamico, setCepDinamico] = useState("");
+  const { endereco, setEndereco } = useContext(EnderecoContext);
 
   useEffect(() => {
     setNovoEndereco(false);
@@ -19,7 +20,7 @@ const Endereco = ({ id }) => {
     const fetchEnderecos = async () => {
       try {
         const response = await axiosCliente.get(`/usuarios/endereco/${id}`);
-        setEnderecoPrincipal(response.data.enderecoPrincipal);
+        setEndereco(response.data.enderecoPrincipal);
         setEnderecosCadastrado(response.data.enderecosEntrega);
       } catch (error) {
         toast.warn(error.message);
@@ -32,29 +33,29 @@ const Endereco = ({ id }) => {
   const handleNovoEndereco = () => {
     setNovoEndereco(true);
     setRedefinir(false);
-    setEnderecoPrincipal({});
+    setEndereco({});
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEnderecoPrincipal((prevEndereco) => ({
+    setEndereco((prevEndereco) => ({
       ...prevEndereco,
       [name]: value,
     }));
   };
 
   const adicionarNovoEndereco = async () => {
-    if (Object.keys(enderecoPrincipal).length === 0) return toast.warn("Preencha os dados de endereço");
+    if (Object.keys(endereco).length === 0) return toast.warn("Preencha os dados de endereço");
     if (!cepDinamico) return toast.warn("Informe o CEP");
-    if (!enderecoPrincipal.Endereco) return toast.warn("Informe o Endereço");
-    if (!enderecoPrincipal.Cidade) return toast.warn("Informe a Cidade");
-    if (!enderecoPrincipal.Estado) return toast.warn("Informe o Estado");
-    if (!enderecoPrincipal.Bairro) return toast.warn("Informe o Bairro");
-    if (!enderecoPrincipal.Tel) return toast.warn("Informe o Telefone");
-    if (!enderecoPrincipal.Numero) return toast.warn("Informe o Número");
+    if (!endereco.Endereco) return toast.warn("Informe o Endereço");
+    if (!endereco.Cidade) return toast.warn("Informe a Cidade");
+    if (!endereco.Estado) return toast.warn("Informe o Estado");
+    if (!endereco.Bairro) return toast.warn("Informe o Bairro");
+    if (!endereco.Tel) return toast.warn("Informe o Telefone");
+    if (!endereco.Numero) return toast.warn("Informe o Número");
 
     try {
-      const response = await axiosCliente.post(`usuarios/endereco/${id}`, enderecoPrincipal);
+      const response = await axiosCliente.post(`usuarios/endereco/${id}`, endereco);
       setRedefinir(true);
       setCepDinamico("");
       return toast.success(`Novo endereço cadastrado`);
@@ -71,7 +72,7 @@ const Endereco = ({ id }) => {
 
         const cep = resposta.data;
 
-        setEnderecoPrincipal((prevEndereco) => ({
+        setEndereco((prevEndereco) => ({
           ...prevEndereco,
           CEP: cepDinamico,
           Endereco: cep.logradouro,
@@ -98,17 +99,17 @@ const Endereco = ({ id }) => {
             const selectedAddress = enderecosCadastrados.find((address) => address.Endereco === e.target.value);
             setNovoEndereco(false);
             setRedefinir(false);
-            setEnderecoPrincipal(selectedAddress);
+            setEndereco(selectedAddress);
           }}
         >
-          <option disabled>Seus endereços cadastrados</option>
+          <option>Seus endereços cadastrados</option>
           {enderecosCadastrados.map((address) => (
             <option key={address.Lanc} value={address.Endereco}>
               {address.Endereco}
             </option>
           ))}
         </Form.Select>
-        {!enderecoPrincipal || novoEndereco ? (
+        {!endereco || novoEndereco ? (
           <Form>
             <Form.Group controlId="CEP">
               <Form.Label>CEP</Form.Label>
@@ -118,47 +119,47 @@ const Endereco = ({ id }) => {
             </Form.Group>
             <Form.Group controlId="Endereco">
               <Form.Label>Endereço</Form.Label>
-              <Form.Control type="text" name="Endereco" value={enderecoPrincipal?.Endereco || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="Endereco" value={endereco?.Endereco || ""} onChange={handleInputChange} />
             </Form.Group>
             <Form.Group controlId="Cidade">
               <Form.Label>Cidade</Form.Label>
-              <Form.Control type="text" name="Cidade" value={enderecoPrincipal?.Cidade || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="Cidade" value={endereco?.Cidade || ""} onChange={handleInputChange} />
             </Form.Group>
             <Form.Group controlId="Estado">
               <Form.Label>Estado</Form.Label>
-              <Form.Control type="text" name="Estado" value={enderecoPrincipal?.Estado || ""} onChange={handleInputChange} maxLength={2} minLength={2} />
+              <Form.Control type="text" name="Estado" value={endereco?.Estado || ""} onChange={handleInputChange} maxLength={2} minLength={2} />
             </Form.Group>
             <Form.Group controlId="Bairro">
               <Form.Label>Bairro</Form.Label>
-              <Form.Control type="text" name="Bairro" value={enderecoPrincipal?.Bairro || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="Bairro" value={endereco?.Bairro || ""} onChange={handleInputChange} />
             </Form.Group>
             <Form.Group controlId="Tel">
               <Form.Label>Telefone</Form.Label>
-              <InputMask mask="(99)99999-9999" maskChar="" value={enderecoPrincipal?.Tel || ""} onChange={handleInputChange}>
+              <InputMask mask="(99)99999-9999" maskChar="" value={endereco?.Tel || ""} onChange={handleInputChange}>
                 {(inputProps: any) => <Form.Control type="text" name="Tel" {...inputProps} />}
               </InputMask>
             </Form.Group>
 
             <Form.Group controlId="Tel2">
               <Form.Label>Telefone 2</Form.Label>
-              <InputMask mask="(99) 9999-9999" maskChar="" value={enderecoPrincipal?.Tel2 || ""} onChange={handleInputChange} required>
+              <InputMask mask="(99) 9999-9999" maskChar="" value={endereco?.Tel2 || ""} onChange={handleInputChange} required>
                 {(inputProps: any) => <Form.Control type="text" name="Tel2" {...inputProps} />}
               </InputMask>
             </Form.Group>
 
             <Form.Group controlId="CampoLivre">
               <Form.Label>Campo Livre</Form.Label>
-              <Form.Control type="text" name="CampoLivre" value={enderecoPrincipal?.CampoLivre || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="CampoLivre" value={endereco?.CampoLivre || ""} onChange={handleInputChange} />
             </Form.Group>
 
             <Form.Group controlId="ComplementoEndereco">
               <Form.Label>Complemento do Endereço</Form.Label>
-              <Form.Control type="text" name="ComplementoEndereco" value={enderecoPrincipal?.ComplementoEndereco || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="ComplementoEndereco" value={endereco?.ComplementoEndereco || ""} onChange={handleInputChange} />
             </Form.Group>
 
             <Form.Group controlId="Numero">
               <Form.Label>Número</Form.Label>
-              <Form.Control type="text" name="Numero" value={enderecoPrincipal?.Numero || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="Numero" value={endereco?.Numero || ""} onChange={handleInputChange} />
             </Form.Group>
             <div style={{ marginTop: "10px" }}>
               <Button variant="primary" onClick={() => setRedefinir(true)} style={{ marginRight: "10px" }}>
@@ -173,47 +174,47 @@ const Endereco = ({ id }) => {
           <Form>
             <Form.Group controlId="formCEP">
               <Form.Label>CEP</Form.Label>
-              <Form.Control type="text" name="CEP" value={enderecoPrincipal?.CEP || ""} onChange={handleInputChange} disabled />
+              <Form.Control type="text" name="CEP" value={endereco?.CEP || ""} onChange={handleInputChange} disabled />
             </Form.Group>
             <Form.Group controlId="formEndereco">
               <Form.Label>Endereço</Form.Label>
-              <Form.Control type="text" name="endereco" value={enderecoPrincipal?.Endereco || ""} onChange={handleInputChange} disabled />
+              <Form.Control type="text" name="endereco" value={endereco?.Endereco || ""} onChange={handleInputChange} disabled />
             </Form.Group>
             <Form.Group controlId="formCidade">
               <Form.Label>Cidade</Form.Label>
-              <Form.Control type="text" name="cidade" value={enderecoPrincipal?.Cidade || ""} onChange={handleInputChange} disabled />
+              <Form.Control type="text" name="cidade" value={endereco?.Cidade || ""} onChange={handleInputChange} disabled />
             </Form.Group>
             <Form.Group controlId="formEstado">
               <Form.Label>Estado</Form.Label>
-              <Form.Control type="text" name="estado" value={enderecoPrincipal?.Estado || ""} onChange={handleInputChange} disabled />
+              <Form.Control type="text" name="estado" value={endereco?.Estado || ""} onChange={handleInputChange} disabled />
             </Form.Group>
             <Form.Group controlId="formBairro">
               <Form.Label>Bairro</Form.Label>
-              <Form.Control type="text" name="Bairro" value={enderecoPrincipal?.Bairro || ""} onChange={handleInputChange} disabled />
+              <Form.Control type="text" name="Bairro" value={endereco?.Bairro || ""} onChange={handleInputChange} disabled />
             </Form.Group>
             <Form.Group controlId="formTel">
               <Form.Label>Telefone</Form.Label>
-              <Form.Control type="text" name="Tel" value={enderecoPrincipal?.Tel || ""} onChange={handleInputChange} disabled />
+              <Form.Control type="text" name="Tel" value={endereco?.Tel || ""} onChange={handleInputChange} disabled />
             </Form.Group>
 
             <Form.Group controlId="formTel2">
               <Form.Label>Telefone 2</Form.Label>
-              <Form.Control type="text" name="tel2" value={enderecoPrincipal?.Tel2 || ""} onChange={handleInputChange} disabled />
+              <Form.Control type="text" name="tel2" value={endereco?.Tel2 || ""} onChange={handleInputChange} disabled />
             </Form.Group>
 
             <Form.Group controlId="formCampoLivre">
               <Form.Label>Campo Livre</Form.Label>
-              <Form.Control type="text" name="campoLivre" value={enderecoPrincipal?.CampoLivre || ""} onChange={handleInputChange} disabled />
+              <Form.Control type="text" name="campoLivre" value={endereco?.CampoLivre || ""} onChange={handleInputChange} disabled />
             </Form.Group>
 
             <Form.Group controlId="formComplementoEndereco">
               <Form.Label>Complemento do Endereço</Form.Label>
-              <Form.Control type="text" name="ComplementoEndereco" value={enderecoPrincipal?.ComplementoEndereco || ""} onChange={handleInputChange} disabled />
+              <Form.Control type="text" name="ComplementoEndereco" value={endereco?.ComplementoEndereco || ""} onChange={handleInputChange} disabled />
             </Form.Group>
 
             <Form.Group controlId="formNumero">
               <Form.Label>Número</Form.Label>
-              <Form.Control type="text" name="Numero" value={enderecoPrincipal?.Numero || ""} onChange={enderecoPrincipal?.handleInputChange} disabled />
+              <Form.Control type="text" name="Numero" value={endereco?.Numero || ""} onChange={endereco?.handleInputChange} disabled />
             </Form.Group>
             <Button variant="primary" onClick={handleNovoEndereco} style={{ marginTop: "10px" }}>
               Usar outro endereço

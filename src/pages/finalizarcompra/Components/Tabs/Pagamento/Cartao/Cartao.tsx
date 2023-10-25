@@ -1,11 +1,13 @@
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
-import axios from "axios";
-import { useState } from "react";
+import { EnderecoContext } from "@/context/EnderecoContexto";
+import axiosCliente from "@/services/axiosCliente";
+import { useContext, useState } from "react";
 import { Form, InputGroup, Row, Col, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 const Cartao = () => {
   const { produtosNoCarrinho } = useCarrinhoContext();
+  const { endereco } = useContext(EnderecoContext);
 
   const [dadosPessoais, setDadosPessoais] = useState({
     nomeCompleto: "",
@@ -35,7 +37,7 @@ const Cartao = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const formattedProducts = produtosNoCarrinho.map((produto) => {
@@ -43,7 +45,7 @@ const Cartao = () => {
         reference_id: produto.Referencia,
         name: produto.Produto,
         quantity: produto.Quantidade,
-        unit_amount: produto.Preco1,
+        unit_amount: produto.Preco1 * 100,
       };
     });
 
@@ -53,78 +55,16 @@ const Cartao = () => {
     }, 0);
 
     try {
-      const options = {
-        method: "POST",
-        url: "https://sandbox.api.pagseguro.com/orders",
-        headers: {
-          accept: "application/json",
-          Authorization: "Bearer B871F6967C2341489D37924D761FF1BD",
-          "content-type": "application/json",
-        },
-        data: {
-          customer: {
-            name: dadosPessoais.nomeCompleto,
-            email: dadosPessoais.email,
-            tax_id: dadosPessoais.cpfCnpj,
-            phones: [{ country: "55", area: "71", number: dadosPessoais.telefone, type: "MOBILE" }],
-          },
-          shipping: {
-            address: {
-              street: "Avenida Brigadeiro Faria Lima",
-              number: "1384",
-              complement: "apto 12",
-              locality: "Pinheiros",
-              city: "São Paulo",
-              region_code: "SP",
-              country: "BRA",
-              postal_code: "01452002",
-            },
-          },
-          reference_id: "ex-00001",
-          items: formattedProducts,
-          notification_urls: ["https://meusite.com/notificacoes"],
-          charges: [
-            {
-              reference_id: "referencia da cobranca",
-              description: "descricao da cobranca",
-              amount: { value: totalAmount * 100, currency: "BRL" },
-              payment_method: {
-                type: "CREDIT_CARD",
-                installments: 1,
-                capture: true,
-                card: {
-                  number: dadosCartao.numeroCartao,
-                  exp_month: dadosCartao.expMonth,
-                  exp_year: dadosCartao.expYear,
-                  security_code: dadosCartao.cvv,
-                  holder: { name: dadosCartao.nomeCartao },
-                  store: true,
-                },
-              },
-            },
-          ],
-        },
-      };
-
-      console.log(options);
-
-      //   axios
-      //     .request(options)
-      //     .then(function (response) {
-      //       return response.data;
-      //     })
-      //     .catch(function (error) {
-      //       toast.warn(error.message);
-      //       return error.message;
-      //     });
-    } catch (error) {}
+      const resposta = await axiosCliente.post("/pedido/criar-pedido", { dadosPessoais, dadosCartao, formattedProducts, totalAmount, endereco });
+    } catch (error) {
+      toast.warn(error.message);
+    }
 
     // Aqui você pode usar os dados armazenados nos estados para enviar a requisição ou executar outras ações necessárias
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Button type="submit">Enviar</Button>
       <Form.Label>Seus Dados Pessoais</Form.Label>
       <Row>
         <Col>
@@ -179,6 +119,7 @@ const Cartao = () => {
           </InputGroup>
         </Col>
       </Row>
+      <Button type="submit">Finalizar Compra</Button>
     </Form>
   );
 };

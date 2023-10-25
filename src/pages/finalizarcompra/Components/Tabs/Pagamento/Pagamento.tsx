@@ -1,4 +1,4 @@
-import { Button, Card, Tab, Tabs } from "react-bootstrap";
+import { Card, Tab, Tabs } from "react-bootstrap";
 import Cartao from "./Cartao/Cartao";
 
 const Pagamento = () => {
@@ -18,9 +18,6 @@ const Pagamento = () => {
           </Tab>
         </Tabs>
       </Card.Body>
-      <Card.Footer>
-        <Button>Finalizar Compra</Button>
-      </Card.Footer>
     </Card>
   );
 };
