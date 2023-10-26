@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import style from "./loginForm.module.css";
@@ -53,6 +53,10 @@ export default function LoginForm() {
             toast.error(error.message);
           })
           .finally(() => {
+            getSession().then((res) => {
+              console.log(res);
+            });
+
             setLoading(false); // Desativa o indicador de carregamento quando a resposta é recebida
           });
       })

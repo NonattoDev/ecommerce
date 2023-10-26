@@ -3,7 +3,7 @@ import Cartao from "./Cartao/Cartao";
 
 const Pagamento = () => {
   return (
-    <Card>
+    <Card style={{ marginBottom: "30px" }}>
       <Card.Header>Tela de pagamento</Card.Header>
       <Card.Body>
         <Tabs defaultActiveKey="Cartão" id="uncontrolled-tab-example" className="mb-3">

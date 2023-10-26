@@ -1,7 +1,7 @@
 import Carrinho from "../Carrinho/Carrinho";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import Loading from "../Loading/Loading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyVerticallyCenteredModal from "../AuthModal/ModalAuth/authModal";
 import styles from "./usuarioOption.module.css";
 
@@ -16,7 +16,6 @@ interface User {
 
 function UsuarioOptions() {
   const [modalShow, setModalShow] = useState(false);
-
   const { data: session, status } = useSession();
 
   return (

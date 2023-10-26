@@ -1,9 +1,35 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState, ReactNode, Dispatch, SetStateAction } from "react";
 
-const EnderecoContext = createContext({});
+interface EnderecoProviderProps {
+  children: ReactNode;
+}
 
-const EnderecoProvider: React.FC = ({ children }) => {
-  const [endereco, setEndereco] = useState();
+interface Endereco {
+  Endereco: string;
+  Bairro: string;
+  Cidade: string;
+  Estado: string;
+  CEP: string;
+  Tel: number;
+  Tel2: number | null;
+  CampoLivre: string | null;
+  ComplementoEndereco: string;
+  Numero: string;
+  CodMun: number;
+}
+
+interface EnderecoContextProps {
+  endereco: Endereco | undefined;
+  setEndereco: Dispatch<SetStateAction<Endereco | undefined>>;
+}
+
+const EnderecoContext = createContext<EnderecoContextProps>({
+  endereco: undefined,
+  setEndereco: () => {}, // Um valor padrão vazio para evitar erros em tempo de execução
+});
+
+const EnderecoProvider: React.FC<EnderecoProviderProps> = ({ children }) => {
+  const [endereco, setEndereco] = useState<Endereco | undefined>();
 
   return <EnderecoContext.Provider value={{ endereco, setEndereco }}>{children}</EnderecoContext.Provider>;
 };

@@ -1,10 +1,12 @@
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
 import { EnderecoContext } from "@/context/EnderecoContexto";
 import axiosCliente from "@/services/axiosCliente";
-import { useContext, useEffect, useState } from "react";
-import { Form, InputGroup, Row, Col, Button } from "react-bootstrap";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
+import { Form, InputGroup, Row, Col, Button, Spinner } from "react-bootstrap";
 import { toast } from "react-toastify";
+// @ts-ignore
 import InputMask from "react-input-mask";
+import Loading from "@/components/Loading/Loading";
 
 type FormasDeParcelar = {
   installments: number;
@@ -29,6 +31,7 @@ const Cartao = () => {
   const { endereco } = useContext(EnderecoContext);
   const [parcelaSelecionada, setParcelaSelecionada] = useState(0);
   const [formasDeParcelar, setFormasDeParcelar] = useState<FormasDeParcelar[]>();
+  const [loading, setLoading] = useState(false);
 
   const formattedProducts = produtosNoCarrinho.map((produto) => {
     return {
@@ -41,7 +44,8 @@ const Cartao = () => {
 
   // Calcular o valor total dos produtos
   const totalAmount = formattedProducts.reduce((total, product) => {
-    return total + product.unit_amount * product.quantity;
+    const unitAmount = parseFloat(product.unit_amount); // ou Number(product.unit_amount)
+    return total + unitAmount * product.quantity;
   }, 0);
 
   const [dadosPessoais, setDadosPessoais] = useState({
@@ -57,54 +61,89 @@ const Cartao = () => {
     expYear: "",
     cvv: "",
   });
-  const handleDadosPessoaisChange = (event) => {
+  const handleDadosPessoaisChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDadosPessoais({
       ...dadosPessoais,
       [event.target.name]: event.target.value,
     });
   };
-  const handleDadosCartaoChange = (event) => {
+  const handleDadosCartaoChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDadosCartao({
       ...dadosCartao,
       [event.target.name]: event.target.value,
     });
   };
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
 
-    if (!dadosPessoais.email) return toast.warn("Digite o seu email");
-    if (!dadosPessoais.nomeCompleto) return toast.warn("Digite o seu nome para efetuar a compra");
-    if (!dadosPessoais.cpfCnpj) return toast.warn("Digite o seu CPF ou CNPJ");
+    if (!dadosPessoais.email) {
+      setLoading(false);
+      toast.warn("Digite o seu email");
+      return;
+    }
+    if (!dadosPessoais.nomeCompleto) {
+      setLoading(false);
+      return toast.warn("Digite o seu nome para efetuar a compra");
+    }
+
+    if (!dadosPessoais.cpfCnpj) {
+      setLoading(false);
+      return toast.warn("Digite o seu CPF ou CNPJ");
+    }
     if (dadosPessoais.cpfCnpj.length !== 14 && dadosPessoais.cpfCnpj.length !== 11) {
+      setLoading(false);
       return toast.warn("Digite um CNPJ ou um CPF válido");
     }
-    if (!dadosPessoais.telefone) return toast.warn("Digite o seu telefone");
-    if (!dadosCartao.cvv) return toast.warn("Digite o código de segurança do cartão");
-    if (!dadosCartao.expMonth) return toast.warn("Digite o mês de expiração do cartão");
-    if (!dadosCartao.expYear) return toast.warn("Digite o ano de expiração do cartão");
-    if (!dadosCartao.nomeCartao) return toast.warn("Digite o nome como está no cartão apresentado");
-    if (!dadosCartao.numeroCartao) return toast.warn("Digite o número do seu cartão");
+    if (!dadosPessoais.telefone) {
+      setLoading(false);
+      return toast.warn("Digite o seu telefone");
+    }
+    if (!dadosCartao.cvv) {
+      setLoading(false);
+      return toast.warn("Digite o código de segurança do cartão");
+    }
+    if (!dadosCartao.expMonth) {
+      setLoading(false);
+      return toast.warn("Digite o mês de expiração do cartão");
+    }
+    if (!dadosCartao.expYear) {
+      setLoading(false);
+      return toast.warn("Digite o ano de expiração do cartão");
+    }
+    if (!dadosCartao.nomeCartao) {
+      setLoading(false);
+      return toast.warn("Digite o nome como está no cartão apresentado");
+    }
+    if (!dadosCartao.numeroCartao) {
+      setLoading(false);
+      return toast.warn("Digite o número do seu cartão");
+    }
 
     try {
       const resposta = await axiosCliente.post("/pedido/criar-pedido/", { dadosPessoais, dadosCartao, formattedProducts, totalAmount: totalAmount.toFixed(0), endereco, parcelaSelecionada });
 
       if (resposta.data.error_messages) {
+        setLoading(false);
         const erros = resposta.data.error_messages;
-        erros.forEach((erro) => {
+        erros.forEach((erro: any) => {
           if (erro.description === "must be a valid CPF or CNPJ") return toast.warn("Digite um CPF ou CNPJ Válido");
-          return toast.warn(erro.description);
+          toast.warn(erro.parameter_name);
+          toast.warn(erro.description);
+          return;
         });
       }
 
-      console.log(resposta.data);
-
       if (resposta?.data?.charges[0]?.payment_response?.code === "20000") {
         //Remover do Localstorage o carrinho com o id que vem da sessão apos a venda efetuada
+        setLoading(false);
         return toast.success("Pagamento realizado");
       } else {
+        setLoading(false);
         return toast.info(resposta?.data?.charges[0]?.payment_response?.message);
       }
-    } catch (error) {
+    } catch (error: any) {
+      setLoading(false);
       toast.warn(error.message);
     }
 
@@ -117,15 +156,15 @@ const Cartao = () => {
           params: { totalAmount: totalAmount.toFixed(0), numeroCartao: dadosCartao.numeroCartao.substring(0, 6), parcelaSelecionada: parcelaSelecionada },
         });
 
-        console.log(resposta.data);
-
         if (resposta.data.error_messages) {
           const erros = resposta.data.error_messages;
-          erros.forEach((erro) => {
+          erros.forEach((erro: { description: string }) => {
             return toast.warn(erro.description);
           });
         }
-        const bandeiras = ["mastercard", "visa", "hipercard", "elo"]; // Adicione outras bandeiras, se necessário
+
+        // Adicione outras bandeiras, se necessário
+        const bandeiras = ["mastercard", "visa", "hipercard", "elo", "amex", "maestro", "mercadopago"];
 
         for (const bandeira of bandeiras) {
           const paymentMethod = resposta.data?.payment_methods?.credit_card?.[bandeira];
@@ -142,10 +181,8 @@ const Cartao = () => {
     }
   }, [dadosCartao.numeroCartao.length === 16, produtosNoCarrinho]);
 
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = parseInt(event.target.value);
-
-    console.log(selectedValue);
 
     setParcelaSelecionada(selectedValue);
   };
@@ -172,7 +209,7 @@ const Cartao = () => {
         <Col>
           <InputGroup className="mb-3">
             <InputMask mask="(99)99999-9999" value={dadosPessoais.telefone} onChange={handleDadosPessoaisChange}>
-              {(inputProps) => <Form.Control name="telefone" type="text" placeholder="Telefone/Celular" {...inputProps} />}
+              {(inputProps: any) => <Form.Control name="telefone" type="text" placeholder="Telefone/Celular" {...inputProps} />}
             </InputMask>
           </InputGroup>
         </Col>
@@ -209,21 +246,37 @@ const Cartao = () => {
         </Col>
       </Row>
       <Row>
-        <Col md={2}>
-          <Form.Select aria-label="qtdParcelas" value={parcelaSelecionada} onChange={handleChange}>
-            {formasDeParcelar?.map((forma, index) => (
-              <option key={forma.installments} value={forma.installments}>
-                {forma.installments}x de{" "}
-                {(forma.installment_value / 100).toLocaleString("pt-BR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </option>
-            ))}
-          </Form.Select>
+        <Col md={3}>
+          {dadosCartao.numeroCartao.length < 13 ? (
+            <h6 className="text-muted">Digite o número do seu cartão</h6>
+          ) : !formasDeParcelar && dadosCartao.numeroCartao.length > 13 ? (
+            <Spinner animation="grow" variant="primary"></Spinner>
+          ) : (
+            <Form.Select aria-label="qtdParcelas" value={parcelaSelecionada} onChange={handleChange}>
+              {formasDeParcelar?.map((forma, index) => (
+                <option key={forma.installments} value={forma.installments}>
+                  {forma.installments}x de{" "}
+                  {(forma.installment_value / 100).toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </option>
+              ))}
+            </Form.Select>
+          )}
         </Col>
       </Row>
-      <Button type="submit">Finalizar Compra</Button>
+      {loading ? (
+        <div style={{ marginTop: "10px" }}>
+          <Loading />
+        </div>
+      ) : !formasDeParcelar ? (
+        <></>
+      ) : (
+        <Button type="submit" style={{ marginTop: "10px" }}>
+          Finalizar Compra
+        </Button>
+      )}
     </Form>
   );
 };

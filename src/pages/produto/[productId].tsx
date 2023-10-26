@@ -11,7 +11,7 @@ import imagemSubstituicao from "../../../public/fotosProdutos/erro/semProduto.pn
 import { Produto, ProdutosSimilaresType, ResponseData } from "@/Types/Produto";
 import ProdutosSimilares from "@/components/ProdutosSimilares/produtosSimilares";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 
 function Produto() {
@@ -22,7 +22,7 @@ function Produto() {
   const [imagemCarregada, setImagemCarregada] = useState(true);
   const [imagemPrincipal, setImagemPrincipal] = useState("");
   const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilaresType[]>([]);
-  const { handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
+  const { handleAdicionarProdutosAoCarrinho, produtosNoCarrinho } = useCarrinhoContext();
   const { data: session, status } = useSession();
 
   const handleImagemErro = () => {

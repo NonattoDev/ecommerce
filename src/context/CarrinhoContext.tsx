@@ -3,6 +3,7 @@ import { Produto } from "@/Types/Produto";
 import axiosCliente from "@/services/axiosCliente";
 import { getSession } from "next-auth/react";
 import { Session } from "next-auth";
+import { toast } from "react-toastify";
 
 interface CarrinhoContextData {
   produtosNoCarrinho: Produto[];
@@ -42,6 +43,7 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
         carrinhoAtualizado = carrinhoAtualizado.map((p) => {
           if (p.CodPro === produto.CodPro) {
             produtoExistente = true;
+
             return {
               ...p,
               Quantidade: p.Quantidade + produto.Quantidade,

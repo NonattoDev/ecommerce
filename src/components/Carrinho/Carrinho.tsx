@@ -7,8 +7,11 @@ import { Form } from "react-bootstrap";
 import { Produto } from "@/Types/Produto";
 import { getSession } from "next-auth/react";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 function Carrinho() {
+  const router = useRouter();
   const [quantidadeTotal, setQuantidadeTotal] = useState(0); // Declare quantidadeTotal state
   const { produtosNoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto } = useCarrinhoContext();
   const [show, setShow] = useState(false);
@@ -67,6 +70,22 @@ function Carrinho() {
     return quantidadeTotal;
   };
 
+  const handleNegociarVendedor = () => {
+    setShow(false);
+
+    // Enviar como proposta para o enterprise via AXIOS
+
+    // Receber como retorno um ID do orçamento para poder criar um Dashboard
+
+    // Zerar o Carrinho no LocalStorage com o ID do usuario
+
+    //Redirecionar para página principal
+    router.push("/");
+    toast.success("Um vendedor recebeu o seu pedido, aguarde e entraremos em contato", { position: "top-center" });
+
+    return;
+  };
+
   return (
     <>
       <div className={styles.BotaoCarrinho} data-count={quantidadeTotal}>
@@ -114,7 +133,7 @@ function Carrinho() {
                       <Form.Control
                         name="quantidadeProduto"
                         type="number"
-                        value={produto.Quantidade || 0}
+                        value={produto.Quantidade > produto.Estoque ? produto.Estoque : produto.Quantidade || 0}
                         onChange={(e) => {
                           const quantidade = e.target.value === "" ? 1 : parseInt(e.target.value);
                           const valorMaximo = produto.Estoque;
@@ -145,10 +164,11 @@ function Carrinho() {
               <h6>
                 Total da compra com frete: <strong>R$ {calcularTotalCompraComFrete().toLocaleString("pt-br", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</strong>
               </h6>
-              <Link href={"/finalizarcompra"}>
-                <Button variant="primary" className={styles.botaoFinalizarCompra}>
-                  Finalizar Compra
-                </Button>
+              <Button className={styles.botaoFinalizarCompra} onClick={handleNegociarVendedor} style={{ marginBottom: "10px" }}>
+                Negociar com vendedor
+              </Button>
+              <Link href={"/finalizarcompra"} onClick={handleClose} className={styles.botaoFinalizarCompra}>
+                Finalizar Compra
               </Link>
             </div>
           )}

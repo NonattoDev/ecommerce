@@ -5,30 +5,18 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export default NextAuth({
   providers: [
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. "Sign in with...")
       name: "Credentials",
-      // `credentials` is used to generate a form on the sign in page.
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         email: { label: "Email", type: "text", placeholder: "Digite o seu email" },
         password: { label: "Senha", type: "password" },
       },
       async authorize(credentials, req) {
-        // Add logic here to look up the user from the credentials supplied
         let response = await axiosCliente.post("/usuarios/login", credentials);
-
         const user = await response.data;
-
         if (user) {
-          // Any object returned will be saved in `user` property of the JWT
           return user;
         } else {
-          // If you return null then an error will be displayed advising the user to check their details.
           return null;
-
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
       },
     }),
@@ -59,6 +47,6 @@ export default NextAuth({
   jwt: {
     secret: "secret",
     encryption: true,
-    expires: 1 * 60 * 60, // Define a expiração do token para 1 hora (1 hora * 60 minutos * 60 segundos)
+    expires: 8200, // Define a expiração do token para 1 hora (1 hora * 60 minutos * 60 segundos)
   },
 });
