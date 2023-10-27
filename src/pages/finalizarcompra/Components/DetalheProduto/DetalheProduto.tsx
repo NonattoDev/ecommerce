@@ -3,7 +3,6 @@ import { Card, Form, ProgressBar } from "react-bootstrap";
 import Image from "next/image";
 import styles from "./DetalheProduto.module.css";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
-import ProgressBarFrete from "../ProgressBarFrete/ProgressBarFrete";
 
 const DetalheProduto: React.FC<{ produto: Produto }> = ({ produto }) => {
   const { handleRemoverProduto, handleAtualizarQuantidadeProduto, valorMinimoFreteGratis } = useCarrinhoContext();
@@ -28,7 +27,7 @@ const DetalheProduto: React.FC<{ produto: Produto }> = ({ produto }) => {
               <Form.Control
                 name="quantidadeProduto"
                 type="number"
-                value={produto.Quantidade || 0}
+                value={produto.Quantidade > produto.Estoque ? produto.Estoque : produto.Quantidade || 0}
                 onChange={(e) => {
                   const quantidade = e.target.value === "" ? 1 : parseInt(e.target.value);
                   const valorMaximo = produto.Estoque;

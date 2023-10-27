@@ -4,6 +4,8 @@ import Card from "react-bootstrap/Card";
 import Link from "next/link";
 import styles from "./produto.module.css";
 import Loading from "../Loading/Loading";
+import { useCarrinhoContext } from "@/context/CarrinhoContext";
+import { Produto } from "@/Types/Produto";
 
 export type ProdutoComponenteProps = {
   CodPro: number;
@@ -19,6 +21,7 @@ export type ProdutoComponenteProps = {
 
 function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, PromocaoData, Caminho, Categoria, Estoque }: ProdutoComponenteProps) {
   const [isLoading, setIsLoading] = useState(true);
+  const { handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
   const preco = Preco1.toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -36,15 +39,16 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
   }, [Caminho]);
 
   return (
-    <Link href={`/produto/${CodPro}`} style={{ textDecoration: "none" }}>
-      <Card className={`${styles["produto-card"]} ${Estoque <= 0 ? styles.unavailable : ""}`}>
-        {isLoading && <Loading />}
+    <Card className={`${styles["produto-card"]} ${Estoque <= 0 ? styles.unavailable : ""}`}>
+      {isLoading && <Loading />}
+      <Link href={`/produto/${CodPro}`} style={{ textDecoration: "none" }} passHref>
         <div className={styles["produto-card-img-container"]}>
           {Estoque <= 0 && (
             <div className={styles["produto-card-unavailable"]}>
               <span>Produto indisponível</span>
             </div>
           )}
+
           <Card.Img
             src={`/fotosProdutos/${Caminho}`}
             alt={Produto}
@@ -59,14 +63,22 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
             }}
           />
         </div>
-        <div className={styles["produto-card-content"]}>
-          <Card.Body>
-            <Card.Title className={styles["produto-card-title"]}>
-              <strong>{Produto}</strong>
-            </Card.Title>
-            <div className={styles["produto-card-price"]}>{preco}</div>
-            <div className={styles["produto-card-action"]}>
-              <Button variant="" size="sm">
+      </Link>
+      <div className={styles["produto-card-content"]}>
+        <Card.Body>
+          <Card.Title className={styles["produto-card-title"]}>
+            <strong>{Produto}</strong>
+          </Card.Title>
+          <div className={styles["produto-card-price"]}>{preco}</div>
+          <div className={styles["produto-card-action"]}>
+            {Estoque > 0 && (
+              <Button
+                variant=""
+                size="sm"
+                onClick={() => {
+                  handleAdicionarProdutosAoCarrinho({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, PromocaoData, Caminho, Categoria, Estoque, Quantidade: 1 } as Produto);
+                }}
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                   <path
                     strokeLinecap="round"
@@ -75,11 +87,11 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
                   />
                 </svg>
               </Button>
-            </div>
-          </Card.Body>
-        </div>
-      </Card>
-    </Link>
+            )}
+          </div>
+        </Card.Body>
+      </div>
+    </Card>
   );
 }
 

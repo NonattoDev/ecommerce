@@ -1,15 +1,16 @@
 import { Button, Card, Form } from "react-bootstrap";
-import { useContext, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import { useEffect } from "react";
 import axiosCliente from "@/services/axiosCliente";
 import { toast } from "react-toastify";
 import axios from "axios";
+//@ts-ignore
 import InputMask from "react-input-mask";
-import { EnderecoContext } from "@/context/EnderecoContexto";
+import { Endereco, EnderecoContext } from "@/context/EnderecoContexto";
 
-const Endereco = ({ id }) => {
+const Endereco = ({ id }: { id: number }) => {
   const [novoEndereco, setNovoEndereco] = useState(false);
-  const [enderecosCadastrados, setEnderecosCadastrado] = useState([]);
+  const [enderecosCadastrados, setEnderecosCadastrado] = useState<Endereco[]>([]);
   const [redefinir, setRedefinir] = useState(false);
   const [cepDinamico, setCepDinamico] = useState("");
   const { endereco, setEndereco } = useContext(EnderecoContext);
@@ -22,7 +23,7 @@ const Endereco = ({ id }) => {
         const response = await axiosCliente.get(`/usuarios/endereco/${id}`);
         setEndereco(response.data.enderecoPrincipal);
         setEnderecosCadastrado(response.data.enderecosEntrega);
-      } catch (error) {
+      } catch (error: any) {
         toast.warn(error.message);
       }
     };
@@ -33,19 +34,23 @@ const Endereco = ({ id }) => {
   const handleNovoEndereco = () => {
     setNovoEndereco(true);
     setRedefinir(false);
-    setEndereco({});
+    setEndereco(undefined);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEndereco((prevEndereco) => ({
-      ...prevEndereco,
-      [name]: value,
-    }));
+    setEndereco((prevEndereco) => {
+      const updatedEndereco: Endereco = {
+        ...prevEndereco,
+        [name]: value,
+      };
+
+      return updatedEndereco;
+    });
   };
 
   const adicionarNovoEndereco = async () => {
-    if (Object.keys(endereco).length === 0) return toast.warn("Preencha os dados de endereço");
+    if (!endereco) return toast.warn("Preencha os dados de endereço");
     if (!cepDinamico) return toast.warn("Informe o CEP");
     if (!endereco.Endereco) return toast.warn("Informe o Endereço");
     if (!endereco.Cidade) return toast.warn("Informe a Cidade");
@@ -59,7 +64,7 @@ const Endereco = ({ id }) => {
       setRedefinir(true);
       setCepDinamico("");
       return toast.success(`Novo endereço cadastrado`);
-    } catch (error) {
+    } catch (error: any) {
       return toast.warn(error.message);
     }
   };
@@ -72,15 +77,23 @@ const Endereco = ({ id }) => {
 
         const cep = resposta.data;
 
-        setEndereco((prevEndereco) => ({
-          ...prevEndereco,
-          CEP: cepDinamico,
-          Endereco: cep.logradouro,
-          Bairro: cep.bairro,
-          Cidade: cep.localidade,
-          Estado: cep.uf,
-        }));
-      } catch (error) {
+        setEndereco((prevEndereco) => {
+          const updatedEndereco: Endereco = {
+            ...prevEndereco,
+            CEP: cepDinamico,
+            Endereco: cep.logradouro,
+            Bairro: cep.bairro,
+            Cidade: cep.localidade,
+            Estado: cep.uf,
+            Lanc: cep.lanc || "",
+            Tel: cep.tel || 0,
+            Tel2: cep.tel2 ?? null,
+            CampoLivre: cep.campoLivre ?? null, // Definir um valor padrão de null caso cep.campoLivre seja undefined
+          };
+
+          return updatedEndereco;
+        });
+      } catch (error: any) {
         toast.warn(error.message);
       }
     }
@@ -96,7 +109,8 @@ const Endereco = ({ id }) => {
           aria-label="Selecione um endereço"
           style={{ marginBottom: "10px" }}
           onChange={(e) => {
-            const selectedAddress = enderecosCadastrados.find((address) => address.Endereco === e.target.value);
+            const selectedAddress = enderecosCadastrados.find((address) => address.Lanc == e.target.value);
+
             setNovoEndereco(false);
             setRedefinir(false);
             setEndereco(selectedAddress);
@@ -104,7 +118,7 @@ const Endereco = ({ id }) => {
         >
           <option>Seus endereços cadastrados</option>
           {enderecosCadastrados.map((address) => (
-            <option key={address.Lanc} value={address.Endereco}>
+            <option key={address.Lanc} value={address.Lanc}>
               {address.Endereco}
             </option>
           ))}
@@ -214,7 +228,7 @@ const Endereco = ({ id }) => {
 
             <Form.Group controlId="formNumero">
               <Form.Label>Número</Form.Label>
-              <Form.Control type="text" name="Numero" value={endereco?.Numero || ""} onChange={endereco?.handleInputChange} disabled />
+              <Form.Control type="text" name="Numero" value={endereco?.Numero || ""} onChange={handleInputChange} disabled />
             </Form.Group>
             <Button variant="primary" onClick={handleNovoEndereco} style={{ marginTop: "10px" }}>
               Usar outro endereço

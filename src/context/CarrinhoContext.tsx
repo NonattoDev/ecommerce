@@ -12,6 +12,7 @@ interface CarrinhoContextData {
   valorMinimoFreteGratis: number;
   handleAtualizarQuantidadeProduto: (CodPro: number, novaQuantidade: number) => void;
   fetchCarrinho: () => Promise<void>;
+  handleLimparCarrinho: () => void;
 }
 
 const CarrinhoContext = createContext<CarrinhoContextData>({} as CarrinhoContextData);
@@ -44,9 +45,16 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
           if (p.CodPro === produto.CodPro) {
             produtoExistente = true;
 
+            const quantidadeTotal = p.Quantidade + produto.Quantidade;
+            const novaQuantidade = Math.min(quantidadeTotal, p.Estoque); // Verifica se a quantidade total é maior que o estoque
+
+            if (quantidadeTotal > p.Estoque) {
+              toast.warn("Você está selecionando uma quantidade maior do que há no estoque", { position: "top-center" });
+            }
+
             return {
               ...p,
-              Quantidade: p.Quantidade + produto.Quantidade,
+              Quantidade: novaQuantidade,
             };
           }
           return p;
@@ -65,6 +73,14 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
     },
     [session]
   );
+
+  const handleLimparCarrinho = useCallback(() => {
+    setProdutosNoCarrinho([]); // Limpa a lista de produtos no carrinho
+
+    if (typeof window !== "undefined" && session?.user) {
+      localStorage.removeItem(`carrinho_${session.user.id}`); // Remove o carrinho do localStorage
+    }
+  }, [session]);
 
   const handleRemoverProduto = (CodPro: number) => {
     // Filtra os produtos removendo o produto com o ID correspondente
@@ -113,7 +129,9 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
   }
 
   return (
-    <CarrinhoContext.Provider value={{ fetchCarrinho, produtosNoCarrinho, handleAdicionarProdutosAoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto }}>
+    <CarrinhoContext.Provider
+      value={{ handleLimparCarrinho, fetchCarrinho, produtosNoCarrinho, handleAdicionarProdutosAoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto }}
+    >
       {children}
     </CarrinhoContext.Provider>
   );

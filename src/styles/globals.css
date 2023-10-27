@@ -10,6 +10,8 @@
 /* Estilizando a barra de rolagem */
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
+
     /* Largura da barra de rolagem */
 }
 
@@ -19,11 +21,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #189000;
+    background-color: #00A9FF;
     /* Cor da barra de rolagem */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #02b10d;
+    background-color: #00A9FF;
     /* Cor da barra de rolagem ao passar o mouse */
 }

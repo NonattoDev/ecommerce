@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 // @ts-ignore
 import InputMask from "react-input-mask";
 import Loading from "@/components/Loading/Loading";
+import { useRouter } from "next/router";
 
 type FormasDeParcelar = {
   installments: number;
@@ -27,15 +28,16 @@ type FormasDeParcelar = {
 };
 
 const Cartao = () => {
-  const { produtosNoCarrinho } = useCarrinhoContext();
+  const { produtosNoCarrinho, handleLimparCarrinho } = useCarrinhoContext();
   const { endereco } = useContext(EnderecoContext);
   const [parcelaSelecionada, setParcelaSelecionada] = useState(0);
   const [formasDeParcelar, setFormasDeParcelar] = useState<FormasDeParcelar[]>();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const formattedProducts = produtosNoCarrinho.map((produto) => {
     return {
-      reference_id: produto.Referencia,
+      reference_id: `${produto.Produto}COD=${produto.CodPro}`,
       name: produto.Produto,
       quantity: produto.Quantidade,
       unit_amount: (produto.Preco1 * 100).toFixed(0),
@@ -123,6 +125,8 @@ const Cartao = () => {
     try {
       const resposta = await axiosCliente.post("/pedido/criar-pedido/", { dadosPessoais, dadosCartao, formattedProducts, totalAmount: totalAmount.toFixed(0), endereco, parcelaSelecionada });
 
+      console.log(resposta.data);
+      
       if (resposta.data.error_messages) {
         setLoading(false);
         const erros = resposta.data.error_messages;
@@ -135,9 +139,13 @@ const Cartao = () => {
       }
 
       if (resposta?.data?.charges[0]?.payment_response?.code === "20000") {
-        //Remover do Localstorage o carrinho com o id que vem da sessão apos a venda efetuada
         setLoading(false);
-        return toast.success("Pagamento realizado");
+        // Redirecionar para a página raiz ("/")
+        router.push("/");
+        //Remover do Localstorage o carrinho com o id que vem da sessão apos a venda efetuada
+        handleLimparCarrinho();
+        toast.success("Pagamento realizado", { position: "top-center", autoClose: 5000 });
+        return;
       } else {
         setLoading(false);
         return toast.info(resposta?.data?.charges[0]?.payment_response?.message);

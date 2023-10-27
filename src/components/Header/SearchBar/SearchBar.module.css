@@ -1,0 +1,26 @@
+/* SearchBar.module.css */
+
+.card {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.card:hover {
+    background-color: #dcdcdc;
+    cursor: pointer;
+}
+
+.card-body {
+    padding: 10px;
+}
+
+.cardContainer {
+    height: 480px;
+    /* Defina a altura desejada */
+    overflow-y: auto;
+}
+
+.scrollContainer {
+    padding-right: 15px;
+    /* Adiciona um espaço para evitar o conteúdo ser cortado pela barra de rolagem */
+}

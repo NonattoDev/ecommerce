@@ -1,11 +1,11 @@
 import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
 import logo from "./logo-progjteo.png";
 import Navbar from "react-bootstrap/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import style from "./header.module.css";
 import UsuarioOptions from "../UsuarioOptions/usuarioOptions";
+import SearchBar from "./SearchBar/SearchBar";
 
 function Header() {
   return (
@@ -20,9 +20,7 @@ function Header() {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <div className={style.searchBar}>
-            <Form className="d-flex mx-auto">
-              <Form.Control autoComplete="false" name="searchEngine" type="search" placeholder="E-commerce Softline Sistemas" className="me-2 form-control-lg textSearch " aria-label="Search" />
-            </Form>
+            <SearchBar />
           </div>
           <div style={{ margin: "20px" }}>
             <UsuarioOptions />

@@ -4,7 +4,8 @@ interface EnderecoProviderProps {
   children: ReactNode;
 }
 
-interface Endereco {
+export interface Endereco {
+  Lanc: string;
   Endereco: string;
   Bairro: string;
   Cidade: string;
