@@ -76,6 +76,7 @@ const Endereco = ({ id }: { id: number }) => {
         const resposta = await axios.get(`https://viacep.com.br/ws/${cepFormatado}/json/`);
 
         const cep = resposta.data;
+        console.log(cep);
 
         setEndereco((prevEndereco) => {
           const updatedEndereco: Endereco = {
@@ -85,7 +86,6 @@ const Endereco = ({ id }: { id: number }) => {
             Bairro: cep.bairro,
             Cidade: cep.localidade,
             Estado: cep.uf,
-            Lanc: cep.lanc || "",
             Tel: cep.tel || 0,
             Tel2: cep.tel2 ?? null,
             CampoLivre: cep.campoLivre ?? null, // Definir um valor padrão de null caso cep.campoLivre seja undefined
