@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const baseURL = "http://localhost:3001/";
+const baseURL = "http://192.168.1.3:3001/";
 
 const axiosCliente = axios.create({
   baseURL: baseURL,

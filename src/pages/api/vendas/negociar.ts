@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
 
-      return res.status(200).json({ message: "Vendedor recebeu a Proposta", idProposta: valorAtualizado });
+      return res.json({ message: "Vendedor recebeu a Proposta", idProposta: valorAtualizado });
     } catch (error: any) {
       console.log(error);
       return res.status(500).json(error.message);

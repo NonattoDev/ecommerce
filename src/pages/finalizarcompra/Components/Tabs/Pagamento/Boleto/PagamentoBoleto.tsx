@@ -75,7 +75,7 @@ const PagamentoBoleto = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const resposta = await axios.post("api/vendas/boleto", {
+      const resposta = await axios.post("/api/vendas/boleto", {
         dadosPessoais,
         dadosTelefone,
         endereco,

@@ -77,7 +77,7 @@ function Carrinho() {
       // Enviar como proposta para o enterprise via AXIOS
       console.log(produtosNoCarrinho, session, calcularValorFrete());
 
-      const resposta = await axios.post("api/vendas/negociar", { produtosNoCarrinho, session, valorFrete: calcularValorFrete() });
+      const resposta = await axios.post("/api/vendas/negociar", { produtosNoCarrinho, session, valorFrete: calcularValorFrete() });
 
       console.log(resposta);
 
