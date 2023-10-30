@@ -9,6 +9,7 @@ import { getSession } from "next-auth/react";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 function Carrinho() {
   const router = useRouter();
@@ -70,20 +71,28 @@ function Carrinho() {
     return quantidadeTotal;
   };
 
-  const handleNegociarVendedor = () => {
-    setShow(false);
+  const handleNegociarVendedor = async () => {
+    try {
+      setShow(false);
+      // Enviar como proposta para o enterprise via AXIOS
+      console.log(produtosNoCarrinho, session, calcularValorFrete());
 
-    // Enviar como proposta para o enterprise via AXIOS
+      const resposta = await axios.post("api/vendas/negociar", { produtosNoCarrinho, session, valorFrete: calcularValorFrete() });
 
-    // Receber como retorno um ID do orçamento para poder criar um Dashboard
+      console.log(resposta);
 
-    // Zerar o Carrinho no LocalStorage com o ID do usuario
+      // Receber como retorno um ID do orçamento para poder criar um Dashboard
 
-    //Redirecionar para página principal
-    router.push("/");
-    toast.success("Um vendedor recebeu o seu pedido, aguarde e entraremos em contato", { position: "top-center" });
+      // Zerar o Carrinho no LocalStorage com o ID do usuario
 
-    return;
+      //Redirecionar para página principal
+      router.push("/");
+      toast.success(`Um vendedor recebeu o seu pedido, o número da sua proposta é ${resposta.data.idProposta}`, { position: "top-center" });
+
+      return;
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   return (

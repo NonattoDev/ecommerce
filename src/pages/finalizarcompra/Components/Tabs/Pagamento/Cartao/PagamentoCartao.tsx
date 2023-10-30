@@ -31,13 +31,37 @@ type FormasDeParcelar = {
 
 const Cartao = () => {
   const { data: session, status } = useSession();
+  const { produtosNoCarrinho, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto, handleLimparCarrinho } = useCarrinhoContext();
 
-  const { produtosNoCarrinho, handleLimparCarrinho } = useCarrinhoContext();
   const { endereco } = useContext(EnderecoContext);
   const [parcelaSelecionada, setParcelaSelecionada] = useState(0);
   const [formasDeParcelar, setFormasDeParcelar] = useState<FormasDeParcelar[]>();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const calcularTotalCompra = () => {
+    let total = 0;
+    produtosNoCarrinho.forEach((produto) => {
+      total += produto.Quantidade * produto.Preco1;
+    });
+    return total;
+  };
+
+  const calcularValorFrete = () => {
+    const totalCompra = calcularTotalCompra();
+    if (totalCompra < valorMinimoFreteGratis) {
+      return 100; // Valor fixo para o frete quando o valor mínimo não for atingido
+    } else {
+      return 0; // Frete grátis quando o valor mínimo for atingido
+    }
+  };
+
+  const calcularTotalCompraComFrete = () => {
+    const totalCompra = calcularTotalCompra();
+    const valorFrete = calcularValorFrete();
+    return totalCompra + valorFrete;
+  };
+
   const formattedProducts = produtosNoCarrinho.map((produto) => {
     return {
       reference_id: produto.CodPro,
@@ -126,7 +150,8 @@ const Cartao = () => {
     }
 
     try {
-      const resposta = await axiosCliente.post("/pedido/criar-pedido/", { dadosPessoais, dadosCartao, formattedProducts, totalAmount: totalAmount.toFixed(0), endereco, parcelaSelecionada });
+      // Definir aonde ficará no Enterprise o valor do frete pago pelo cliente
+      const resposta = await axiosCliente.post("/pedido/criar-pedido/", { dadosPessoais, dadosCartao, formattedProducts, totalAmount: calcularTotalCompraComFrete(), endereco, parcelaSelecionada });
 
       if (resposta.data.error_messages) {
         setLoading(false);
@@ -135,24 +160,22 @@ const Cartao = () => {
           if (erro.description === "must be a valid CPF or CNPJ") return toast.warn("Digite um CPF ou CNPJ Válido");
           toast.warn(erro.parameter_name);
           toast.warn(erro.description);
-          return;
         });
+        return;
       }
 
       if (resposta?.data?.charges[0]?.payment_response?.code === "20000") {
-        console.log(session);
-
         setLoading(false);
         // Redirecionar para a página raiz ("/")
         router.push("/");
         //Remover do Localstorage o carrinho com o id que vem da sessão apos a venda efetuada
         handleLimparCarrinho();
 
-        //Retornar um aviso
-        toast.success("Pagamento realizado", { position: "top-center", autoClose: 2000, pauseOnHover: false });
-
         //Colocar no Banco
-        const insertVendaBanco = await axios.post("/api/vendas/cartao", { Pagamento: resposta.data, CodCli: session?.user?.id });
+        const insertVendaBanco = await axios.post("/api/vendas/cartao", { Pagamento: resposta.data, CodCli: session?.user?.id, frete: calcularValorFrete() });
+
+        //Retornar um aviso
+        toast.success(`Pagamento realizado o código da sua compra é: ${insertVendaBanco.data.idVenda}`, { position: "top-center", autoClose: 2000, pauseOnHover: false });
 
         return;
       } else {
@@ -170,7 +193,7 @@ const Cartao = () => {
     if (dadosCartao.numeroCartao.length === 16 || dadosCartao.numeroCartao.length === 15) {
       const fetchParcelas = async () => {
         const resposta = await axiosCliente.get("/pedido/calculoJurosCartao/", {
-          params: { totalAmount: totalAmount.toFixed(0), numeroCartao: dadosCartao.numeroCartao.substring(0, 6), parcelaSelecionada: parcelaSelecionada },
+          params: { totalAmount: Math.round(calcularTotalCompraComFrete() * 100), numeroCartao: dadosCartao.numeroCartao.substring(0, 6), parcelaSelecionada: parcelaSelecionada },
         });
 
         if (resposta.data.error_messages) {

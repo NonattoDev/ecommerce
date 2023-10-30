@@ -24,7 +24,7 @@ export default NextAuth({
   callbacks: {
     redirect: async ({ url, baseUrl }) => {
       //Essa aqui é a Base URL do NEXTAUTH, ou seja, se caso vc redirecionar o usuário para '/', será a baseURL que ele irá buscar, fiz isso para rede interna
-      return (baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000");
+      return (baseUrl = process.env.NEXTAUTH_URL || "http://10.71.0.119:3000");
     },
 
     jwt: async ({ token, user }) => {

@@ -1,5 +1,6 @@
 import { Card, Tab, Tabs } from "react-bootstrap";
-import Cartao from "./Cartao/Cartao";
+import Cartao from "./Cartao/PagamentoCartao";
+import PagamentoBoleto from "./Boleto/PagamentoBoleto";
 
 const Pagamento = () => {
   return (
@@ -14,7 +15,7 @@ const Pagamento = () => {
             Pix
           </Tab>
           <Tab eventKey="Boleto" title="Boleto">
-            Boleto
+            <PagamentoBoleto />
           </Tab>
         </Tabs>
       </Card.Body>
