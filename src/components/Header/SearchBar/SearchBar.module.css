@@ -15,7 +15,9 @@
 }
 
 .cardContainer {
-    height: 480px;
+    max-height: 800px;
+    min-height: 450px;
+    height: 800px;
     /* Defina a altura desejada */
     overflow-y: auto;
 }

@@ -14,6 +14,7 @@ const SearchBar = () => {
   const [typingTimeout, setTypingTimeout] = useState<any>(null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
     const value = e.target.value;
     setQuery(value);
     if (typingTimeout) {
@@ -21,11 +22,8 @@ const SearchBar = () => {
     }
     setTypingTimeout(
       setTimeout(() => {
-        if (value.length === 0) setLoading(false);
         if (value.length >= 3) {
-          setLoading(true);
           handleSearch(value);
-          setLoading(false);
         } else {
           setResult([]);
         }
@@ -34,16 +32,17 @@ const SearchBar = () => {
   };
 
   const handleSearch = async (query: string) => {
-    setLoading(true);
+    setLoading(true); // Sempre inicie uma pesquisa com o estado de loading ativado
     try {
       const response = await axiosCliente.get(`/produtos/search/${query}`);
       setResult(response.data);
-      setLoading(false);
     } catch (error: any) {
       if (error.response) {
-        return toast.warn(error.response.data);
+        toast.warn(error.response.data);
       }
-      setLoading(false);
+      setResult([]); // Em caso de erro, defina os resultados como vazios para mostrar a mensagem "não encontrado"
+    } finally {
+      setLoading(false); // Após receber os resultados ou em caso de erro, defina o estado de loading como falso
     }
   };
 
@@ -53,23 +52,29 @@ const SearchBar = () => {
         <Form.Control autoComplete="false" name="searchEngine" type="search" placeholder="E-commerce Softline Sistemas" className="me-2 form-control-lg textSearch" aria-label="Search" />
       </Form>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Pesquisa no nosso E-Commerce</Modal.Title>
-        </Modal.Header>
+      <Modal
+        size="lg"
+        show={showModal}
+        onHide={() => {
+          setShowModal(false);
+          setQuery("");
+          setResult([]);
+        }}
+      >
         <Modal.Body>
           <Form.Control
+            autoFocus
             autoComplete="false"
             name="searchEngine"
             type="search"
-            placeholder="E-commerce Softline Sistemas"
+            placeholder="Pesquise por produto, referência ou marca"
             className="me-2 form-control-lg textSearch"
             aria-label="Search"
             value={query}
             onChange={handleChange}
           />
 
-          {query.length > 0 && loading ? (
+          {loading && query.length > 0 ? (
             <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
               <Loading />
             </div>
@@ -96,7 +101,7 @@ const SearchBar = () => {
                 </div>
               )}
             </div>
-          ) : query.length > 0 && !loading ? (
+          ) : query.length > 0 ? (
             <p>Poxa, não encontramos isso por aqui.</p>
           ) : null}
         </Modal.Body>

@@ -134,7 +134,7 @@ const RegistrationForm = () => {
           // Remover a pontuação do CNPJ
           const cnpj = formValues.cgc.replace(/[^\d]+/g, "");
 
-          const response = await axios.get(`https://cors-anywhere.herokuapp.com/https://www.receitaws.com.br/v1/cnpj/${cnpj}`);
+          const response = await axios.get(`/api/cnpj/${cnpj}`);
           const CNPJDados = await response.data;
           // Atualizar os campos do formulário com os dados do CNPJ
           setFormValues((prevValues) => {

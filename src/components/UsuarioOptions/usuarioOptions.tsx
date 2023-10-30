@@ -1,7 +1,7 @@
 import Carrinho from "../Carrinho/Carrinho";
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Loading from "../Loading/Loading";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MyVerticallyCenteredModal from "../AuthModal/ModalAuth/authModal";
 import styles from "./usuarioOption.module.css";
 
