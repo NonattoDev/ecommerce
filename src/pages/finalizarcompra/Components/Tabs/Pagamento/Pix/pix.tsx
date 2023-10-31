@@ -5,7 +5,27 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { Button, Card } from "react-bootstrap";
 import { toast } from "react-toastify";
+
+
+// Criação da interface para o objeto 'dadosPix'
+interface DadosPix {
+    text: string;
+    amount: {
+        value: number;
+    };
+    expiration_date: string;
+    links: [
+        {
+            rel: string;
+            href: string;
+            media: string;
+            type: string;
+        }
+    ];
+}
+
 
 const PagamentoPix = () => {
     const { data: session, status } = useSession();
@@ -14,7 +34,8 @@ const PagamentoPix = () => {
     const { endereco } = useContext(EnderecoContext);
     const { produtosNoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto } = useCarrinhoContext();
     const [pix, setPix] = useState(false);
-    const [dadosPix, setDadosPix] = useState({})
+    const [dadosPix, setDadosPix] = useState<DadosPix | undefined>();
+
 
     const calcularTotalCompra = () => {
         let total = 0;
@@ -103,6 +124,8 @@ const PagamentoPix = () => {
             toast.success(`Seu código QRCODE PIX foi gerado com sucesso, o número do seu pedido é:${resposta?.data?.idVenda} `);
             setPix(true);
             setDadosPix(resposta.data);
+            console.log(resposta.data);
+
 
             //   router.push("/");
         } catch (error: any) {
@@ -119,9 +142,18 @@ const PagamentoPix = () => {
     return (
         <div className="container mt-5">
             {pix ? (
-                <>
-                    <p>{dadosPix?.text}</p>
-                </>
+                <Card style={{ width: '22rem' }}>
+                    <Card.Img variant="top" src={dadosPix?.links[0].href} />
+                    <Card.Body>
+                        <Card.Title>Informações do PIX</Card.Title>
+                        <Card.Text>
+                            <p>Copia e cola: {dadosPix?.text}</p>
+                            <p>Data de Expiração: {dadosPix?.expiration_date}</p>
+                            <p>Valor: R$ {dadosPix?.amount.value}</p>
+                        </Card.Text>
+                        <Button variant="primary">Fazer Pagamento</Button>
+                    </Card.Body>
+                </Card>
             ) : (
                 <form onSubmit={handleSubmit}>
                     <h4>Dados do Comprador</h4>
