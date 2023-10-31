@@ -35,10 +35,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             postal_code: endereco.CEP.replace("-", ""),
           },
         },
-        reference_id: "pix-00001",
+        reference_id: "Pagamento_pix",
         items: formattedProducts,
         qr_codes: [{ amount: { value: Math.round(valorCompra * 100) }, expiration_date: moment().add(10, "minutes").format() }],
-        notification_urls: ["http://10.71.0.119:3000/api/vendas/pix"],
+        notification_urls: ["http://10.0.0.169:3000/api/vendas/pix"],
       },
     };
 

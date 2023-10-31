@@ -2,29 +2,42 @@ import db from "@/db/db";
 import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
+import xml2js from "xml2js";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*"); // Permite que todas as origens acessem
   if (req.method === "POST") {
     const { dadosPessoais, dadosTelefone, endereco, formattedProducts, valorCompra, CodCli, valorFrete, notificationCode, notificationType } = req.body;
-    console.log("ok");
+    // 1. Obtenha a última venda
+    let ultimaVenda = await db("numero").select("Venda").first();
+    let valorAtualizado = ultimaVenda.Venda + 1; // Adicione 1 ao valor da última venda
 
+    //Vai entrar aqui caso o WEBHOOK Seja ativo, ou seja, será uma notificacao de que aquele pagamento mudou.
     if (notificationCode && notificationType) {
-      console.log("Notification Code:", notificationCode);
-      console.log("Notification Type:", notificationType);
-
       let credenciais = {
-        email: "v25038630014046778692@sandbox.pagseguro.com.br",
+        email: "robsonnonatoiii@gmail.com",
         token_api: "B871F6967C2341489D37924D761FF1BD",
       };
 
-      const url = `https://ws.pagseguro.uol.com.br/v3/transactions/notifications/${notificationCode}?email=${credenciais.email}&token=${credenciais.token_api}`;
+      const url = `https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/${notificationCode}?email=${credenciais.email}&token=${credenciais.token_api}`;
 
       try {
         const response = await axios.get(url);
 
-        console.log("Detalhes da notificação:", response.data);
-        return res.json("Recebido e processado");
+        // Converter o XML para um objeto JavaScript
+        xml2js.parseString(response.data, async (err: any, result: any) => {
+          if (err) {
+            console.error("Erro ao converter o XML:", err);
+            return;
+          }
+
+          // Colocar o Status em um campo, pois ele representa se a venda está paga ou aguardando pagamento, e mais 7 status
+          const statusPagamento = result.transaction.status;
+
+          // Colocando o Enterprise a ultima atualizacao de LOG.
+          const insertLogOnRequisi = await db("requisi").insert({ Observacao: result.transaction });
+        });
+        return res.json("Recebido e inserido no banco!");
       } catch (error) {
         console.log("Erro ao buscar detalhes da notificação:", error);
         return res.status(500).json("Erro ao processar notificação");
@@ -58,18 +71,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             postal_code: endereco.CEP.replace("-", ""),
           },
         },
-        reference_id: "boleto-00001",
+        reference_id: valorAtualizado,
         items: formattedProducts,
-        notification_urls: ["https://meusite.com/notificacoes"],
+        notification_urls: ["http://10.0.0.169:3000/api/vendas/boleto"],
         charges: [
           {
-            reference_id: "boleto-ex0001",
-            description: "boleto softline",
+            reference_id: valorAtualizado,
+            description: "Boleto Softline Sistemas",
             amount: { value: Math.round(valorCompra * 100), currency: "BRL" },
             payment_method: {
               type: "BOLETO",
               boleto: {
-                due_date: "2024-06-20",
+                due_date: moment().add(3, "days").format("YYYY-MM-DD"),
                 instruction_lines: { line_1: "Pagamento processado para DESC Fatura", line_2: "Via PagSeguro" },
                 holder: {
                   name: dadosPessoais.name,
@@ -102,9 +115,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const dataAtual = moment().startOf("day"); // Zera horas, minutos, segundos e milissegundos
         const dataFormatada = dataAtual.format("YYYY-MM-DD HH:mm:ss.SSS");
 
-        // 1. Obtenha a última venda
-        let ultimaVenda = await db("numero").select("Venda").first();
-        let valorAtualizado = ultimaVenda.Venda + 1; // Adicione 1 ao valor da última venda
         // 2. Atualize o valor da venda na tabela
         await db("numero").update({ Venda: valorAtualizado });
         // 3. Inserir em Requisi
