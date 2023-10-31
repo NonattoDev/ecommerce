@@ -1,9 +1,10 @@
-import db from "@/db/db";
 import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log("cai aqui");
+
   if (req.method === "POST") {
     const { dadosPessoais, dadosTelefone, endereco, formattedProducts, valorCompra, CodCli, valorFrete } = req.body;
 
@@ -36,8 +37,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
         reference_id: "pix-00001",
         items: formattedProducts,
-        qr_codes: [{ amount: { value: Math.round(valorCompra * 100) }, expiration_date: "2023-12-29T20:15:59-03:00" }],
-        notification_urls: ["https://meusite.com/notificacoes"],
+        qr_codes: [{ amount: { value: Math.round(valorCompra * 100) }, expiration_date: moment().add(10, "minutes").format() }],
+        notification_urls: ["http://10.71.0.119:3000/api/vendas/pix"],
       },
     };
 

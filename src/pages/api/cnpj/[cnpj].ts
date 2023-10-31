@@ -7,13 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { cnpj } = req.query;
 
     try {
-      const dados = await db("Clientes").select("CodCli").where("CodCli", "15506");
-      console.log(dados);
-    } catch (error) {
-      console.log(error);
-    }
-
-    try {
       const response = await axios.get(`https://www.receitaws.com.br/v1/cnpj/${cnpj}`);
       return res.status(200).json(response.data);
     } catch (error) {

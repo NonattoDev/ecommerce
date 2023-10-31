@@ -95,7 +95,6 @@ const PagamentoBoleto = () => {
         return;
       }
 
-      console.log(resposta);
 
       setLoading(false);
 

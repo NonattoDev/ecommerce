@@ -4,8 +4,32 @@ import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Permite que todas as origens acessem
   if (req.method === "POST") {
-    const { dadosPessoais, dadosTelefone, endereco, formattedProducts, valorCompra, CodCli, valorFrete } = req.body;
+    const { dadosPessoais, dadosTelefone, endereco, formattedProducts, valorCompra, CodCli, valorFrete, notificationCode, notificationType } = req.body;
+    console.log("ok");
+
+    if (notificationCode && notificationType) {
+      console.log("Notification Code:", notificationCode);
+      console.log("Notification Type:", notificationType);
+
+      let credenciais = {
+        email: "v25038630014046778692@sandbox.pagseguro.com.br",
+        token_api: "B871F6967C2341489D37924D761FF1BD",
+      };
+
+      const url = `https://ws.pagseguro.uol.com.br/v3/transactions/notifications/${notificationCode}?email=${credenciais.email}&token=${credenciais.token_api}`;
+
+      try {
+        const response = await axios.get(url);
+
+        console.log("Detalhes da notificação:", response.data);
+        return res.json("Recebido e processado");
+      } catch (error) {
+        console.log("Erro ao buscar detalhes da notificação:", error);
+        return res.status(500).json("Erro ao processar notificação");
+      }
+    }
 
     const options = {
       method: "POST",
