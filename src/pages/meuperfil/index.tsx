@@ -86,7 +86,7 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
           </Col>
           <Col md={4}>
             <Form.Group controlId="formCep">
-              <Form.Label>Cep   </Form.Label>
+              <Form.Label>Cep</Form.Label>
               <Form.Control type="text" placeholder="Cep" value={dadosDoCliente.Cep} />
             </Form.Group>
           </Col>
