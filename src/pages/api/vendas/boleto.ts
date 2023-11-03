@@ -7,42 +7,10 @@ import xml2js from "xml2js";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*"); // Permite que todas as origens acessem
   if (req.method === "POST") {
-    const { dadosPessoais, dadosTelefone, endereco, formattedProducts, valorCompra, CodCli, valorFrete, notificationCode, notificationType } = req.body;
+    const { dadosPessoais, dadosTelefone, endereco, formattedProducts, valorCompra, CodCli, valorFrete } = req.body;
     // 1. Obtenha a última venda
     let ultimaVenda = await db("numero").select("Venda").first();
     let valorAtualizado = ultimaVenda.Venda + 1; // Adicione 1 ao valor da última venda
-
-    //Vai entrar aqui caso o WEBHOOK Seja ativo, ou seja, será uma notificacao de que aquele pagamento mudou.
-    if (notificationCode && notificationType) {
-      let credenciais = {
-        email: "robsonnonatoiii@gmail.com",
-        token_api: "B871F6967C2341489D37924D761FF1BD",
-      };
-
-      const url = `https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/${notificationCode}?email=${credenciais.email}&token=${credenciais.token_api}`;
-
-      try {
-        const response = await axios.get(url);
-
-        // Converter o XML para um objeto JavaScript
-        xml2js.parseString(response.data, async (err: any, result: any) => {
-          if (err) {
-            console.error("Erro ao converter o XML:", err);
-            return;
-          }
-
-          // Colocar o Status em um campo, pois ele representa se a venda está paga ou aguardando pagamento, e mais 7 status
-          const statusPagamento = result.transaction.status;
-
-          // Colocando o Enterprise a ultima atualizacao de LOG.
-          const insertLogOnRequisi = await db("requisi").insert({ Observacao: result.transaction });
-        });
-        return res.json("Recebido e inserido no banco!");
-      } catch (error) {
-        console.log("Erro ao buscar detalhes da notificação:", error);
-        return res.status(500).json("Erro ao processar notificação");
-      }
-    }
 
     const options = {
       method: "POST",
@@ -73,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
         reference_id: valorAtualizado,
         items: formattedProducts,
-        notification_urls: ["http://10.0.0.169:3000/api/vendas/boleto"],
+        notification_urls: ["http://10.71.0.119:3000/api/vendas/boleto"],
         charges: [
           {
             reference_id: valorAtualizado,
@@ -110,6 +78,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const response = await axios.post(options.url, options.data, {
         headers: options.headers,
       });
+
       //! Se o Status é OK, ou seja, foi gerado o BOLETO, vamos agir no Enterprise
       if (response.data.charges[0].payment_response.code === "20000") {
         const dataAtual = moment().startOf("day"); // Zera horas, minutos, segundos e milissegundos
@@ -117,6 +86,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // 2. Atualize o valor da venda na tabela
         await db("numero").update({ Venda: valorAtualizado });
+
+        // - Chamada no banco que pega o codigo referente ao pagamento em BOLETO
+
+        const { CodBoleto } = await db("empresa").select("CodBoleto").where("CodEmp", 1).first();
+
         // 3. Inserir em Requisi
         const inserirVendaRequisi = await db("requisi").insert({
           Pedido: valorAtualizado,
@@ -134,6 +108,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           FIB: valorFrete > 0 ? 0 : 9,
           Ecommerce: "X",
           Frete: valorFrete,
+          CodForma1: CodBoleto,
+          Data1: response.data.charges[0].payment_method.boleto.due_date,
+          Parc1: 1,
+          //FAZER AS MUDANÇAS DE ACORDO FORMA DE PAGAMENTO
+          StatusPagamento: response.data.charges[0].status,
+          CodAutorizacaoNumber: response.data.charges[0].payment_response.code,
+          idStatus: response.data.id,
+          idPagamento: response.data.charges[0].id,
+          Nome: response.data.charges[0].payment_method.boleto.holder.name,
         });
         // 4. Inserir em Requisi1
         for (const item of response.data.items) {
@@ -149,6 +132,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             Marca: "*",
           });
         }
+
         return res.status(200).json({ message: "Venda concluída no banco de dados", idVenda: valorAtualizado, data: response.data });
       }
     } catch (error: any) {

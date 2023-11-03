@@ -5,6 +5,7 @@ import moment from "moment";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     const { Pagamento, CodCli, valorFrete } = req.body;
+    console.log(Pagamento);
 
     const dataAtual = moment().startOf("day"); // Zera horas, minutos, segundos e milissegundos
 
@@ -17,6 +18,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // 2. Atualize o valor da venda na tabela
       await db("numero").update({ Venda: valorAtualizado });
+
+      // - Chamada no banco que pega o codigo referente ao pagamento em BOLETO
+
+      const { CodCartao } = await db("empresa").select("CodCartao").where("CodEmp", 1).first();
+
+      console.log(Pagamento);
 
       // 3. Inserir em Requisi
       const inserirVendaRequisi = await db("requisi").insert({
@@ -35,6 +42,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         FIB: valorFrete > 0 ? 0 : 9,
         Ecommerce: "X",
         Frete: valorFrete,
+        CodForma1: CodCartao,
+        Data1: moment().format("YYYY-MM-DD"),
+        Parc1: Pagamento.charges[0].payment_method.installments,
+        StatusPagamento: Pagamento.charges[0].status,
+        CodAutorizacaoNumber: Pagamento.charges[0].payment_response.code,
+        idStatus: Pagamento.id,
+        idPagamento: Pagamento.charges[0].id,
+        Pago: Pagamento.charges[0].paid_at,
+        Bandeira: Pagamento.charges[0].payment_method.card.brand,
+        PDigito: Pagamento.charges[0].payment_method.card.first_digits,
+        UDigito: Pagamento.charges[0].payment_method.card.last_digits,
+        Nome: Pagamento.charges[0].payment_method.card.holder.name,
       });
 
       // 4. Inserir em Requisi1

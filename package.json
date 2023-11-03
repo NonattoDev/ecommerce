@@ -40,6 +40,7 @@
     "@types/node": "^20.8.3",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@types/xml2js": "^0.4.13",
     "typescript": "latest"
   }
 }

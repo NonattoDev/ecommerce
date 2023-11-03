@@ -11,12 +11,12 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartPlus, faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 function Carrinho() {
   const router = useRouter();
   const [quantidadeTotal, setQuantidadeTotal] = useState(0); // Declare quantidadeTotal state
-  const { produtosNoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto } = useCarrinhoContext();
+  const { produtosNoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto, handleLimparCarrinho } = useCarrinhoContext();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -82,6 +82,7 @@ function Carrinho() {
       // Receber como retorno um ID do orçamento para poder criar um Dashboard
 
       // Zerar o Carrinho no LocalStorage com o ID do usuario
+      handleLimparCarrinho();
 
       //Redirecionar para página principal
       router.push("/");
@@ -95,15 +96,26 @@ function Carrinho() {
 
   return (
     <>
-      <span>
-        <FontAwesomeIcon
-          icon={faCartPlus}
-          onClick={handleShow}
-          data-count={quantidadeTotal}
-          cursor={"pointer"}
-          style={{ background: "none", border: "none", cursor: "pointer", color: "blue", width: "30px" }}
-        />
-      </span>
+      <div style={{ position: "relative", display: "inline-block" }}>
+        <FontAwesomeIcon icon={faCartShopping} onClick={handleShow} cursor={"pointer"} style={{ color: "blue", height: "30px" }} />
+        <span
+          style={{
+            position: "absolute",
+            top: "-15px",
+            right: "-10px",
+            background: "red",
+            color: "white",
+            borderRadius: "50%",
+            width: "22px",
+            height: "22px",
+            fontSize: "12px",
+            textAlign: "center",
+            lineHeight: "22px",
+          }}
+        >
+          {quantidadeTotal}
+        </span>
+      </div>
       <Offcanvas show={show} onHide={handleClose} placement="end">
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Carrinho</Offcanvas.Title>

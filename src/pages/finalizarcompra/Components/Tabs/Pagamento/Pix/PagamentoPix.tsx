@@ -144,8 +144,7 @@ const PagamentoPix = () => {
 
       toast.success(`Seu código QRCODE PIX foi gerado com sucesso, o número do seu pedido é:${resposta?.data?.idVenda} `);
       setPix(true);
-      setDadosPix(resposta.data);
-      console.log(resposta.data);
+      setDadosPix(resposta.data.dadosPix);
 
       //   router.push("/");
     } catch (error: any) {
@@ -186,7 +185,7 @@ const PagamentoPix = () => {
       {pix ? (
         <Card.Body style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
           <div>
-            <Card.Img variant="top" src={dadosPix?.links[0].href} style={{ width: "300px", height: "300px" }} />
+            <Card.Img variant="top" src={dadosPix?.links[0]?.href} style={{ width: "300px", height: "300px" }} />
           </div>
           <div style={{ marginLeft: "30px" }}>
             <Card.Title>Informações do PIX</Card.Title>

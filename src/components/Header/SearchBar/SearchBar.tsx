@@ -49,7 +49,7 @@ const SearchBar = () => {
   return (
     <>
       <Form className="d-flex mx-auto" onClick={() => setShowModal(true)}>
-        <Form.Control autoComplete="false" name="searchEngine" type="search" placeholder="E-commerce Softline Sistemas" className="me-2 form-control-lg textSearch" aria-label="Search" />
+        <Form.Control autoComplete="false" name="searchEngine" type="search" placeholder="E-commerce Softline Sistemas" className="me-3 form-control-lg textSearch" readOnly />
       </Form>
 
       <Modal

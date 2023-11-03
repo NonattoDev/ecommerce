@@ -63,11 +63,9 @@ function UsuarioOptions() {
         </>
       ) : (
         <Dropdown className={styles.container}>
-          <Dropdown.Toggle variant="transparent" id="dropdown-basic">
-            <span>
-              <FontAwesomeIcon icon={faUser} style={{ background: "none", border: "none", cursor: "pointer", color: "blue", width: "30px" }} />
-              {session?.user?.cliente}
-            </span>
+          <Dropdown.Toggle variant="transparent" style={{ marginRight: "-20px" }}>
+            <span style={{ color: "blue" }}>{session?.user?.cliente}</span>
+            <FontAwesomeIcon icon={faUser} style={{ color: "blue", height: "30px", marginLeft: "10px" }} />
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Dropdown.Item href="/meuperfil">Meu Perfil</Dropdown.Item>
