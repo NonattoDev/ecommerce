@@ -10,14 +10,16 @@ import { GetServerSideProps } from "next";
 import moment from "moment";
 
 const MeuPerfil = ({ dadosDoCliente }: any) => {
-  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      toast.warn("Você não está autenticado");
+      router.push("/");
+    },
+  });
 
   if (status === "loading") return <Loading />;
-
-  if (status === "unauthenticated") {
-    toast.warn("Você não está autenticado");
-    useRouter().push("/");
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

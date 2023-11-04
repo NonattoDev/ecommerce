@@ -1,7 +1,7 @@
 import Carrinho from "../Carrinho/Carrinho";
 import { useSession } from "next-auth/react";
 import Loading from "../Loading/Loading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyVerticallyCenteredModal from "../AuthModal/ModalAuth/authModal";
 import { Dropdown } from "react-bootstrap";
 import styles from "./usuarioOption.module.css";
@@ -15,11 +15,16 @@ interface User {
   cliente?: string | null;
   email?: string | null;
   image?: string | null;
+  admin?: boolean | null;
 }
 
 function UsuarioOptions() {
   const [modalShow, setModalShow] = useState(false);
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    console.log(session);
+  }, [session]);
 
   return (
     <>
@@ -68,6 +73,7 @@ function UsuarioOptions() {
             <FontAwesomeIcon icon={faUser} style={{ color: "blue", height: "30px", marginLeft: "10px" }} />
           </Dropdown.Toggle>
           <Dropdown.Menu>
+            {session?.user?.admin && <Dropdown.Item href="/painel/admin">Admin</Dropdown.Item>}
             <Dropdown.Item href="/meuperfil">Meu Perfil</Dropdown.Item>
             <Dropdown.Item href="/minhascompras">Minhas Compras</Dropdown.Item>
           </Dropdown.Menu>

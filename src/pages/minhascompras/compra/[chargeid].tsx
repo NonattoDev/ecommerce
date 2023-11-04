@@ -7,11 +7,12 @@ import { GetServerSideProps } from "next";
 import { Container } from "react-bootstrap";
 
 const CompraEspecifica = ({ CompraEspecifica }: any) => {
+  const router = useRouter();
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
       toast.warn("Você não está autenticado");
-      useRouter().push("/");
+      router.push("/");
     },
   });
 

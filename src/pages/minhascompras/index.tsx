@@ -10,14 +10,16 @@ import moment from "moment";
 import styles from "./minhasCompras.module.css";
 
 const MinhasCompras = ({ comprasDoCliente }: any) => {
-  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      toast.warn("Você não está autenticado");
+      router.push("/");
+    },
+  });
 
   if (status === "loading") return <Loading />;
-
-  if (status === "unauthenticated") {
-    toast.warn("Você não está autenticado");
-    useRouter().push("/");
-  }
 
   return (
     <Container className={styles.container} style={{ marginTop: "20px" }}>

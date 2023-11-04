@@ -1,6 +1,17 @@
 import axiosCliente from "@/services/axiosCliente";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import type { DefaultSession } from "next-auth";
+
+declare module "next-auth" {
+  interface Session {
+    user: DefaultSession["user"] & {
+      id: string;
+      cliente: string;
+      admin: boolean;
+    };
+  }
+}
 
 export default NextAuth({
   providers: [
@@ -29,15 +40,20 @@ export default NextAuth({
 
     jwt: async ({ token, user }) => {
       if (user) {
-        token.id = user.CodCli;
-        token.cliente = user.Cliente;
+        console.log(user);
+
+        const { CodCli, Cliente } = user as unknown as { CodCli: string; Cliente: string };
+        token.id = CodCli;
+        token.cliente = Cliente;
+        token.admin = (user as { admin?: boolean }).admin || false;
       }
       return token;
     },
     session: ({ session, token }) => {
       if (token) {
-        session.user.id = token.id;
-        session.user.cliente = token.cliente;
+        session.user.id = token.id?.toString() || "";
+        session.user.cliente = token.cliente as string;
+        session.user.admin = (token as { admin?: boolean }).admin || false;
       }
 
       return session;
@@ -46,7 +62,6 @@ export default NextAuth({
   secret: "secret",
   jwt: {
     secret: "secret",
-    encryption: true,
-    expires: 8200, // Define a expiração do token para 1 hora (1 hora * 60 minutos * 60 segundos)
+    ...{ expires: 8200 }, // Define a expiração do token para 1 hora (1 hora * 60 minutos * 60 segundos)
   },
 });

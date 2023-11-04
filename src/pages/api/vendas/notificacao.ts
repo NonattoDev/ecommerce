@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           const insertLogOnRequisi = await db("requisi")
             .where("Pedido", pedidoPAG)
-            .update({ Observacao: JSON.stringify(result.transaction) });
+            .update({ Observacao: JSON.stringify(result.transaction), StatusPagamento: statusPagamento });
         });
         return res.json("Recebido e inserido no banco!");
       } catch (error) {
