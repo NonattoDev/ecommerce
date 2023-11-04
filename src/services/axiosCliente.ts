@@ -1,8 +1,7 @@
 import axios from "axios";
-import dotenv from "dotenv";
 
 const axiosCliente = axios.create({
-  baseURL: "http://10.71.0.119:3001",
+  baseURL: "http://192.168.15.61:3001",
 });
 
 export default axiosCliente;

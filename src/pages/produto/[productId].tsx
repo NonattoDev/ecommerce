@@ -36,6 +36,14 @@ function Produto() {
       setLoading(true);
       try {
         const response = await axiosCliente.get<ResponseData>(`/produtos/produtoEspecifico/${productId}`);
+
+        if (!response.data.produto) {
+          toast.warn("produto não encontrado");
+          setLoading(false);
+          router.push("/");
+          return;
+        }
+
         setProduto(response.data.produto);
         setImagemPrincipal(response.data.produto.Caminho); // Define a primeira imagem como principal ao carregar o produto
         setProdutosSimilares(response.data.produtosSimilares);
@@ -182,10 +190,7 @@ function Produto() {
                 </Row>
               </Row>
             ) : (
-              <div>
-                <h1>Produto não encontrado</h1>
-                {/* Exiba uma mensagem ou redirecione o usuário para uma página de erro */}
-              </div>
+              <Loading />
             )}
           </>
         )}
