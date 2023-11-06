@@ -22,9 +22,7 @@ function UsuarioOptions() {
   const [modalShow, setModalShow] = useState(false);
   const { data: session, status } = useSession();
 
-  useEffect(() => {
-    console.log(session);
-  }, [session]);
+  useEffect(() => {}, [session]);
 
   return (
     <>
@@ -74,10 +72,14 @@ function UsuarioOptions() {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {session?.user?.admin && <Dropdown.Item href="/painel/admin">Admin</Dropdown.Item>}
-            <Dropdown.Item href="/meuperfil">Meu Perfil</Dropdown.Item>
-            <Dropdown.Item href="/minhascompras">Minhas Compras</Dropdown.Item>
+            {!session?.user?.admin && (
+              <>
+                <Dropdown.Item href="/meuperfil">Meu Perfil</Dropdown.Item>
+                <Dropdown.Item href="/minhascompras">Minhas Compras</Dropdown.Item>
+              </>
+            )}
           </Dropdown.Menu>
-          <Carrinho />
+          {!session?.user?.admin && <Carrinho />}
           <LogoutButton />
         </Dropdown>
       )}

@@ -39,10 +39,8 @@ export default NextAuth({
     },
 
     jwt: async ({ token, user }) => {
-      if (user) {
-        console.log(user);
-
-        const { CodCli, Cliente } = user as unknown as { CodCli: string; Cliente: string };
+      if (user && 'usuario' in user) {
+        const { CodCli, Cliente } = (user as { usuario: { CodCli: string; Cliente: string } }).usuario;
         token.id = CodCli;
         token.cliente = Cliente;
         token.admin = (user as { admin?: boolean }).admin || false;

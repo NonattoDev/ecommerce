@@ -151,7 +151,16 @@ const Cartao = () => {
 
     try {
       // Definir aonde ficará no Enterprise o valor do frete pago pelo cliente
-      const resposta = await axiosCliente.post("/pedido/criar-pedido/", { dadosPessoais, dadosCartao, formattedProducts, totalAmount: calcularTotalCompraComFrete(), endereco, parcelaSelecionada });
+      const resposta = await axios.post("/api/vendas/cartao", {
+        dadosPessoais,
+        dadosCartao,
+        formattedProducts,
+        totalAmount: calcularTotalCompraComFrete(),
+        endereco,
+        parcelaSelecionada,
+        CodCli: session?.user?.id,
+        valorFrete: calcularValorFrete(),
+      });
 
       if (resposta.data.error_messages) {
         setLoading(false);
@@ -164,18 +173,15 @@ const Cartao = () => {
         return;
       }
 
-      if (resposta?.data?.charges[0]?.payment_response?.code === "20000") {
+      if (resposta?.status == 200) {
         setLoading(false);
         // Redirecionar para a página raiz ("/")
         router.push("/");
         //Remover do Localstorage o carrinho com o id que vem da sessão apos a venda efetuada
         handleLimparCarrinho();
 
-        //Colocar no Banco
-        const insertVendaBanco = await axios.post("/api/vendas/cartao", { Pagamento: resposta.data, CodCli: session?.user?.id, frete: calcularValorFrete() });
-
         //Retornar um aviso
-        toast.success(`Pagamento realizado o código da sua compra é: ${insertVendaBanco.data.idVenda}`, { position: "top-center", autoClose: 2000, pauseOnHover: false });
+        toast.success(`Pagamento realizado o código da sua compra é: ${resposta?.data?.idVenda}`, { position: "top-center", pauseOnHover: false });
 
         return;
       } else {

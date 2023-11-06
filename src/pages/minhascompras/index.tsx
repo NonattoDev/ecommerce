@@ -21,6 +21,11 @@ const MinhasCompras = ({ comprasDoCliente }: any) => {
 
   if (status === "loading") return <Loading />;
 
+  if (status === "authenticated" && session?.user?.admin) {
+    toast.warn("Está página é restrita para clientes, utilize o painel de ADMIN");
+    router.push("/painel/admin");
+  }
+
   return (
     <Container className={styles.container} style={{ marginTop: "20px" }}>
       <h3 style={{ textAlign: "center" }}>Página de Compras do usuário</h3>

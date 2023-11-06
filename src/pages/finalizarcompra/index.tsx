@@ -4,10 +4,12 @@ import React from "react";
 import { Alert, Container } from "react-bootstrap";
 import TabsPagamentoFinal from "./Components/Tabs/TabsPagamentoFinal";
 import { EnderecoProvider } from "@/context/EnderecoContexto";
-
-
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const finalizarCompra = () => {
+  const router = useRouter();
+
   const { produtosNoCarrinho } = useCarrinhoContext();
   const { data: sessao, status } = useSession({
     required: true,
@@ -30,6 +32,11 @@ const finalizarCompra = () => {
         </div>
       </Container>
     );
+  }
+
+  if (status === "authenticated" && sessao?.user?.admin) {
+    toast.warn("Está página é restrita para clientes, utilize o painel de ADMIN");
+    router.push("/painel/admin");
   }
 
   return (

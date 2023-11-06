@@ -31,10 +31,13 @@ const PagamentoPix = () => {
   const { endereco } = useContext(EnderecoContext);
   const { produtosNoCarrinho, handleRemoverProduto, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto } = useCarrinhoContext();
   const [pix, setPix] = useState(false);
+  const [pixCharge, setPixCharge] = useState("");
   const [dadosPix, setDadosPix] = useState<DadosPix | undefined>();
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
+    console.log(pixCharge);
+
     if (dadosPix?.expiration_date) {
       const interval = setInterval(() => {
         const startTime = moment(); // Mova esta linha para dentro do setInterval
@@ -43,9 +46,6 @@ const PagamentoPix = () => {
         const totalDuration = 10 * 60; // 10 minutos em segundos
 
         const newProgress = (totalTime / totalDuration) * 100;
-
-        console.log("Total Time:", totalTime);
-        console.log("New Progress:", newProgress);
 
         setProgress(newProgress);
 
@@ -145,8 +145,7 @@ const PagamentoPix = () => {
       toast.success(`Seu código QRCODE PIX foi gerado com sucesso, o número do seu pedido é:${resposta?.data?.idVenda} `);
       setPix(true);
       setDadosPix(resposta.data.dadosPix);
-
-      //   router.push("/");
+      setPixCharge(resposta.data.idCharge);
     } catch (error: any) {
       setLoading(false);
       console.log(error);
@@ -179,6 +178,37 @@ const PagamentoPix = () => {
       toast.success("Código copiado com sucesso!");
     }
   };
+
+  useEffect(() => {
+    // A função que será executada a cada 5 segundos
+    const enviarNotificacao = async () => {
+      try {
+        // Substitua 'dadosPix.id' com o caminho correto para o ID do Pix, se necessário
+        const response = await axios.get(`https://sandbox.api.pagseguro.com/orders/${pixCharge}`);
+        // Trate a resposta como desejar...
+        console.log(response.data);
+        toast.success("Pagamento realizado com sucesso!");
+      } catch (error) {
+        console.error("Erro ao enviar notificação:", error);
+      }
+    };
+
+    if (pixCharge) {
+      // Define um intervalo para enviar a notificação a cada 5 segundos
+      const intervalo = setInterval(enviarNotificacao, 5000);
+
+      // Configura um temporizador para limpar o intervalo após 15 minutos
+      const timeout = setTimeout(() => {
+        clearInterval(intervalo);
+      }, 900000); // 15 minutos em milissegundos
+
+      // Limpa o intervalo e o timeout quando o componente for desmontado
+      return () => {
+        clearInterval(intervalo);
+        clearTimeout(timeout);
+      };
+    }
+  }, [dadosPix]);
 
   return (
     <div className="container mt-5">

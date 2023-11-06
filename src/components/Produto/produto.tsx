@@ -6,6 +6,7 @@ import styles from "./produto.module.css";
 import Loading from "../Loading/Loading";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
 import { Produto } from "@/Types/Produto";
+import { useSession } from "next-auth/react";
 
 export type ProdutoComponenteProps = {
   CodPro: number;
@@ -21,6 +22,7 @@ export type ProdutoComponenteProps = {
 
 function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, PromocaoData, Caminho, Categoria, Estoque }: ProdutoComponenteProps) {
   const [isLoading, setIsLoading] = useState(true);
+  const { data: session, status } = useSession();
   const { handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
   const preco = Preco1.toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
@@ -71,7 +73,7 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
           </Card.Title>
           <div className={styles["produto-card-price"]}>{preco}</div>
           <div className={styles["produto-card-action"]}>
-            {Estoque > 0 && (
+            {Estoque > 0 && !session?.user?.admin && (
               <Button
                 variant=""
                 size="sm"

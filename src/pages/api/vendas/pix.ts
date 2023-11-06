@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             postal_code: endereco.CEP.replace("-", ""),
           },
         },
-        reference_id: "Pagamento_pix",
+        reference_id: valorAtualizado,
         items: formattedProducts,
         qr_codes: [{ amount: { value: Math.round(valorCompra * 100) }, expiration_date: moment().add(10, "minutes").format() }],
         notification_urls: ["http://10.0.0.169:3000/api/vendas/pix"],
@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         headers: options.headers,
       });
 
-      //! Se o Status é OK, ou seja, foi gerado o BOLETO, vamos agir no Enterprise
+      //! So pode passar se o pix for pago
       if (response.data) {
         const dataAtual = moment().startOf("day"); // Zera horas, minutos, segundos e milissegundos
         const dataFormatada = dataAtual.format("YYYY-MM-DD HH:mm:ss.SSS");
@@ -95,7 +95,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             Marca: "*",
           });
         }
-        return res.status(200).json({ dadosPix: response.data.qr_codes[0], idVenda: valorAtualizado });
+        return res.status(200).json({ dadosPix: response.data.qr_codes[0], idVenda: valorAtualizado, idCharge: response.data.id });
       }
     } catch (error: any) {
       return res.json(error);
