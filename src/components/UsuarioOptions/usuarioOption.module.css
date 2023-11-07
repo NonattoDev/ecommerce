@@ -1,6 +1,35 @@
 .container {
     display: flex;
     align-items: center;
+    justify-content: space-around;
     gap: 20px;
-    /* Espaço entre os ícones e o texto */
+    margin-right: 15px;
+}
+.DropDowncontainer {
+    display: flex;
+    align-items: center;
+    margin-right: -15px;
+}
+
+/* Para telas menores (dispositivos móveis) */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: row;
+        /* Mantém os itens em linha */
+        justify-content: center;
+        /* Centraliza os itens no container */
+        align-items: center;
+        /* Alinha os itens verticalmente no centro */
+        gap: 10px;
+        /* Reduz o espaço entre os itens para economizar espaço */
+    }
+
+    .container .faUser,
+    .container .faSignInAlt {
+        height: 20px;
+        /* Reduz o tamanho dos ícones em dispositivos móveis */
+    }
+
+    /* Adiciona-se uma classe para os itens individuais, se necessário */
+
 }

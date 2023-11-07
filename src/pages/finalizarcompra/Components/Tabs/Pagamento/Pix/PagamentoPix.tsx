@@ -8,6 +8,7 @@ import { Button, Card, FormControl, InputGroup, ProgressBar } from "react-bootst
 import { toast } from "react-toastify";
 import moment from "moment";
 import { useRouter } from "next/router";
+import styles from "./PagamentoPix.module.css"; // Importe seu arquivo de estilos CSS module aqui
 
 // Criação da interface para o objeto 'dadosPix'
 interface DadosPix {
@@ -192,7 +193,7 @@ const PagamentoPix = () => {
 
         if (response) {
           toast.success("Pagamento concluído!");
-          handleLimparCarrinho()
+          handleLimparCarrinho();
           setPagamentoVerificado(true);
           router.push("/");
         }
@@ -214,15 +215,14 @@ const PagamentoPix = () => {
     }
   }, [pixCharge, pagamentoVerificado, router]);
 
-
   return (
     <div className="container mt-5">
       {pix ? (
-        <Card.Body style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+        <Card.Body className={styles.cardBody}>
           <div>
-            <Card.Img variant="top" src={dadosPix?.links[0]?.href} style={{ width: "300px", height: "300px" }} />
+            <Card.Img variant="top" src={dadosPix?.links[0]?.href} className={styles.cardImage} />
           </div>
-          <div style={{ marginLeft: "30px" }}>
+          <div className={styles.cardText}>
             <Card.Title>Informações do PIX</Card.Title>
             <Card.Text>
               <div>Copia e cola:</div>
@@ -269,9 +269,9 @@ const PagamentoPix = () => {
           {loading ? (
             <Loading />
           ) : (
-            <button type="submit" className="btn btn-primary">
+            <Button type="submit" className="btn btn-primary">
               Finalizar Pagamento
-            </button>
+            </Button>
           )}
         </form>
       )}

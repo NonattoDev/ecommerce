@@ -5,8 +5,18 @@
     height: 350px;
 }
 
-
 .imageContent {
     width: 100%;
     height: 350px;
 }
+
+@media (max-width: 768px) {
+    .carrossel {
+        height: 200px;
+    }
+    
+    .imageContent {
+        height: 200px;
+    }
+}
+

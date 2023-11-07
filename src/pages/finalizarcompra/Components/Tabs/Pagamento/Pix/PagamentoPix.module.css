@@ -1,0 +1,41 @@
+.cardBody {
+    display: flex;
+    flex-direction: column;
+    /* Altera a direção do flex para coluna em dispositivos móveis */
+    align-items: center;
+    /* Centraliza os itens verticalmente */
+}
+
+.cardImage {
+    width: 100%;
+    /* Define a largura da imagem como 100% para preencher a largura do contêiner pai */
+    max-width: 300px;
+    /* Define a largura máxima da imagem para evitar que ela fique muito grande em dispositivos maiores */
+    height: auto;
+    /* Define a altura da imagem como automática para manter a proporção */
+}
+
+.cardText {
+    margin: 10px 0;
+    /* Reduz o espaçamento entre o texto e a imagem */
+    text-align: center;
+    /* Centraliza o texto horizontalmente */
+}
+
+/* Adicione mais estilos customizados conforme necessário */
+
+/* Media query para dispositivos móveis */
+@media (max-width: 768px) {
+    .cardBody {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cardImage {
+        max-width: 200px;
+    }
+
+    .cardText {
+        margin: 5px 0;
+    }
+}

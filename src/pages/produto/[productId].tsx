@@ -86,123 +86,119 @@ function Produto() {
   };
 
   return (
-    <>
-      <Container className={styles.container}>
-        {loading ? (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-            <Loading />
-          </div>
-        ) : (
-          <>
-            {produto && produto.Produto ? (
+    <Container>
+      {loading ? (
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+          <Loading />
+        </div>
+      ) : (
+        <>
+          {produto && produto.Produto ? (
+            <Row>
               <Row>
-                <Row>
-                  <div className={styles.tituloProduto}>
-                    <h1>{produto.Produto}</h1>
-                    <div className={styles.descricaoTitulo}>
-                      <p className={styles.referencia}>Referência: {produto.Referencia}</p>
-                      <p className={styles.categoria}>Categoria: {produto.Categoria}</p>
-                    </div>
+                <div className={styles.tituloProduto}>
+                  <h1>{produto.Produto}</h1>
+                  <div className={styles.descricaoTitulo}>
+                    <p className={styles.referencia}>Referência: {produto.Referencia}</p>
+                    <p className={styles.categoria}>Categoria: {produto.Categoria}</p>
                   </div>
-                </Row>
-                <Row>
-                  <Col sm={2}>
-                    {produto.Caminho && (
-                      <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho)}>
-                        <Image src={`/fotosProdutos/${produto.Caminho}`} alt="Thumbnail 2" width={80} height={80} style={{ objectFit: "contain" }} />
-                      </div>
-                    )}
-
-                    <div className={styles.imagensThumbnail}>
-                      {produto.Caminho2 && (
-                        <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho2)}>
-                          <Image src={`/fotosProdutos/${produto.Caminho2}`} alt="Thumbnail 2" width={80} height={80} style={{ objectFit: "contain" }} />
-                        </div>
-                      )}
-                      {produto.Caminho3 && (
-                        <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho3)}>
-                          <Image src={`/fotosProdutos/${produto.Caminho3}`} alt="Thumbnail 3" width={80} height={80} style={{ objectFit: "contain" }} />
-                        </div>
-                      )}
-                      {produto.Caminho4 && (
-                        <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho4)}>
-                          <Image src={`/fotosProdutos/${produto.Caminho4}`} alt="Thumbnail 3" width={80} height={80} style={{ objectFit: "contain" }} />
-                        </div>
-                      )}
-                      {/* Adicione outros thumbnails aqui */}
-                    </div>
-                  </Col>
-                  <Col>
-                    {imagemCarregada ? (
-                      <Image src={`/fotosProdutos/${imagemPrincipal}`} alt="Imagem do produto" width={500} height={500} onError={handleImagemErro} style={{ objectFit: "contain" }} priority />
-                    ) : (
-                      <Image src={imagemSubstituicao} alt="Imagem de substituição" width={500} height={500} priority />
-                    )}
-                  </Col>
-                  <Col>
-                    <Card>
-                      <div className={styles.descricao}>
-                        <p>
-                          Preço:{" "}
-                          {produto.Preco1.toLocaleString("pt-BR", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                        </p>
-                        {produto.PrecoPromocao && <p>Preço de Promoção: {produto.PrecoPromocao.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}</p>}
-                        {produto.PromocaoData && <p>Data da Promoção: {format(new Date(produto.PromocaoData), "dd/MM/yyyy")}</p>}
-                        {produto.Estoque <= 0 ? <p>Estoque: 😢</p> : <p>Estoque: {produto.Estoque}</p>}
-                        {/* Renderize outros detalhes do produto */}
-                        {produto.Caracteristicas && (
-                          <p>
-                            <strong>Características deste produto:</strong> {produto.Caracteristicas}
-                          </p>
-                        )}
-
-                        {produto.Estoque > 0 ? (
-                          <div className={styles.botoesCompra}>
-                            <input name="quantidadeProduto" type="number" value={quantidade} min={1} max={produto.Estoque} onChange={handleQuantidadeChange} className={styles.selectInput} />
-
-                            {session?.user?.admin ? (
-                              <button disabled className={styles.botaoComprar} >
-                                <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
-                                Modo Admin
-                              </button>
-                            ) : status === "unauthenticated" ? (
-                              <button disabled className={styles.produtoIndisponivel}>
-                                <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
-                                Logue para comprar
-                              </button>
-                            ) : (
-                              <button onClick={handleAdicionarCarrinho} className={styles.botaoComprar}>
-                                <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
-                                Adicionar ao carrinho
-                              </button>
-                            )}
-                          </div>
-                        ) : (
-                          <div className={styles.produtoIndisponivel}>Produto Indisponível</div>
-                        )}
-
-                      </div>
-                    </Card>
-                  </Col>
-                </Row>
-                <Row>
-                  {produtosSimilares.length > 0 && (
-                    <div className={styles.produtosSimilares}>
-                      <ProdutosSimilares produtos={produtosSimilares} />
+                </div>
+              </Row>
+              <Row>
+                <Col xs={12} md={6} lg={4}>
+                  {produto.Caminho && (
+                    <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho)}>
+                      <Image src={`/fotosProdutos/${produto.Caminho}`} alt="Thumbnail 2" width={80} height={80} layout="responsive" objectFit="contain" priority />
                     </div>
                   )}
-                </Row>
+
+                  <div className={styles.imagensThumbnail}>
+                    {produto.Caminho2 && (
+                      <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho2)}>
+                        <Image src={`/fotosProdutos/${produto.Caminho2}`} alt="Thumbnail 2" width={80} height={80} layout="responsive" objectFit="contain" priority />
+                      </div>
+                    )}
+                    {produto.Caminho3 && (
+                      <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho3)}>
+                        <Image src={`/fotosProdutos/${produto.Caminho3}`} alt="Thumbnail 3" width={80} height={80} layout="responsive" objectFit="contain" priority />
+                      </div>
+                    )}
+                    {produto.Caminho4 && (
+                      <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho4)}>
+                        <Image src={`/fotosProdutos/${produto.Caminho4}`} alt="Thumbnail 3" width={80} height={80} layout="responsive" objectFit="contain" priority />
+                      </div>
+                    )}
+                    {/* Adicione outros thumbnails aqui */}
+                  </div>
+                </Col>
+                <Col xs={12} md={6} lg={4}>
+                  {imagemCarregada ? (
+                    <Image src={`/fotosProdutos/${imagemPrincipal}`} alt="Imagem do produto" width={500} height={500} onError={handleImagemErro} layout="responsive" objectFit="contain" priority />
+                  ) : (
+                    <Image src={imagemSubstituicao} alt="Imagem de substituição" width={500} height={500} layout="responsive" objectFit="contain" priority />
+                  )}
+                </Col>
+                <Col>
+                  <Card>
+                    <div className={styles.descricao}>
+                      <p>
+                        Preço:{" "}
+                        {produto.Preco1.toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </p>
+                      {produto.PrecoPromocao && <p>Preço de Promoção: {produto.PrecoPromocao.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}</p>}
+                      {produto.PromocaoData && <p>Data da Promoção: {format(new Date(produto.PromocaoData), "dd/MM/yyyy")}</p>}
+                      {produto.Estoque <= 0 ? <p>Estoque: 😢</p> : <p>Estoque: {produto.Estoque}</p>}
+                      {/* Renderize outros detalhes do produto */}
+                      {produto.Caracteristicas && (
+                        <p>
+                          <strong>Características deste produto:</strong> {produto.Caracteristicas}
+                        </p>
+                      )}
+
+                      {produto.Estoque > 0 ? (
+                        <div className={styles.botoesCompra}>
+                          <input name="quantidadeProduto" type="number" value={quantidade} min={1} max={produto.Estoque} onChange={handleQuantidadeChange} className={styles.selectInput} />
+                          {session?.user?.admin ? (
+                            <button disabled className={styles.botaoComprar}>
+                              <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
+                              Modo Admin
+                            </button>
+                          ) : status === "unauthenticated" ? (
+                            <button disabled className={styles.produtoIndisponivel}>
+                              <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
+                              Logue para comprar
+                            </button>
+                          ) : (
+                            <button onClick={handleAdicionarCarrinho} className={styles.botaoComprar}>
+                              <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
+                              Adicionar ao carrinho
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className={styles.produtoIndisponivel}>Produto Indisponível</div>
+                      )}
+                    </div>
+                  </Card>
+                </Col>
               </Row>
-            ) : (
-              <Loading />
-            )}
-          </>
-        )}
-      </Container>
-    </>
+              <Row>
+                {produtosSimilares.length > 0 && (
+                  <div className={styles.produtosSimilares}>
+                    <ProdutosSimilares produtos={produtosSimilares} />
+                  </div>
+                )}
+              </Row>
+            </Row>
+          ) : (
+            <Loading />
+          )}
+        </>
+      )}
+    </Container>
   );
 }
 

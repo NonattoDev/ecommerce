@@ -1,7 +1,4 @@
-.container {
-    margin: 15px auto 15px auto;
-    padding: 15px;
-}
+
 
 .tituloProduto {
     display: flex;
@@ -140,3 +137,4 @@
     display: flex;
     margin-top: 15px;
 }
+

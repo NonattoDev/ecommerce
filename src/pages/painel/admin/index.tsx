@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Nav, Tab } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faChartLine, faTable, faTh, faUserCircle, faUserCheck } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faChartLine, faTable, faTh, faUserCircle, faUserCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import styles from "./admin.module.css"; // Adicionando um arquivo de estilos separado
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import Loading from "@/components/Loading/Loading";
 import Clientes from "./clientes/clientes";
 import Dashboard from "./dashboard/dashboard";
+import CadastroProduto from "./cadastroproduto/cadastroproduto";
 
 const AdminPage: React.FC = () => {
   const router = useRouter();
@@ -50,6 +51,11 @@ const AdminPage: React.FC = () => {
                   <FontAwesomeIcon icon={faTable} className={styles.icon} />
                 </Nav.Link>
               </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="cadastroProduto" className={styles["nav-item-spacing"]}>
+                  <FontAwesomeIcon icon={faPlus} className={styles.icon} />
+                </Nav.Link>
+              </Nav.Item>
             </Nav>
           </Col>
           <Col sm={11}>
@@ -59,6 +65,9 @@ const AdminPage: React.FC = () => {
               </Tab.Pane>
               <Tab.Pane eventKey="analise">
                 <Dashboard />
+              </Tab.Pane>
+              <Tab.Pane eventKey="cadastroProduto">
+                <CadastroProduto />
               </Tab.Pane>
             </Tab.Content>
           </Col>

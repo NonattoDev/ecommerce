@@ -3,9 +3,10 @@ import { Card, Form } from "react-bootstrap";
 import Image from "next/image";
 import styles from "./DetalheProduto.module.css";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const DetalheProduto: React.FC<{ produto: Produto }> = ({ produto }) => {
-
   if (!produto) {
     // Se o produto não estiver disponível, retorne um placeholder ou null
     return <div>Produto não encontrado</div>;
@@ -14,7 +15,7 @@ const DetalheProduto: React.FC<{ produto: Produto }> = ({ produto }) => {
   const { handleRemoverProduto, handleAtualizarQuantidadeProduto } = useCarrinhoContext();
 
   // Adicione uma verificação para garantir que o produto e a propriedade Caminho existam
-  const imagePath = produto?.Caminho ? `/fotosProdutos/${produto.Caminho}` : '/fotosProdutos/erro/semProduto.png'; // Caminho padrão ou imagem padrão
+  const imagePath = produto?.Caminho ? `/fotosProdutos/${produto.Caminho}` : "/fotosProdutos/erro/semProduto.png"; // Caminho padrão ou imagem padrão
 
   return (
     <Card key={produto?.CodPro} className={styles.cardContainer}>
@@ -27,9 +28,7 @@ const DetalheProduto: React.FC<{ produto: Produto }> = ({ produto }) => {
             </div>
             <div>
               <h5>{produto?.Produto}</h5>
-              <p className={styles.botaoExcluirItem} onClick={() => handleRemoverProduto(produto?.CodPro)}>
-                Excluir
-              </p>
+              <FontAwesomeIcon icon={faTrash} onClick={() => handleRemoverProduto(produto?.CodPro)} className={styles.botaoExcluirItem} />
             </div>
           </div>
           <div className={styles.produtoSelect}>
