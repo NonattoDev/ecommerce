@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Row, Col, Nav, Tab } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faChartLine, faTable, faTh, faUserCircle, faUserCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faTable, faUserCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import styles from "./admin.module.css"; // Adicionando um arquivo de estilos separado
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ import Loading from "@/components/Loading/Loading";
 import Clientes from "./clientes/clientes";
 import Dashboard from "./dashboard/dashboard";
 import CadastroProduto from "./cadastroproduto/cadastroproduto";
+import socketIOClient from "socket.io-client";
 
 const AdminPage: React.FC = () => {
   const router = useRouter();
@@ -21,6 +22,24 @@ const AdminPage: React.FC = () => {
       return;
     },
   });
+
+  const ENDPOINT = "http://172.16.204.208:3001"; // Substitua pelo seu servidor
+
+  useEffect((): (() => void) => {
+    const socket = socketIOClient(ENDPOINT);
+
+    socket.on("connect", () => {
+      console.log("Conectado ao servidor de Socket.IO!");
+    });
+
+    // Ouvindo por eventos do servidor
+    socket.on("algumEvento", (data) => {
+      console.log(data);
+    });
+
+    // Desconectar do socket quando o componente for desmontado
+    return () => socket.disconnect();
+  }, []);
 
   if (status === "loading") return <Loading />;
 

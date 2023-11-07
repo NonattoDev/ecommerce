@@ -23,6 +23,9 @@ interface Product {
   EstoqueReservado1: number;
   Caminho: string;
 }
+interface Props {
+  error: { message: string };
+}
 
 const fetchProductCount = async () => {
   const { data } = await axios.get("/api/admin/produtos/contagem"); // Atualize com o caminho correto do seu endpoint
@@ -51,17 +54,25 @@ const CadastroProduto: React.FC = () => {
   const { data: productCount, isLoading, error } = useQuery("productCount", fetchProductCount);
 
   if (isLoading) return <div>Carregando...</div>;
-  if (error) return <div>Ocorreu um erro: {error.message}</div>;
+
+  function ErrorBox({ error }: Props) {
+    return <div>Ocorreu um erro: {error.message}</div>;
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setProduct({ ...product, [name]: value });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(product);
+
+    const response = await axios.post("/api/admin/produtos/adicionar", product);
+
+    if (response.data.error) return toast.error(response.data.error);
+
     toast.success("Produto cadastrado com sucesso");
+    console.log(response.data);
   };
 
   return (
@@ -89,7 +100,22 @@ const CadastroProduto: React.FC = () => {
           <Col xs={12} md={4}>
             <Form.Group controlId="CodigoBarras">
               <Form.Label>Código de Barras</Form.Label>
-              <Form.Control type="text" name="CodigoBarras" value={product.CodigoBarras} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="CodigoBarras"
+                value={product.CodigoBarras}
+                maxLength={13}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const { value } = event.target;
+                  const onlyNums = value.replace(/[^0-9]/g, "");
+                  if (onlyNums.length <= 13) {
+                    setProduct({ ...product, CodigoBarras: onlyNums });
+                  }
+                }}
+                onBlur={() => {
+                  if (product.CodigoBarras.length < 13) return toast.error("Código de barras inválido, são necessários 13 dígitos");
+                }}
+              />
             </Form.Group>
           </Col>
         </Row>
@@ -171,7 +197,7 @@ const CadastroProduto: React.FC = () => {
         <Row>
           <Col>
             <button type="submit" className={styles.botaoSalvar}>
-              <FontAwesomeIcon icon={faSave} cursor={"pointer"} width={30} color="#6EB4D1" />
+              <FontAwesomeIcon icon={faSave} cursor={"pointer"} width={30} color="#024968" />
             </button>
           </Col>
         </Row>
