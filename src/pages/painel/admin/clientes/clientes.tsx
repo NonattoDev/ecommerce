@@ -118,7 +118,7 @@ const Clientes = () => {
           <Col md={4}>
             <Form.Group controlId="formEMail">
               <Form.Label>Email</Form.Label>
-              <Form.Control name="Email" type="email" placeholder="Email" value={dadosDoCliente.EMail} onChange={handleChange} />
+              <Form.Control name="EMail" type="email" placeholder="Email" value={dadosDoCliente.EMail} onChange={handleChange} />
             </Form.Group>
           </Col>
           <Col md={4}>
