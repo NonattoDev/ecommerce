@@ -23,22 +23,24 @@ const AdminPage: React.FC = () => {
     },
   });
 
-  const ENDPOINT = "http://172.16.204.208:3001"; // Substitua pelo seu servidor
+  const ENDPOINT = "http://192.168.1.6:3001"; // Substitua pelo seu servidor
 
   useEffect((): (() => void) => {
+    //Socket I.O configurado para mudar o dashboard, de 1 em 1 minuto
+
+    // Conecta ao servidor Socket.IO
     const socket = socketIOClient(ENDPOINT);
 
-    socket.on("connect", () => {
-      console.log("Conectado ao servidor de Socket.IO!");
+    // Define um ouvinte para o evento de atualização do status do PIX
+    socket.on("variavelAtualizada", (data) => {
+      console.log("Atualização do status do PIX recebida:", data);
     });
 
-    // Ouvindo por eventos do servidor
-    socket.on("algumEvento", (data) => {
-      console.log(data);
-    });
-
-    // Desconectar do socket quando o componente for desmontado
-    return () => socket.disconnect();
+    // Limpa e desconecta ao desmontar o componente
+    return () => {
+      socket.off("variavelAtualizada");
+      socket.disconnect();
+    };
   }, []);
 
   if (status === "loading") return <Loading />;

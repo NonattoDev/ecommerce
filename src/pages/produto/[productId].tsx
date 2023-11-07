@@ -108,24 +108,40 @@ function Produto() {
                 <Col xs={12} md={6} lg={4}>
                   {produto.Caminho && (
                     <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho)}>
-                      <Image src={`/fotosProdutos/${produto.Caminho}`} alt="Thumbnail 2" width={80} height={80} layout="responsive" objectFit="contain" priority />
+                      <Image src={`/fotosProdutos/${produto.Caminho}`} alt="Thumbnail 2" width={80} height={80}  priority  style={{
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain' // ou 'cover', dependendo do que você precisa
+    }} />
                     </div>
                   )}
 
                   <div className={styles.imagensThumbnail}>
                     {produto.Caminho2 && (
                       <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho2)}>
-                        <Image src={`/fotosProdutos/${produto.Caminho2}`} alt="Thumbnail 2" width={80} height={80} layout="responsive" objectFit="contain" priority />
+                        <Image src={`/fotosProdutos/${produto.Caminho2}`} alt="Thumbnail 2" width={80} height={80}  priority style={{
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain' // ou 'cover', dependendo do que você precisa
+    }}/>
                       </div>
                     )}
                     {produto.Caminho3 && (
                       <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho3)}>
-                        <Image src={`/fotosProdutos/${produto.Caminho3}`} alt="Thumbnail 3" width={80} height={80} layout="responsive" objectFit="contain" priority />
+                        <Image src={`/fotosProdutos/${produto.Caminho3}`} alt="Thumbnail 3" width={80} height={80}  priority style={{
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain' // ou 'cover', dependendo do que você precisa
+    }}/>
                       </div>
                     )}
                     {produto.Caminho4 && (
                       <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho4)}>
-                        <Image src={`/fotosProdutos/${produto.Caminho4}`} alt="Thumbnail 3" width={80} height={80} layout="responsive" objectFit="contain" priority />
+                        <Image src={`/fotosProdutos/${produto.Caminho4}`} alt="Thumbnail 3" width={80} height={80}   priority style={{
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain' // ou 'cover', dependendo do que você precisa
+    }}/>
                       </div>
                     )}
                     {/* Adicione outros thumbnails aqui */}
@@ -133,9 +149,17 @@ function Produto() {
                 </Col>
                 <Col xs={12} md={6} lg={4}>
                   {imagemCarregada ? (
-                    <Image src={`/fotosProdutos/${imagemPrincipal}`} alt="Imagem do produto" width={500} height={500} onError={handleImagemErro} layout="responsive" objectFit="contain" priority />
+                    <Image src={`/fotosProdutos/${imagemPrincipal}`} alt="Imagem do produto" width={500} height={500} onError={handleImagemErro}  priority style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain' // ou 'cover', dependendo do que você precisa
+                    }}/>
                   ) : (
-                    <Image src={imagemSubstituicao} alt="Imagem de substituição" width={500} height={500} layout="responsive" objectFit="contain" priority />
+                    <Image src={imagemSubstituicao} alt="Imagem de substituição" width={500} height={500}  priority style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain' // ou 'cover', dependendo do que você precisa
+                    }}/>
                   )}
                 </Col>
                 <Col>

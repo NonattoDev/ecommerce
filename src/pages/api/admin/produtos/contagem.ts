@@ -1,4 +1,3 @@
-// pages/api/path-to-your-endpoint.js
 import db from "@/db/db";
 import { NextApiRequest, NextApiResponse } from "next";
 

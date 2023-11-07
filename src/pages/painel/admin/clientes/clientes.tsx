@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import { useState } from "react";
 import axios from "axios";
+import styles from './clientes.module.css'
 
 interface Cliente {
   CodCli?: number;
