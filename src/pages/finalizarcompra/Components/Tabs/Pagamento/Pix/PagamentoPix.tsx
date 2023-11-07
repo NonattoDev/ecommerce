@@ -191,13 +191,9 @@ const PagamentoPix = () => {
         });
 
         if (response) {
-          console.log(response);
-
           toast.success("Pagamento concluído!");
-
           handleLimparCarrinho()
           setPagamentoVerificado(true);
-
           router.push("/");
         }
       } catch (error) {
@@ -217,6 +213,7 @@ const PagamentoPix = () => {
       };
     }
   }, [pixCharge, pagamentoVerificado, router]);
+
 
   return (
     <div className="container mt-5">

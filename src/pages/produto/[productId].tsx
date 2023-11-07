@@ -162,7 +162,13 @@ function Produto() {
                         {produto.Estoque > 0 ? (
                           <div className={styles.botoesCompra}>
                             <input name="quantidadeProduto" type="number" value={quantidade} min={1} max={produto.Estoque} onChange={handleQuantidadeChange} className={styles.selectInput} />
-                            {status === "unauthenticated" ? (
+
+                            {session?.user?.admin ? (
+                              <button disabled className={styles.botaoComprar} >
+                                <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
+                                Modo Admin
+                              </button>
+                            ) : status === "unauthenticated" ? (
                               <button disabled className={styles.produtoIndisponivel}>
                                 <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
                                 Logue para comprar
@@ -177,6 +183,7 @@ function Produto() {
                         ) : (
                           <div className={styles.produtoIndisponivel}>Produto Indisponível</div>
                         )}
+
                       </div>
                     </Card>
                   </Col>

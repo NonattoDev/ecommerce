@@ -6,9 +6,15 @@ import { Modal, Form, Card } from "react-bootstrap";
 import { toast } from "react-toastify";
 import style from "./SearchBar.module.css";
 
+interface Product {
+  CodPro: number;
+  Produto: string;
+  Categoria: string;
+}
+
 const SearchBar = () => {
   const [showModal, setShowModal] = useState(false);
-  const [result, setResult] = useState([]);
+  const [result, setResult] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [typingTimeout, setTypingTimeout] = useState<any>(null);
