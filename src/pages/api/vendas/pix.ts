@@ -50,6 +50,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       //! So pode passar se o pix for pago
       if (response.data) {
+        console.log(response.data);
+        
         const dataAtual = moment().startOf("day"); // Zera horas, minutos, segundos e milissegundos
         const dataFormatada = dataAtual.format("YYYY-MM-DD HH:mm:ss.SSS");
         // 2. Atualize o valor da venda na tabela
@@ -100,6 +102,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (error: any) {
       return res.json(error);
     }
+  }
+
+  if (req.method === "GET") {
+    const { pixCharge } = req.query;
+
+    const response = await axios.get(`https://sandbox.api.pagseguro.com/orders/${pixCharge}`, {
+      headers: {
+        Authorization: `Bearer B871F6967C2341489D37924D761FF1BD`,
+      },
+    });
+    console.log(response.data)
+
+    if(response?.data?.charges[0]){
+      await db("requisi")
+            .where("Pedido", response.data.reference_id)
+            .update({ Observacao: JSON.stringify(response.data), StatusPagamento: response.data.charges[0].status, Pago: response.data.charges[0].paid_at,idPagamento: response.data.charges[0].id,CodigoRazao:response.data.charges[0].payment_response.code });
+      
+      return res.json(response.data.charges[0])
+    }
+    
   }
   return res.status(500).end(); // Proibir caso a requisição nao seja POST
 }
