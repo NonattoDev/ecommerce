@@ -2,10 +2,16 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 
-export default function SearchModal({ show, handleClose, handleSearch }) {
+type SearchModalProps = {
+  show: boolean;
+  handleClose: () => void;
+  handleSearch: (searchTerm: string) => void;
+};
+
+export default function SearchModal({ show, handleClose, handleSearch }: SearchModalProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleChange = (event) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
