@@ -1,11 +1,14 @@
 import { Produto } from "@/Types/Produto";
-import { Card, Form, ProgressBar } from "react-bootstrap";
+import { Card, Form } from "react-bootstrap";
 import Image from "next/image";
 import styles from "./DetalheProduto.module.css";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
 
 const DetalheProduto: React.FC<{ produto: Produto }> = ({ produto }) => {
-  const { handleRemoverProduto, handleAtualizarQuantidadeProduto, valorMinimoFreteGratis } = useCarrinhoContext();
+  const { handleRemoverProduto, handleAtualizarQuantidadeProduto } = useCarrinhoContext();
+
+  // Adicione uma verificação para garantir que o produto e a propriedade Caminho existam
+  const imagePath = produto?.Caminho ? `/fotosProdutos/${produto.Caminho}` : '/fotosProdutos/erro/semProduto.png'; // Caminho padrão ou imagem padrão
 
   return (
     <Card key={produto.CodPro} className={styles.cardContainer}>
@@ -13,7 +16,8 @@ const DetalheProduto: React.FC<{ produto: Produto }> = ({ produto }) => {
         <div className={styles.cardProdutoDetalheContainer}>
           <div className={styles.produtoInfo}>
             <div>
-              <Image src={`/fotosProdutos/${produto.Caminho}`} alt={produto.Caminho} width={100} height={100} />
+              {/* Use a variável imagePath para o atributo src da imagem */}
+              <Image src={imagePath} alt={produto.Produto} width={100} height={100} />
             </div>
             <div>
               <h5>{produto.Produto}</h5>
