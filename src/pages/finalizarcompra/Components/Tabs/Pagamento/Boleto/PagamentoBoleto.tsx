@@ -1,6 +1,7 @@
 import Loading from "@/components/Loading/Loading";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
 import { EnderecoContext } from "@/context/EnderecoContexto";
+import db from "@/db/db";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -94,8 +95,6 @@ const PagamentoBoleto = () => {
         });
         return;
       }
-
-      console.log(resposta);
 
       setLoading(false);
 

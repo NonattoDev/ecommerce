@@ -1,24 +1,15 @@
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
-import { getSession, useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
-import type { DefaultSession } from "next-auth";
-import { Session } from "next-auth";
-import Loading from "@/components/Loading/Loading";
-import { toast } from "react-toastify";
-import { Alert, Container, Spinner } from "react-bootstrap";
+import { useSession } from "next-auth/react";
+import React from "react";
+import { Alert, Container } from "react-bootstrap";
 import TabsPagamentoFinal from "./Components/Tabs/TabsPagamentoFinal";
 import { EnderecoProvider } from "@/context/EnderecoContexto";
-
-declare module "next-auth" {
-  interface Session {
-    user: DefaultSession["user"] & {
-      id: string;
-      cliente: string;
-    };
-  }
-}
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const finalizarCompra = () => {
+  const router = useRouter();
+
   const { produtosNoCarrinho } = useCarrinhoContext();
   const { data: sessao, status } = useSession({
     required: true,
@@ -43,6 +34,11 @@ const finalizarCompra = () => {
     );
   }
 
+  if (status === "authenticated" && sessao?.user?.admin) {
+    toast.warn("Está página é restrita para clientes, utilize o painel de ADMIN");
+    router.push("/painel/admin");
+  }
+
   return (
     <>
       <Container>
@@ -53,7 +49,7 @@ const finalizarCompra = () => {
           ) : (
             <>
               <EnderecoProvider>
-                <TabsPagamentoFinal id={sessao.user.id} />
+                <TabsPagamentoFinal id={parseInt(sessao.user.id)} />
               </EnderecoProvider>
             </>
           )}

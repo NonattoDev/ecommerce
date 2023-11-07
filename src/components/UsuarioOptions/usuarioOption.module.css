@@ -1,21 +1,6 @@
 .container {
-    width: 230px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-right: 10px;
-}
-
-.iconContainer {
-    display: flex;
-    word-wrap: break-word;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    color: blue;
-}
-
-.icon {
-    width: 35px;
+    gap: 20px;
+    /* Espaço entre os ícones e o texto */
 }

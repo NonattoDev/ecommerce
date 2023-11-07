@@ -1,0 +1,28 @@
+.nav-item-spacing {
+  margin-bottom: 15px;
+  /* Ou o espaçamento que preferir */
+}
+
+.navItem {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  width: 50px;
+}
+
+.icon {
+  height: 30px;
+}
+
+.sidebar {
+  background-color: black;
+  max-width: 90px;
+}
+
+/* Para garantir que os ícones estejam centralizados no caso de colunas mais finas */
+@media (max-width: 768px) {
+  .nav-item-spacing {
+    justify-content: center;
+  }
+}

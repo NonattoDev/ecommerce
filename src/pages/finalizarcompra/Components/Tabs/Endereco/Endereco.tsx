@@ -76,7 +76,6 @@ const Endereco = ({ id }: { id: number }) => {
         const resposta = await axios.get(`https://viacep.com.br/ws/${cepFormatado}/json/`);
 
         const cep = resposta.data;
-        console.log(cep);
 
         setEndereco((prevEndereco) => {
           const updatedEndereco: Endereco = {

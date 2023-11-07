@@ -1,7 +1,7 @@
 import { Card, Tab, Tabs } from "react-bootstrap";
 import Cartao from "./Cartao/PagamentoCartao";
 import PagamentoBoleto from "./Boleto/PagamentoBoleto";
-import PagamentoPix from "./Pix/pix";
+import PagamentoPix from "./Pix/PagamentoPix";
 
 const Pagamento = () => {
   return (

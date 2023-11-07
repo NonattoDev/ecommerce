@@ -53,9 +53,7 @@ export default function LoginForm() {
             toast.error(error.message);
           })
           .finally(() => {
-            getSession().then((res) => {
-              console.log(res);
-            });
+            getSession().then((res) => {});
 
             setLoading(false); // Desativa o indicador de carregamento quando a resposta é recebida
           });
