@@ -134,9 +134,7 @@ const PagamentoPix = () => {
 
             return toast.error(error.message);
         }
-        // Aqui você pode chamar a API para processar os dados do formulário
 
-        // Você pode combinar os dadosPessoais e dadosTelefone se precisar
     };
 
     return (
