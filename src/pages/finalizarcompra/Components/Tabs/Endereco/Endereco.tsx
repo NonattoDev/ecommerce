@@ -40,6 +40,7 @@ const Endereco = ({ id }: { id: number }) => {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setEndereco((prevEndereco) => {
+      //@ts-ignore
       const updatedEndereco: Endereco = {
         ...prevEndereco,
         [name]: value,
@@ -78,6 +79,7 @@ const Endereco = ({ id }: { id: number }) => {
         const cep = resposta.data;
 
         setEndereco((prevEndereco) => {
+          //@ts-ignore
           const updatedEndereco: Endereco = {
             ...prevEndereco,
             CEP: cepDinamico,
@@ -126,7 +128,7 @@ const Endereco = ({ id }: { id: number }) => {
           <Form>
             <Form.Group controlId="CEP">
               <Form.Label>CEP</Form.Label>
-              <InputMask mask="99999-999" maskChar="" value={cepDinamico} onChange={(e) => setCepDinamico(e.target.value)} onBlur={fetchCEP}>
+              <InputMask mask="99999-999" maskChar="" value={cepDinamico} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCepDinamico(e.target.value)} onBlur={fetchCEP}>
                 {(inputProps: any) => <Form.Control type="text" name="CEP" {...inputProps} />}
               </InputMask>
             </Form.Group>
