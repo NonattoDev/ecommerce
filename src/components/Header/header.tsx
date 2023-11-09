@@ -1,5 +1,4 @@
 import Container from "react-bootstrap/Container";
-import logo from "./logo-progjteo.png";
 import Navbar from "react-bootstrap/Navbar";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,7 +14,7 @@ function Header() {
       <Container fluid>
         <Link href="/">
           <Navbar.Brand style={{ margin: "0px 30px" }}>
-            <Image src={logo} alt="Logo" priority width={160} height={70} />
+            <Image src="https://www.atlanticosulcomercio.com.br/image/catalog/logo-atlantico-sul.png" alt="Logo" priority width={160} height={70} />
           </Navbar.Brand>
         </Link>
         <Navbar.Toggle aria-controls="navbarScroll" />

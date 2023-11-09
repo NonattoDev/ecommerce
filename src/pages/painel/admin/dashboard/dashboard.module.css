@@ -1,0 +1,12 @@
+.CardAnalytics {
+    max-width: 650px;
+    margin: 10px 0px 10px 0px;
+}
+
+.DatePicker {
+    justify-content: flex-end;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin: 5px 0 10px 0;
+}

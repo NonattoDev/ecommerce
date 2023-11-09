@@ -1,51 +1,20 @@
-// Dashboard.tsx
+// Dashboard.js ou Dashboard.jsx
 import React from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { Bar } from "react-chartjs-2";
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-const data = {
-  labels: ["January", "February", "March", "April", "May", "June", "July"],
-  datasets: [
-    {
-      label: "Visitors",
-      data: [65, 59, 80, 81, 56, 55, 40],
-      backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
-      borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
-      borderWidth: 1,
-    },
-  ],
-};
-
-const options = {
-  scales: {
-    y: {
-      beginAtZero: true,
-    },
-  },
-  legend: {
-    labels: {
-      fontSize: 26,
-    },
-  },
-};
+import { Container, Row, Col } from "react-bootstrap";
+import GraficoVendedor from "./components/VendedoresChart/GraficoVendedor";
+import ProdutosMaisVendidosChart from "./components/ProdutosMaisVendidos/ProdutosMaisVendidosChart";
 
 const Dashboard = () => {
   return (
     <Container fluid>
-      <Row className="my-4">
-        <Col>
-          <Card>
-            <Card.Body>
-              <Card.Title>Visitors</Card.Title>
-              <Bar data={data} options={options} />
-            </Card.Body>
-          </Card>
+      <Row>
+        <Col xs={12} sm={12} md={6} lg={6} xl={6}>
+          <GraficoVendedor />
+        </Col>
+        <Col xs={12} sm={12} md={6} lg={6} xl={6}>
+          <ProdutosMaisVendidosChart />
         </Col>
       </Row>
-      {/* You can add more rows and charts following the pattern above */}
     </Container>
   );
 };

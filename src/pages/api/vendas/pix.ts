@@ -66,7 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           Data: dataFormatada,
           Tipo: "PEDIDO",
           CodCli: CodCli,
-          Observacao: response.data,
+          Observacao: "PAGAMENTO NO ECOMMERCE VIA PIX",
           Tipo_Preco: 1, //
           CodCon: 0,
           CodPros: 0,
@@ -84,6 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           StatusPagamento: "Waiting",
           idStatus: response.data.id,
           Nome: response.data.customer.name,
+          Autorizacao: `E${valorAtualizado}`,
         });
         // 4. Inserir em Requisi1
         for (const item of response.data.items) {
@@ -99,6 +100,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             Marca: "*",
           });
         }
+
         return res.status(200).json({ dadosPix: response.data.qr_codes[0], idVenda: valorAtualizado, idCharge: response.data.id });
       }
     } catch (error: any) {

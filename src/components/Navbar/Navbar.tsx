@@ -35,7 +35,7 @@ export default function NavbarSite() {
   }, []);
 
   return (
-    <Navbar expand="lg" bg="primary" >
+    <Navbar className="justify-content-center" expand="lg" bg="primary">
       <Container>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

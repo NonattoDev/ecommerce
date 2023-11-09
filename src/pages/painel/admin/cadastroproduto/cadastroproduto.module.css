@@ -2,3 +2,33 @@
     background-color: transparent;
     border-color: transparent;
 }
+
+.form-label {
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: -5px;
+}
+
+
+.Badges {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 30px;
+}
+
+.Badges h6 {
+    font-weight: bold;
+    margin-bottom: 0px;
+
+}
+
+
+.Title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
+}

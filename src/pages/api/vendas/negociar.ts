@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import transporter from "@/services/nodeMailer";
 import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -35,6 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         Status: "VENDA",
         FIB: valorFrete > 0 ? 0 : 9,
         Ecommerce: "X",
+        Autorizacao: `E${valorAtualizado}`,
       });
 
       // 4. Inserir em Requisi1
@@ -49,6 +51,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           Situacao: "000",
         });
       }
+
+      const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", session.user.id).first();
+
+      const mailOptions = {
+        from: "softlinedocs@gmail.com",
+        to: email,
+        subject: `Pedido de Proposta Recebido`,
+        html: `
+          <div style="font-family: 'Arial', sans-serif; color: #333;">
+            <h2>Olá, ${Cliente}</h2>
+            <p>Recebemos o seu interesse em negociar a proposta de número <strong>${valorAtualizado}</strong>.</p>
+            <p>Aguarde e um dos nossos colaboradores entrará em contato com você.</p>
+            <hr>
+            <p>Atenciosamente,</p>
+            <p><strong>Equipe SoftlineDocs</strong></p>
+          </div>
+        `,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+          // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
+        } else {
+          console.log("E-mail enviado com sucesso:", info.response);
+        }
+      });
 
       return res.json({ message: "Vendedor recebeu a Proposta", idProposta: valorAtualizado });
     } catch (error: any) {

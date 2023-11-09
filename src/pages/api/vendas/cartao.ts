@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import db from "@/db/db";
 import moment from "moment";
 import axios from "axios";
+import transporter from "@/services/nodeMailer";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*"); // Permite que todas as origens acessem
@@ -107,7 +108,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           Data: dataFormatada,
           Tipo: "PEDIDO",
           CodCli: CodCli,
-          Observacao: Pagamento,
+          Observacao: "PAGAMENTO REALIZADO NO ECOMMERCE VIA CARTAO",
           Tipo_Preco: 1, //
           CodCon: 0,
           CodPros: 0,
@@ -132,6 +133,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           Nome: Pagamento.charges[0].payment_method.card.holder.name,
           NSU: Pagamento.charges[0].payment_response.reference,
           CodigoRazao: Pagamento.charges[0].payment_response.code,
+          Autorizacao: `E${valorAtualizado}`,
         });
         // 4. Inserir em Requisi1
         for (const item of Pagamento.items) {
@@ -147,6 +149,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             Marca: "*",
           });
         }
+
+        const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
+
+        const mailOptions = {
+          from: "softlinedocs@gmail.com",
+          to: email,
+          subject: `Confirmação de Compra Aprovada`,
+          html: `
+            <div style="font-family: 'Arial', sans-serif; color: #333;">
+              <h2>Parabéns, ${Cliente}!</h2>
+              <p>Sua compra no valor de <strong>R$ ${totalAmount}</strong> foi <span style="color: #27ae60;"><strong>aprovada</strong></span> com sucesso!</p>
+              <p>Detalhes da compra:</p>
+              <p><strong>Número do Pedido:</strong> ${valorAtualizado}</p>
+              <p><strong>Data:</strong> ${moment().format("DD/MM/YY HH:MM:SS")}</p>
+              <p>Os itens do seu pedido serão preparados e enviados em breve. Agradecemos pela sua confiança e preferência.</p>
+              <p>Você pode acompanhar o status do seu pedido através do nosso site ou entrando em contato conosco.</p>
+              <hr>
+              <p>Caso tenha qualquer dúvida ou necessite de assistência, fique à vontade para responder a este e-mail ou entrar em contato pelo nosso suporte.</p>
+              <p>Atenciosamente,</p>
+              <p><strong>Equipe de Atendimento ao Cliente</strong></p>
+              <p>SoftlineDocs</p>
+            </div>
+          `,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error(error);
+            // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
+          } else {
+            console.log("E-mail enviado com sucesso:", info.response);
+          }
+        });
 
         return res.status(200).json({ message: "Venda concluída no banco de dados", idVenda: valorAtualizado });
       }

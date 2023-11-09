@@ -8,7 +8,8 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import { useState } from "react";
 import axios from "axios";
-import styles from './clientes.module.css'
+import styles from "./clientes.module.css";
+import InputMask from "react-input-mask";
 
 interface Cliente {
   CodCli?: number;
@@ -119,7 +120,16 @@ const Clientes = () => {
           <Col md={4}>
             <Form.Group controlId="formEMail">
               <Form.Label>Email</Form.Label>
-              <Form.Control name="EMail" type="email" placeholder="Email" value={dadosDoCliente.EMail} onChange={handleChange} />
+              <Form.Control
+                name="EMail"
+                type="email"
+                placeholder="Email"
+                value={dadosDoCliente.EMail}
+                onChange={handleChange}
+                className="form-control" // Classe de estilo do Bootstrap
+                required // Opcional: Adiciona uma validação HTML5 que exige que o campo seja preenchido
+                pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" // Opcional: Adiciona uma validação de padrão para o email
+              />
             </Form.Group>
           </Col>
           <Col md={4}>
@@ -139,7 +149,16 @@ const Clientes = () => {
           <Col md={4}>
             <Form.Group controlId="formTelEnt">
               <Form.Label>Telefone</Form.Label>
-              <Form.Control name="TelEnt" type="text" placeholder="Telefone" value={dadosDoCliente.TelEnt} onChange={handleChange} />
+              <Form.Control
+                as={InputMask}
+                mask="(99)99999-9999"
+                name="TelEnt"
+                type="text"
+                placeholder="Telefone"
+                value={dadosDoCliente.TelEnt}
+                onChange={handleChange}
+                className="form-control" // Classe de estilo do Bootstrap
+              />
             </Form.Group>
           </Col>
           <Col md={4}>
@@ -179,7 +198,16 @@ const Clientes = () => {
           <Col md={4}>
             <Form.Group controlId="formCep">
               <Form.Label>Cep</Form.Label>
-              <Form.Control name="Cep" type="text" placeholder="Cep" value={dadosDoCliente.Cep} onChange={handleChange} />
+              <Form.Control
+                as={InputMask}
+                mask="99999-999"
+                name="Cep"
+                type="text"
+                placeholder="Cep"
+                value={dadosDoCliente.Cep}
+                onChange={handleChange}
+                className="form-control" // Classe de estilo do Bootstrap
+              />
             </Form.Group>
           </Col>
         </Row>

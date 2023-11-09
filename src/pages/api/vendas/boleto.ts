@@ -97,7 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           Data: dataFormatada,
           Tipo: "PEDIDO",
           CodCli: CodCli,
-          Observacao: response.data,
+          Observacao: "PAGAMENTO NO ECOMMERCE VIA BOLETO",
           Tipo_Preco: 1, //
           CodCon: 0,
           CodPros: 0,
@@ -117,6 +117,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           idStatus: response.data.id,
           idPagamento: response.data.charges[0].id,
           Nome: response.data.charges[0].payment_method.boleto.holder.name,
+          Autorizacao: `E${valorAtualizado}`,
         });
         // 4. Inserir em Requisi1
         for (const item of response.data.items) {

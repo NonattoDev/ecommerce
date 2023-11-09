@@ -21,7 +21,7 @@ const SearchBar = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLoading(true);
-    const value = e.target.value;
+    let value = e.target.value.replace(/[^a-zA-Z0-9\s]/g, "");
     setQuery(value);
     if (typingTimeout) {
       clearTimeout(typingTimeout);
