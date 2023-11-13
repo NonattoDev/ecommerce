@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 // @ts-ignore
 import InputMask from "react-input-mask";
 import Loading from "@/components/Loading/Loading";
-import { Spinner } from "react-bootstrap";
+import { FormControl, Spinner } from "react-bootstrap";
 
 const RegistrationForm = () => {
   const [loading, setLoading] = useState(false); // Estado para controlar o indicador de carregamento
@@ -39,7 +39,9 @@ const RegistrationForm = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (formValues.complementoEndereco.length > 30) return toast.error("O campo complemento de endereço deve ter no máximo 30 caracteres");
     setLoading(true);
+
     const response = axiosCliente
       .post("/usuarios/cadastro", formValues)
       .then((response) => {
@@ -174,14 +176,19 @@ const RegistrationForm = () => {
     <Form onSubmit={handleSubmit} className={styles.form}>
       <Form.Group controlId="cgc">
         <Form.Label className={styles.label}>CNPJ</Form.Label>
-        <InputMask mask="99.999.999/9999-99" maskChar="" value={formValues.cgc} onChange={handleChange}>
-          {(inputProps: any) => (
-            <div className="position-relative">
-              <Form.Control type="text" name="cgc" className={styles.input} required={true} maxLength={18} {...inputProps} />
-              {loadingCNPJ && <Spinner animation="border" className="position-absolute top-50 start-100 translate-middle" />}
-            </div>
-          )}
-        </InputMask>
+        <Form.Control
+          as={InputMask}
+          mask="99.999.999/9999-99"
+          maskChar={null}
+          value={formValues.cgc}
+          onChange={handleChange}
+          type="text"
+          name="cgc"
+          className={styles.input}
+          required={true}
+          maxLength={18}
+        />
+        {loadingCNPJ && <Spinner animation="border" className="position-absolute top-50 start-100 translate-middle" />}
       </Form.Group>
       <Form.Group controlId="email">
         <Form.Label className={styles.label}>Email</Form.Label>
@@ -197,9 +204,7 @@ const RegistrationForm = () => {
       </Form.Group>
       <Form.Group controlId="telent2">
         <Form.Label className={styles.label}>Whatsapp</Form.Label>
-        <InputMask mask="(99)99999-9999" maskChar="" value={formValues.telent2} onChange={handleChange}>
-          {(inputProps: any) => <Form.Control type="text" name="telent2" className={styles.input} required={true} {...inputProps} />}
-        </InputMask>
+        <Form.Control as={InputMask} mask="(99)99999-9999" maskChar={null} value={formValues.telent2} onChange={handleChange} type="text" name="telent2" className={styles.input} required={true} />
       </Form.Group>
       <Form.Group controlId="endereco">
         <Form.Label className={styles.label}>Endereço</Form.Label>
@@ -223,13 +228,11 @@ const RegistrationForm = () => {
       </Form.Group>
       <Form.Group controlId="cep">
         <Form.Label className={styles.label}>CEP</Form.Label>
-        <InputMask mask="99999-999" maskChar="" value={formValues.cep} onChange={handleChange}>
-          {(inputProps: any) => <Form.Control type="text" name="cep" className={styles.input} required={true} {...inputProps} />}
-        </InputMask>
+        <Form.Control as={InputMask} mask="99999-999" maskChar={null} value={formValues.cep} onChange={handleChange} type="text" name="cep" className={styles.input} required={true} />
       </Form.Group>
       <Form.Group controlId="complementoEndereco">
         <Form.Label className={styles.label}>Complemento de Endereço</Form.Label>
-        <Form.Control type="text" name="complementoEndereco" value={formValues.complementoEndereco} onChange={handleChange} className={styles.input} required={true} />
+        <Form.Control type="text" name="complementoEndereco" value={formValues.complementoEndereco} onChange={handleChange} className={styles.input} max={30} required={true} />
       </Form.Group>
       <Form.Group controlId="campoLivre">
         <Form.Label className={styles.label}>Referencia</Form.Label>

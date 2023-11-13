@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Nav, Tab } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faTable, faUserCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faTable, faUserCheck, faPlus, faGear } from "@fortawesome/free-solid-svg-icons";
 import styles from "./admin.module.css"; // Adicionando um arquivo de estilos separado
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";

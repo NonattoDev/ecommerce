@@ -20,13 +20,13 @@ interface Vendedor {
 const fetchVendedorDados = async (startDate: string, endDate: string) => {
   // Verificar se as datas são válidas
   if (!moment(startDate, "YYYY-MM-DD", true).isValid() || !moment(endDate, "YYYY-MM-DD", true).isValid()) {
-    toast.error("Formato de data inválido. Use 'YYYY-MM-DD'.");
+    // toast.error("Formato de data inválido. Use 'YYYY-MM-DD'.");
     return;
   }
 
   // Verificar se a data de início é anterior à data de término
   if (moment(startDate).isAfter(moment(endDate))) {
-    toast.error("A data de início deve ser anterior à data de término.");
+    // toast.error("A data de início deve ser anterior à data de término.");
     return;
   }
 
@@ -35,13 +35,13 @@ const fetchVendedorDados = async (startDate: string, endDate: string) => {
     return data;
   } catch (error: any) {
     // Assumindo que você tem um bom tratamento de erros no lado do servidor e retorna uma mensagem de erro adequada
-    toast.error(`Erro ao buscar os dados: ${error.response?.data?.error || error.message}`);
+    // toast.error(`Erro ao buscar os dados: ${error.response?.data?.error || error.message}`);
     return;
   }
 };
 
 const GraficoVendedor = () => {
-  const [startDate, setStartDate] = useState(moment().format("YYYY-MM-DD"));
+  const [startDate, setStartDate] = useState(moment().subtract(1, "months").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"));
 
   const { data: vendedorDados, isLoading, error, refetch } = useQuery(["vendedorDados", startDate, endDate], () => fetchVendedorDados(startDate, endDate), { enabled: true });

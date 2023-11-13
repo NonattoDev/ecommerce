@@ -39,7 +39,7 @@ export default NextAuth({
     },
 
     jwt: async ({ token, user }) => {
-      if (user && 'usuario' in user) {
+      if (user && "usuario" in user) {
         const { CodCli, Cliente } = (user as { usuario: { CodCli: string; Cliente: string } }).usuario;
         token.id = CodCli;
         token.cliente = Cliente;
@@ -57,9 +57,9 @@ export default NextAuth({
       return session;
     },
   },
-  secret: "secret",
+  secret: process.env.NEXTAUTH_URL,
   jwt: {
-    secret: "secret",
+    secret: process.env.NEXTAUTH_URL,
     ...{ expires: 8200 }, // Define a expiração do token para 1 hora (1 hora * 60 minutos * 60 segundos)
   },
 });

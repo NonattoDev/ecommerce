@@ -3,6 +3,7 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import GraficoVendedor from "./components/VendedoresChart/GraficoVendedor";
 import ProdutosMaisVendidosChart from "./components/ProdutosMaisVendidos/ProdutosMaisVendidosChart";
+import TabelaDeVendasRT from "./components/TabelaDeVendasRT/TabelaDeVendasRT";
 
 const Dashboard = () => {
   return (
@@ -15,6 +16,9 @@ const Dashboard = () => {
           <ProdutosMaisVendidosChart />
         </Col>
       </Row>
+      <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+        <TabelaDeVendasRT />
+      </Col>
     </Container>
   );
 };

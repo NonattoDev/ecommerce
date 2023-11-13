@@ -100,13 +100,13 @@ const Clientes = () => {
           <Col md={4}>
             <Form.Group controlId="formCliente">
               <Form.Label>Cliente</Form.Label>
-              <Form.Control name="Cliente" type="text" placeholder="Nome do cliente" value={dadosDoCliente.Cliente} onChange={handleChange} />
+              <Form.Control name="Cliente" type="text" placeholder="Nome do cliente" value={dadosDoCliente.Cliente} onChange={handleChange} disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formRazao">
               <Form.Label>Razão Social</Form.Label>
-              <Form.Control name="Razao" type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} onChange={handleChange} />
+              <Form.Control name="Razao" type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} onChange={handleChange} disabled />
             </Form.Group>
           </Col>
           <Col md={4}>

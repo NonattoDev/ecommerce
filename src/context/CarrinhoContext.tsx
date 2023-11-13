@@ -65,6 +65,7 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
 
         if (typeof window !== "undefined" && session?.user) {
+          toast.success(`O Produto ${produto.Produto} foi adicionado ao carrinho.`, { position: "top-center" });
           localStorage.setItem(`carrinho_${session.user.id}`, JSON.stringify(carrinhoAtualizado));
         }
 

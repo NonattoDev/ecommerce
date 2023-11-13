@@ -1,0 +1,14 @@
+.statusPago {
+    background-color: green;
+    color: white;
+}
+
+.statusAguardando {
+    background-color: yellow;
+    color: black;
+}
+
+.statusCancelado {
+    background-color: red;
+    color: white;
+}

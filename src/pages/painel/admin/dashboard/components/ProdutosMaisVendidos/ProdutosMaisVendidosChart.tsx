@@ -18,26 +18,26 @@ interface ProdutoVendido {
 const fetchProdutosMaisVendidos = async (startDate: string, endDate: string) => {
   // Verificar se as datas são válidas
   if (!moment(startDate, "YYYY-MM-DD", true).isValid() || !moment(endDate, "YYYY-MM-DD", true).isValid()) {
-    toast.error("Formato de data inválido. Use 'YYYY-MM-DD'.");
+    // toast.error("Formato de data inválido. Use 'YYYY-MM-DD'.");
     return;
   }
 
   // Verificar se a data de início é anterior à data de término
   if (moment(startDate).isAfter(moment(endDate))) {
-    toast.error("A data de início deve ser anterior à data de término.");
+    // toast.error("A data de início deve ser anterior à data de término.");
     return;
   }
   try {
     const { data } = await axios.get(`/api/admin/dashboard/produtosvendidos/?start=${startDate}&end=${endDate}`);
     return data;
   } catch (error: any) {
-    toast.error(`Erro ao buscar os dados: ${error.response?.data?.error || error.message}`);
+    // toast.error(`Erro ao buscar os dados: ${error.response?.data?.error || error.message}`);
     return;
   }
 };
 
 const ProdutosMaisVendidosChart = () => {
-  const [startDate, setStartDate] = useState(moment().format("YYYY-MM-DD"));
+  const [startDate, setStartDate] = useState(moment().subtract(1, "months").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"));
 
   const { data: produtosVendidos, isLoading, error, refetch } = useQuery(["produtosVendidos", startDate, endDate], () => fetchProdutosMaisVendidos(startDate, endDate), { enabled: true });

@@ -6,6 +6,7 @@ import TabsPagamentoFinal from "./Components/Tabs/TabsPagamentoFinal";
 import { EnderecoProvider } from "@/context/EnderecoContexto";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import Loading from "@/components/Loading/Loading";
 
 const finalizarCompra = () => {
   const router = useRouter();
@@ -28,7 +29,7 @@ const finalizarCompra = () => {
     return (
       <Container>
         <div style={{ height: "287px", margin: "50px" }}>
-          <Alert variant="warning">Esta rota é apenas para usuários logados.</Alert>
+          <Loading />
         </div>
       </Container>
     );
@@ -37,6 +38,7 @@ const finalizarCompra = () => {
   if (status === "authenticated" && sessao?.user?.admin) {
     toast.warn("Está página é restrita para clientes, utilize o painel de ADMIN");
     router.push("/painel/admin");
+    return;
   }
 
   return (

@@ -3,6 +3,7 @@ import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import xml2js from "xml2js";
+import transporter from "@/services/nodeMailer";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*"); // Permite que todas as origens acessem
@@ -134,6 +135,51 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           });
         }
 
+        const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
+
+        const mailOptions = {
+          from: "softlinedocs@gmail.com",
+          to: email,
+          subject: "Seu Boleto de Pagamento Está Pronto",
+          html: `
+            <div style="font-family: 'Arial', sans-serif; color: #333;">
+              <h2>Boleto Pendente, ${Cliente}!</h2>
+              <p>Olá, ${Cliente}! 🎈</p>
+              <p>Estamos contentes em informar que seu pedido no valor de <strong>R$ ${valorCompra}</strong> foi gerado com sucesso. Agora falta pouco para finalizá-lo!</p>
+              <p>Detalhes do Pedido:</p>
+              <p><strong>Valor a Pagar:</strong> R$ ${valorCompra}</p>
+              <p><strong>Data e Hora do Pedido:</strong> ${moment().format("DD/MM/YYYY HH:mm:ss")}</p>
+              <p>Não deixe para depois! Seu boleto tem data de validade e estamos ansiosos para processar seu pedido 🚚💨.</p>
+              <p>Para visualizar e pagar o boleto, clique no botão abaixo:</p>
+              <a href="${
+                response.data?.charges[0]?.links[0]?.href
+              }" target="_blank" style="background-color: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; transition: background-color 0.3s; font-size: 16px;">
+                Visualizar Boleto
+              </a>
+              <p style="margin-top: 20px;">Após o pagamento, seu pedido entrará imediatamente em processo de preparação. 📦✨</p>
+              <p>Lembre-se, você pode verificar o status do seu pedido a qualquer momento em nossa plataforma.</p>
+              <hr>
+              <p>Se tiver dúvidas ou precisar de assistência, estamos aqui para ajudar.</p>
+              <p>Atenciosamente,</p>
+              <p><strong>Equipe de Atendimento ao Cliente</strong></p>
+              <p>SoftlineDocs</p>
+            </div>
+            <style>
+              a:hover {
+                background-color: #2ecc71;
+              }
+            </style>
+          `,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error(error);
+            // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
+          } else {
+            console.log("E-mail enviado com sucesso:");
+          }
+        });
         return res.status(200).json({ message: "Venda concluída no banco de dados", idVenda: valorAtualizado, data: response.data });
       }
     } catch (error: any) {

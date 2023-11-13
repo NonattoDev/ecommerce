@@ -1,5 +1,6 @@
 import db from "@/db/db";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth/next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {

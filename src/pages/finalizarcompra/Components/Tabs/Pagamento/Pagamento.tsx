@@ -15,7 +15,7 @@ const Pagamento = () => {
           <Tab eventKey="Pix" title="Pix">
             <PagamentoPix />
           </Tab>
-          <Tab eventKey="Boleto" title="Boleto">
+          <Tab eventKey="Boleto" title="Boleto" disabled>
             <PagamentoBoleto />
           </Tab>
         </Tabs>

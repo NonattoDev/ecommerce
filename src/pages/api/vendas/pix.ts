@@ -2,11 +2,11 @@ import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import db from "@/db/db";
+import transporter from "@/services/nodeMailer";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     const { dadosPessoais, dadosTelefone, endereco, formattedProducts, valorCompra, CodCli, valorFrete } = req.body;
-    console.log(req.body);
 
     // 1. Obtenha a última venda
     let ultimaVenda = await db("numero").select("Venda").first();
@@ -52,8 +52,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       //! So pode passar se o pix for pago
       if (response.data) {
-        console.log(response.data);
-
         const dataAtual = moment().startOf("day"); // Zera horas, minutos, segundos e milissegundos
         const dataFormatada = dataAtual.format("YYYY-MM-DD HH:mm:ss.SSS");
         // 2. Atualize o valor da venda na tabela
@@ -101,6 +99,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           });
         }
 
+        const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
+
+        const mailOptions = {
+          from: "softlinedocs@gmail.com",
+          to: email,
+          subject: "Seu Pagamento via Pix Está Pronto",
+          html: `
+            <div style="font-family: 'Arial', sans-serif; color: #333;">
+              <h2>Pagamento via Pix Pendente, ${Cliente}!</h2>
+              <p>Olá, ${Cliente}! Seu pedido no valor de <strong>R$ ${valorCompra}</strong> está pronto para ser pago via Pix.</p>
+              <p>Detalhes do Pedido:</p>
+              <p><strong>Valor a Pagar:</strong> R$ ${valorCompra}</p>
+              <p><strong>Data e Hora do Pedido:</strong> ${moment().format("DD/MM/YYYY HH:mm:ss")}</p>
+              <p>Para realizar o pagamento, utilize o QR Code abaixo ou copie o código Pix:</p>
+              <div style="margin-bottom: 15px;">
+                <a href="${response.data.qr_codes[0].links[0].href}" target="_blank"><img src="${response.data.qr_codes[0].links[0].href}" alt="QR Code Pix" style="width: 200px; height: 200px;"></a>
+              </div>
+              <div style="border: 1px solid #ccc; padding: 10px; font-size: 16px; color: #333; margin-bottom: 20px;">
+                ${response?.data?.qr_codes[0]?.text}
+              </div>
+              <p>Após o pagamento, seu pedido será processado e preparado para envio. Agradecemos por escolher a SoftlineDocs.</p>
+              <p>Você pode verificar o status do seu pedido a qualquer momento em nossa plataforma.</p>
+              <hr>
+              <p>Se tiver dúvidas ou precisar de assistência, entre em contato conosco.</p>
+              <p>Atenciosamente,</p>
+              <p><strong>Equipe de Atendimento ao Cliente</strong></p>
+              <p>SoftlineDocs</p>
+            </div>
+          `,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error(error);
+            // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
+          } else {
+            console.log("E-mail enviado com sucesso:");
+          }
+        });
+
         return res.status(200).json({ dadosPix: response.data.qr_codes[0], idVenda: valorAtualizado, idCharge: response.data.id });
       }
     } catch (error: any) {
@@ -111,25 +149,65 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === "GET") {
     const { pixCharge } = req.query;
 
-    const response = await axios.get(`https://sandbox.api.pagseguro.com/orders/${pixCharge}`, {
-      headers: {
-        Authorization: `Bearer B871F6967C2341489D37924D761FF1BD`,
-      },
-    });
-    console.log(response.data);
+    try {
+      const response = await axios.get(`https://sandbox.api.pagseguro.com/orders/${pixCharge}`, {
+        headers: {
+          Authorization: `Bearer B871F6967C2341489D37924D761FF1BD`,
+        },
+      });
 
-    if (response?.data?.charges[0]) {
-      await db("requisi")
-        .where("Pedido", response.data.reference_id)
-        .update({
-          Observacao: JSON.stringify(response.data),
-          StatusPagamento: response.data.charges[0].status,
-          Pago: response.data.charges[0].paid_at,
-          idPagamento: response.data.charges[0].id,
-          CodigoRazao: response.data.charges[0].payment_response.code,
-        });
+      if (!response?.data?.charges?.[0]) {
+        console.log("Pagamento ainda não realizado");
+        return res.status(404).json({ message: "Pagamento ainda não realizado" });
+      }
+
+      await db("requisi").where("Pedido", response.data.reference_id).update({
+        Observacao: "PIX PAGO",
+        StatusPagamento: response.data.charges[0].status,
+        Pago: response.data.charges[0].paid_at,
+        idPagamento: response.data.charges[0].id,
+        CodigoRazao: response.data.charges[0].payment_response.code,
+      });
+
+      const { CodCli } = await db("requisi").select("CodCli").where("Pedido", response.data.reference_id).first();
+      const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
+
+      const mailOptions = {
+        from: "softlinedocs@gmail.com",
+        to: email,
+        subject: "Confirmação de Pagamento via Pix",
+        html: `
+            <div style="font-family: 'Arial', sans-serif; color: #333;">
+              <h2>Pagamento Confirmado, ${Cliente}!</h2>
+              <p>Olá, ${Cliente}! 🌟</p>
+              <p>Estamos felizes em informar que o seu pagamento via Pix foi <strong>confirmado</strong> com sucesso!</p>
+              <ul>
+                <li><strong>Data de Pagamento:</strong> ${moment(response.data.charges[0].paid_at).format("DD/MM/YYYY HH:mm:ss")}</li>
+              </ul>
+              <p>Seu pedido agora está em processo de preparação e em breve será enviado. 📦✈️</p>
+              <p>Agradecemos por escolher a SoftlineDocs para suas compras. Seu suporte significa muito para nós!</p>
+              <hr>
+              <p>Para qualquer dúvida ou informação adicional, sinta-se à vontade para nos contatar.</p>
+              <p>Atenciosamente,</p>
+              <p><strong>Equipe de Atendimento ao Cliente</strong></p>
+              <p>SoftlineDocs</p>
+            </div>
+          `,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+          // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
+        } else {
+          console.log("E-mail enviado com sucesso:");
+        }
+      });
 
       return res.json(response.data.charges[0]);
+    } catch (error: any) {
+      console.error("Erro ao verificar o pagamento:", error);
+      return res.status(500).json({ message: "Erro interno do servidor" });
     }
   }
   return res.status(500).end(); // Proibir caso a requisição nao seja POST

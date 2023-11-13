@@ -254,9 +254,7 @@ const Cartao = () => {
         </Col>
         <Col>
           <InputGroup className="mb-3">
-            <InputMask mask="(99)99999-9999" value={dadosPessoais.telefone} onChange={handleDadosPessoaisChange}>
-              {(inputProps: any) => <Form.Control name="telefone" type="text" placeholder="Telefone/Celular" {...inputProps} />}
-            </InputMask>
+            <InputMask mask="(99)99999-9999" value={dadosPessoais.telefone} onChange={handleDadosPessoaisChange} className="form-control" placeholder="Telefone/Celular" name="telefone" />
           </InputGroup>
         </Col>
       </Row>

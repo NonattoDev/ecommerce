@@ -8,6 +8,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import styles from "./navbar.module.css";
+import { Badge } from "react-bootstrap";
 
 interface Grupo {
   CodGrp: number;
@@ -24,7 +25,6 @@ export default function NavbarSite() {
       .all([axiosCliente.get<Grupo[]>("produtos/grupos"), axiosCliente.get<Grupo[]>("produtos/grupos/top")])
       .then(
         axios.spread((responseGrupos, responseGruposTop) => {
-          // Atualiza os estados com os dados retornados
           setGrupo(responseGrupos.data);
           setGruposTop(responseGruposTop.data);
         })
@@ -35,15 +35,15 @@ export default function NavbarSite() {
   }, []);
 
   return (
-    <Navbar className="justify-content-center" expand="lg" bg="primary">
+    <Navbar expand="lg" className={styles.Navbar} variant="dark">
       <Container>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <NavDropdown title="Categorias" id="basic-nav-dropdown" className={styles.navDropDown}>
+        <Navbar.Toggle />
+        <Navbar.Collapse>
+          <Nav style={{ width: "100%", justifyContent: "center" }}>
+            <NavDropdown title={<span style={{ color: "#FFF" }}>Categorias</span>} className={styles.navDropDown}>
               {grupo.map((grupo) => (
                 <NavDropdown.Item key={grupo.CodGrp} href={`/grupo/${grupo.CodGrp}`} className={styles.navDropdownItem}>
-                  <strong>{grupo.Grupo}</strong> - ({grupo.Qtd})
+                  <strong>{grupo.Grupo}</strong> - <Badge>({grupo.Qtd})</Badge>
                 </NavDropdown.Item>
               ))}
             </NavDropdown>
@@ -52,7 +52,6 @@ export default function NavbarSite() {
                 {grupo.Grupo}
               </Nav.Link>
             ))}
-            <NavDropdown.Divider />
           </Nav>
         </Navbar.Collapse>
       </Container>

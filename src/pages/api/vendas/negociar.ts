@@ -75,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           console.error(error);
           // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
         } else {
-          console.log("E-mail enviado com sucesso:", info.response);
+          console.log("E-mail enviado com sucesso:");
         }
       });
 

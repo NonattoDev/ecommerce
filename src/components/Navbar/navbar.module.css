@@ -15,11 +15,11 @@
 }
 
 .navDropDown {
-  color: #ffffff;
+  color: #FFF;
 }
 
 .navDropdownItem {
-  color: #000000;
+  color: #000;
   transition: color 0.5s ease, background-color 0.5s ease;
 }
 
@@ -27,4 +27,8 @@
   color: #000000;
   background-color: #ffd9b4;
   transform: translateX(5px);
+}
+
+.Navbar {
+  background-color: #123456;
 }

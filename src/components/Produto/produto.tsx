@@ -71,7 +71,7 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
           <Card.Title className={styles["produto-card-title"]}>
             <strong>{Produto}</strong>
           </Card.Title>
-          <div className={styles["produto-card-price"]}>{preco}</div>
+          {session?.user?.cliente && <div className={styles["produto-card-price"]}>{preco}</div>}
           <div className={styles["produto-card-action"]}>
             {Estoque > 0 && !session?.user?.admin && status === "authenticated" && (
               <Button

@@ -51,13 +51,13 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
           <Col md={4}>
             <Form.Group controlId="formCliente">
               <Form.Label>Cliente</Form.Label>
-              <Form.Control type="text" placeholder="Nome do cliente" value={dadosDoCliente.Cliente} readOnly />
+              <Form.Control type="text" placeholder="Nome do cliente" value={dadosDoCliente.Cliente} disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formRazao">
               <Form.Label>Razão Social</Form.Label>
-              <Form.Control type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} readOnly />
+              <Form.Control type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
@@ -77,7 +77,7 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
           <Col md={4}>
             <Form.Group controlId="formCGC">
               <Form.Label>CNPJ</Form.Label>
-              <Form.Control type="text" placeholder="CNPJ" value={dadosDoCliente.CGC} readOnly />
+              <Form.Control type="text" placeholder="CNPJ" value={dadosDoCliente.CGC} disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
