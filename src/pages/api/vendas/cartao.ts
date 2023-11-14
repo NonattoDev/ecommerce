@@ -99,6 +99,52 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       //! Se o Status é OK, ou seja, o cartao autorizou
       if (response.data.charges[0].payment_response.code === "20000") {
+        let { CodInd } = await db("Clientes").where("CodCli", CodCli).select("CodInd").first();
+
+        if (CodInd === null) {
+          CodInd = await db("indicado")
+            .select("CodInd")
+            .where("codseg", 1)
+            .andWhere(function () {
+              this.where("Inativo", "F").orWhereNull("Inativo");
+            })
+            .andWhere("statusFila", "FILA")
+            .orderBy("CodInd")
+            .first();
+
+          CodInd = CodInd.CodInd;
+
+          await db("Indicado").where("CodInd", CodInd).update({
+            statusFila: "OK",
+          });
+
+          if (!CodInd) {
+            await db("Indicado")
+              .where("codseg", 1)
+              .andWhere(function () {
+                this.where("Inativo", "F").orWhereNull("Inativo");
+              })
+              .update({
+                statusFila: "FILA",
+              });
+
+            CodInd = await db("indicado")
+              .select("CodInd", "Indicador", "Inativo")
+              .where("codseg", 1)
+              .andWhere(function () {
+                this.where("Inativo", "F").orWhereNull("Inativo");
+              })
+              .andWhere("statusFila", "FILA")
+              .orderBy("CodInd")
+              .first();
+
+            CodInd = CodInd.CodInd;
+
+            await db("Indicado").where("CodInd", CodInd).update({
+              statusFila: "OK",
+            });
+          }
+        }
         // - Chamada no banco que pega o codigo referente ao pagamento em BOLETO
         const { CodCartao } = await db("empresa").select("CodCartao").where("CodEmp", 1).first();
         const Pagamento = await response.data;
@@ -114,7 +160,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           CodPros: 0,
           CodEmp: 1,
           Dimensao: 2,
-          CodInd: 1, //
+          CodInd: CodInd || CodInd.CodInd, //
           Status: "VENDA",
           FIB: valorFrete > 0 ? 0 : 9,
           Ecommerce: "X",

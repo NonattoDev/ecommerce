@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import Loading from "@/components/Loading/Loading";
 import { format } from "date-fns";
+import MyVerticallyCenteredModal from "@/components/AuthModal/ModalAuth/authModal";
 
 function Produto() {
   const router = useRouter();
@@ -26,6 +27,11 @@ function Produto() {
   const { handleAdicionarProdutosAoCarrinho, produtosNoCarrinho } = useCarrinhoContext();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const handleOpenLoginModal = () => {
+    setShowLoginModal(true);
+  };
 
   const handleImagemErro = () => {
     setImagemCarregada(false);
@@ -237,10 +243,13 @@ function Produto() {
                               Modo Admin
                             </button>
                           ) : status === "unauthenticated" ? (
-                            <button disabled className={styles.produtoIndisponivel}>
-                              <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
-                              Logue para comprar
-                            </button>
+                            <>
+                              <button onClick={handleOpenLoginModal} className={styles.produtoIndisponivel}>
+                                <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />
+                                Logue para comprar
+                              </button>
+                              <MyVerticallyCenteredModal show={showLoginModal} onHide={() => setShowLoginModal(false)} />
+                            </>
                           ) : (
                             <button onClick={handleAdicionarCarrinho} className={styles.botaoComprar}>
                               <ShoppingCartIcon style={{ width: "30px", height: "50px", marginRight: "5px" }} />

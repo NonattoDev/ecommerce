@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import Modal from "react-bootstrap/Modal";
-import styles from "./authModal.module.css";
 
 import TabLogin from "./Tabs/Tabs";
 

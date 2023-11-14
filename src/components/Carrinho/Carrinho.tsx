@@ -96,7 +96,7 @@ function Carrinho() {
 
   return (
     <>
-      <div style={{ position: "relative", display: "inline-block" }}>
+      <div className={styles.estiloIconeFlutuante}>
         <FontAwesomeIcon icon={faCartShopping} onClick={handleShow} cursor={"pointer"} style={{ color: "blue", height: "30px" }} />
         <span
           style={{

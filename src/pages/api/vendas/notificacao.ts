@@ -38,8 +38,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             "9": "Retenção temporária", // ou qualquer outro status que represente
           };
 
-          console.log(result.transaction);
-
           const statusPagamento = statusPagamentos[result.transaction.status[0]] || "Status desconhecido";
           const pedidoPAG = parseInt(result.transaction.reference[0]);
           const dataPag = moment(result.transaction.lastEventDate[0]).format("DD/MM/YYYY HH:mm:ss");

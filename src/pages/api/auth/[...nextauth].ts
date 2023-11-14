@@ -57,9 +57,9 @@ export default NextAuth({
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_URL,
+  secret: process.env.NEXTAUTH_SECRET,
   jwt: {
-    secret: process.env.NEXTAUTH_URL,
+    secret: process.env.NEXTAUTH_SECRET,
     ...{ expires: 8200 }, // Define a expiração do token para 1 hora (1 hora * 60 minutos * 60 segundos)
   },
 });

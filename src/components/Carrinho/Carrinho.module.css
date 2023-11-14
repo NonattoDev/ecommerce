@@ -9,6 +9,14 @@
   transition: all 0.3s ease;
 }
 
+
+.estiloIconeFlutuante {
+  position: fixed;
+  right: 40px;
+  bottom: 30px;
+  z-index: 1000;
+}
+
 .itemCarrinho:hover {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);

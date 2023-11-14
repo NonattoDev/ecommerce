@@ -25,10 +25,11 @@ const CookieConsent = () => {
     <>
       <Offcanvas show={show} onHide={handleClose} placement="bottom">
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Consentimento de Cookies</Offcanvas.Title>
+          <Offcanvas.Title>Consentimento de Cookies e Privacidade</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          Nós usamos cookies para melhorar sua experiência. Ao continuar a visitar este site, você aceita o uso de cookies.
+          Ao continuar usando nosso site, você concorda com o uso de cookies para melhorar sua experiência de navegação e com nossa política de privacidade, que assegura a proteção de seus dados
+          pessoais.
           <div className="mt-3">
             <Button variant="primary" onClick={handleAccept}>
               Aceitar Cookies

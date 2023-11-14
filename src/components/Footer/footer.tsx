@@ -1,6 +1,14 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import axiosCliente from "@/services/axiosCliente";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import axios from "axios";
+
+const containerStyle = {
+  borderRadius: "10px",
+  width: "300px",
+  height: "300px",
+};
 
 interface Informacoes {
   Empresa: string;
@@ -16,10 +24,22 @@ interface Informacoes {
 }
 const Footer = () => {
   const [informacoes, setInformacoes] = useState<Informacoes[]>([]);
+  const [mapPosition, setMapPosition] = useState({ lat: -23.5505, lng: -46.6333 }); // Coordenadas padrão (São Paulo)
 
   useEffect(() => {
-    const infoProdutos = axiosCliente.get("/empresa").then((response) => {
-      setInformacoes(response.data);
+    axiosCliente.get("/empresa").then(async (response) => {
+      const data = response.data;
+      setInformacoes(data);
+
+      if (data.length > 0) {
+        const enderecoCompleto = `${data[0].Endereco}, ${data[0].bairro}, ${data[0].Cidade}, ${data[0].Estado}`;
+        try {
+          const { data } = await axios.post("/api/geocode", { address: enderecoCompleto });
+          setMapPosition(data); // Atualiza o estado com as novas coordenadas
+        } catch (error) {
+          console.error("Erro ao obter coordenadas:", error);
+        }
+      }
     });
   }, []);
 
@@ -29,28 +49,36 @@ const Footer = () => {
         <div className="row">
           <div className="col-12 col-md-6">
             {informacoes.map((info) => (
-              <div key={info.Empresa}>
-                <h5>{info.Empresa}</h5>
-                <p>Razão: {info.Razao}</p>
-                <p>Endereço: {info.Endereco}</p>
-                <p>Bairro: {info.bairro}</p>
-                <p>Cidade: {info.Cidade}</p>
-                <p>Estado: {info.Estado}</p>
-                <p>CEP: {info.Cep}</p>
-                <p>Telefone: {info.Tel}</p>
-                <p>Telefone 2: {info.tel2}</p>
-                <p>Email: {info.Email}</p>
+              <div key={info.Empresa} className="row mb-3">
+                <div className="col-6">
+                  <h5>{info.Empresa}</h5>
+                  <p>Razão: {info.Razao}</p>
+                  <p>Endereço: {info.Endereco}</p>
+                  <p>Bairro: {info.bairro}</p>
+                  <p>Cidade: {info.Cidade}</p>
+                </div>
+                <div className="col-6">
+                  <br />
+                  <p>Estado: {info.Estado}</p>
+                  <p>CEP: {info.Cep}</p>
+                  <p>Telefone: {info.Tel}</p>
+                  <p>Telefone 2: {info.tel2}</p>
+                  <p>Email: {info.Email}</p>
+                </div>
               </div>
             ))}
           </div>
+
           <div className="col-12 col-md-6 d-flex justify-content-md-end">
-            <div className="d-flex align-items-center">
-              <svg style={{ width: "20px", height: "20px", margin: "0 10px" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                {/* SVG Path */}
-              </svg>
-              <Link href="https://softlineinfo.com.br" style={{ textDecoration: "none", color: "#fff" }}>
+            <div>
+              <Link href="https://softlineinfo.com.br" style={{ textDecoration: "none", color: "#fff", textAlign: "center" }}>
                 <span>Site produzido por Soft Line Sistemas</span>
               </Link>
+              <LoadScript googleMapsApiKey="AIzaSyAYSb2k0Y8sZzZNFOgsDwNCAlw4AALzKZY">
+                <GoogleMap mapContainerStyle={containerStyle} center={mapPosition} zoom={18}>
+                  <Marker position={mapPosition} />
+                </GoogleMap>
+              </LoadScript>
             </div>
           </div>
         </div>

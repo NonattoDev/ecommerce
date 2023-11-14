@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import db from "@/db/db";
 import { GetServerSideProps } from "next";
 import moment from "moment";
+import styles from "./MeuPerfil.module.css";
 
 const MeuPerfil = ({ dadosDoCliente }: any) => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
   };
 
   return (
-    <Container>
+    <Container className={styles.Container}>
       <h2>
         <FontAwesomeIcon icon={faUser} style={{ width: "30px", color: "blue" }} />
         Meu Perfil

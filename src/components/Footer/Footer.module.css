@@ -1,0 +1,26 @@
+/* Footer.module.css */
+
+.footer {
+    background-color: #28a745;
+    /* Cor do fundo */
+}
+
+.footerContainer {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.infoSection {
+    /* Estilos para a seção de informações */
+}
+
+.infoColumn {
+    margin-bottom: 20px;
+}
+
+.infoBlock {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 5px;
+}
