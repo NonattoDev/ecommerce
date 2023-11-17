@@ -3,7 +3,6 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import styles from "./RegistrationForm.module.css";
-import axiosCliente from "@/services/axiosCliente";
 import { toast } from "react-toastify";
 // @ts-ignore
 import InputMask from "react-input-mask";
@@ -41,8 +40,8 @@ const RegistrationForm = () => {
     if (formValues.complementoEndereco.length > 30) return toast.error("O campo complemento de endereço deve ter no máximo 30 caracteres");
     setLoading(true);
 
-    const response = axiosCliente
-      .post("/usuarios/cadastro", formValues)
+    const response = axios
+      .post("/api/usuario/cadastro", formValues)
       .then((response) => {
         if (response.status === 200) {
           toast.success("Conta criada com sucesso!");
@@ -64,9 +63,7 @@ const RegistrationForm = () => {
         }
       })
       .catch((error) => {
-        if (error.response.data.message) {
-          return toast.error(error.response.data.message);
-        }
+        if (error?.response?.data) return toast.error(error.response.data.error);
       })
       .finally(() => {
         setLoading(false);
@@ -196,10 +193,10 @@ const RegistrationForm = () => {
         <Form.Label className={styles.label}>(IE) - Inscrição Estadual </Form.Label>
         <Form.Control type="text" name="ie" value={formValues.ie} onChange={handleChange} className={styles.input} required={true} />
       </Form.Group>
-        <Form.Group controlId="telent2">
-          <Form.Label className={styles.label}>Whatsapp</Form.Label>
-          <Form.Control as={InputMask} mask="(99)99999-9999" maskChar={null} value={formValues.telent2} onChange={handleChange} type="text" name="telent2" className={styles.input} required={true} />
-        </Form.Group>
+      <Form.Group controlId="telent2">
+        <Form.Label className={styles.label}>Whatsapp</Form.Label>
+        <Form.Control as={InputMask} mask="(99)99999-9999" maskChar={null} value={formValues.telent2} onChange={handleChange} type="text" name="telent2" className={styles.input} required={true} />
+      </Form.Group>
       <Form.Group controlId="endereco">
         <Form.Label className={styles.label}>Endereço</Form.Label>
         <Form.Control type="text" name="endereco" value={formValues.endereco} onChange={handleChange} className={styles.input} required={true} />

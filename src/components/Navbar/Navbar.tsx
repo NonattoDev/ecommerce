@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import axiosCliente from "@/services/axiosCliente";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import styles from "./navbar.module.css";
 import { Badge } from "react-bootstrap";
+import { set } from "date-fns";
 
 interface Grupo {
   CodGrp: number;
@@ -21,17 +21,17 @@ export default function NavbarSite() {
   const [gruposTop, setGruposTop] = useState<Grupo[]>([]);
 
   useEffect(() => {
-    axios
-      .all([axiosCliente.get<Grupo[]>("produtos/grupos"), axiosCliente.get<Grupo[]>("produtos/grupos/top")])
-      .then(
-        axios.spread((responseGrupos, responseGruposTop) => {
-          setGrupo(responseGrupos.data);
-          setGruposTop(responseGruposTop.data);
-        })
-      )
-      .catch((error) => {
-        console.error("Erro ao obter os grupos:", error);
-      });
+    const obterGrupos = async () => {
+      try {
+        const respostaGruposTop = await axios.get("/api/produtos/topgrupos");
+
+        setGruposTop(respostaGruposTop.data.gruposDeProdutos);
+        setGrupo(respostaGruposTop.data.grupos);
+      } catch (error) {
+        return null;
+      }
+    };
+    obterGrupos();
   }, []);
 
   return (

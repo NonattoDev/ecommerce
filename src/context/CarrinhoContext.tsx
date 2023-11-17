@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
 import { Produto } from "@/Types/Produto";
-import axiosCliente from "@/services/axiosCliente";
 import { getSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 interface CarrinhoContextData {
   produtosNoCarrinho: Produto[];
@@ -25,7 +25,7 @@ export const CarrinhoProvider: React.FC<{ children: ReactNode }> = ({ children }
   useEffect(() => {
     async function fetchValorMinimo() {
       try {
-        const response = await axiosCliente.get("/empresa/compras");
+        const response = await axios.get("/api/empresa/frete");
         setValorMinimoFreteGratis(response.data.freteGratis);
       } catch (error) {
         console.error("Erro ao obter o valor mínimo:", error);

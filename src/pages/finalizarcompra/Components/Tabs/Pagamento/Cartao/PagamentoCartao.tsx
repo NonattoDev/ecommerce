@@ -1,6 +1,5 @@
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
 import { EnderecoContext } from "@/context/EnderecoContexto";
-import axiosCliente from "@/services/axiosCliente";
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { Form, InputGroup, Row, Col, Button, Spinner } from "react-bootstrap";
 import { toast } from "react-toastify";
@@ -198,7 +197,7 @@ const Cartao = () => {
   useEffect(() => {
     if (dadosCartao.numeroCartao.length === 16 || dadosCartao.numeroCartao.length === 15) {
       const fetchParcelas = async () => {
-        const resposta = await axiosCliente.get("/pedido/calculoJurosCartao/", {
+        const resposta = await axios.get("/api/vendas/calculojuroscartao", {
           params: { totalAmount: Math.round(calcularTotalCompraComFrete() * 100), numeroCartao: dadosCartao.numeroCartao.substring(0, 6), parcelaSelecionada: parcelaSelecionada },
         });
 

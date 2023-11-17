@@ -1,10 +1,10 @@
 import Loading from "@/components/Loading/Loading";
-import axiosCliente from "@/services/axiosCliente";
 import Link from "next/link";
 import React, { ChangeEvent, useState } from "react";
 import { Modal, Form, Card } from "react-bootstrap";
 import { toast } from "react-toastify";
 import style from "./SearchBar.module.css";
+import axios from "axios";
 
 interface Product {
   CodPro: number;
@@ -40,7 +40,7 @@ const SearchBar = () => {
   const handleSearch = async (query: string) => {
     setLoading(true); // Sempre inicie uma pesquisa com o estado de loading ativado
     try {
-      const response = await axiosCliente.get(`/produtos/search/${query}`);
+      const response = await axios.get(`/api/produtos/search/${query}`);
       setResult(response.data);
     } catch (error: any) {
       if (error.response) {

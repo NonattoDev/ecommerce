@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import axiosCliente from "@/services/axiosCliente";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import axios from "axios";
 
@@ -27,7 +26,7 @@ const Footer = () => {
   const [mapPosition, setMapPosition] = useState({ lat: -23.5505, lng: -46.6333 }); // Coordenadas padrão (São Paulo)
 
   useEffect(() => {
-    axiosCliente.get("/empresa").then(async (response) => {
+    axios.get("/api/empresa/dadosempresa").then(async (response) => {
       const data = response.data;
       setInformacoes(data);
 

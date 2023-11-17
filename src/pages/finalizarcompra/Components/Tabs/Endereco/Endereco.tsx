@@ -1,7 +1,6 @@
 import { Button, Card, Form } from "react-bootstrap";
 import { ChangeEvent, useContext, useState } from "react";
 import { useEffect } from "react";
-import axiosCliente from "@/services/axiosCliente";
 import { toast } from "react-toastify";
 import axios from "axios";
 //@ts-ignore
@@ -20,7 +19,7 @@ const Endereco = ({ id }: { id: number }) => {
     setRedefinir(false);
     const fetchEnderecos = async () => {
       try {
-        const response = await axiosCliente.get(`/usuarios/endereco/${id}`);
+        const response = await axios.get(`/api/usuario/endereco/${id}`);
         setEndereco(response.data.enderecoPrincipal);
         setEnderecosCadastrado(response.data.enderecosEntrega);
       } catch (error: any) {
@@ -61,7 +60,7 @@ const Endereco = ({ id }: { id: number }) => {
     if (!endereco.Numero) return toast.warn("Informe o Número");
 
     try {
-      const response = await axiosCliente.post(`usuarios/endereco/${id}`, endereco);
+      const response = await axios.post(`/api/usuario/endereco/${id}`, endereco);
       setRedefinir(true);
       setCepDinamico("");
       return toast.success(`Novo endereço cadastrado`);

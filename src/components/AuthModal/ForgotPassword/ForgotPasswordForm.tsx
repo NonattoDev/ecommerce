@@ -2,8 +2,8 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
-import axiosCliente from "@/services/axiosCliente";
 import { FloatingLabel } from "react-bootstrap";
+import axios from "axios";
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
@@ -19,8 +19,8 @@ const ForgotPasswordForm = () => {
       return toast.info("Informe um email!");
     }
 
-    axiosCliente
-      .post("/usuarios/recuperar-senha", { email })
+    axios
+      .post("/api/usuario/recuperarsenha", { email })
       .then((response) => {
         if (response.status === 200) {
           toast.success("Email de recuperação enviado, cheque seu email :)");

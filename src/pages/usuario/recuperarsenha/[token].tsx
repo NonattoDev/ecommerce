@@ -1,4 +1,4 @@
-import axiosCliente from "@/services/axiosCliente";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Container, Card, Form, Button } from "react-bootstrap";
@@ -15,9 +15,11 @@ export default function PasswordReset() {
     const verifyToken = async () => {
       try {
         if (typeof token !== "undefined") {
-          const response = await axiosCliente.post(`/usuarios/recuperar-senha/${token}`);
+          const response = await axios.get(`/api/usuario/recuperarsenha/${token}`);
           if (response.status === 200) {
             setTokenValid(true);
+          } else {
+            setTokenValid(false);
           }
         }
       } catch (error: any) {
@@ -35,7 +37,7 @@ export default function PasswordReset() {
     try {
       if (password !== confirmPassword) return toast.error("As senhas precisam ser iguais.");
       if (password.length <= 0 || password.length < 8) return toast.info("A senha precisa ter ao menos 8 digitos!");
-      const response = await axiosCliente.post(`/usuarios/alterarsenha/`, { token, password });
+      const response = await axios.post(`/api/usuario/alterarsenha/`, { token, password });
       if (response.status === 200) {
         toast.success(response.data);
         setPassword("");

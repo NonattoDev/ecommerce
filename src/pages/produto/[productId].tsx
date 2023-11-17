@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import axiosCliente from "@/services/axiosCliente";
 import Container from "react-bootstrap/Container";
 import { Card, Col, Row } from "react-bootstrap";
 import styles from "./Produto.module.css";
@@ -15,6 +14,7 @@ import { toast } from "react-toastify";
 import Loading from "@/components/Loading/Loading";
 import { format } from "date-fns";
 import MyVerticallyCenteredModal from "@/components/AuthModal/ModalAuth/authModal";
+import axios from "axios";
 
 function Produto() {
   const router = useRouter();
@@ -41,7 +41,7 @@ function Produto() {
     const fetchProduto = async () => {
       setLoading(true);
       try {
-        const response = await axiosCliente.get<ResponseData>(`/produtos/produtoEspecifico/${productId}`);
+        const response = await axios.get<ResponseData>(`/api/produtos/produto/${productId}`);
 
         if (!response.data.produto) {
           toast.warn("produto não encontrado");

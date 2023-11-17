@@ -4,10 +4,10 @@ import ProdutoCard from "@/components/Produto/produto";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import axiosCliente from "@/services/axiosCliente";
 import Pagination from "@/components/Pagination/Pagination";
 import styles from "./grupo.module.css";
 import NavbarSite from "@/components/Navbar/Navbar";
+import axios from "axios";
 
 interface Produto {
   CodPro: number;
@@ -36,7 +36,7 @@ export default function Grupo() {
 
   const obterProdutosPaginados = async (pagina: number, grupo: any) => {
     try {
-      const resposta = await axiosCliente.get(`/produtos/grupo/?grupo=${grupo}&pagina=${pagina}&itensPorPagina=20`);
+      const resposta = await axios.get(`/api/produtos/grupo/?grupo=${grupo}&pagina=${pagina}&itensPorPagina=20`);
 
       const paginas = Math.ceil(resposta.data.qtdProdutos / 20);
 

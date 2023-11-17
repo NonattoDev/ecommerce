@@ -1,7 +1,7 @@
-import axiosCliente from "@/services/axiosCliente";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { DefaultSession } from "next-auth";
+import axios from "axios";
 
 declare module "next-auth" {
   interface Session {
@@ -22,7 +22,7 @@ export default NextAuth({
         password: { label: "Senha", type: "password" },
       },
       async authorize(credentials, req) {
-        let response = await axiosCliente.post("/usuarios/login", credentials);
+        let response = await axios.post(process.env.NEXTAUTH_URL + "/api/usuario/login", credentials);
         const user = await response.data;
         if (user) {
           return user;
