@@ -128,10 +128,19 @@ const Endereco = ({ id }: { id: number }) => {
           <Form>
             <Form.Group controlId="CEP">
               <Form.Label>CEP</Form.Label>
-              <InputMask mask="99999-999" maskChar="" value={cepDinamico} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCepDinamico(e.target.value)} onBlur={fetchCEP}>
-                {(inputProps: any) => <Form.Control type="text" name="CEP" {...inputProps} />}
-              </InputMask>
+              <Form.Control
+                as={InputMask}
+                mask="99999-999"
+                maskChar={null}
+                value={cepDinamico}
+                onChange={(e) => setCepDinamico(e.target.value)}
+                onBlur={fetchCEP}
+                type="text"
+                name="CEP"
+                required={true}
+              />
             </Form.Group>
+
             <Form.Group controlId="Endereco">
               <Form.Label>Endereço</Form.Label>
               <Form.Control type="text" name="Endereco" value={endereco?.Endereco || ""} onChange={handleInputChange} />
@@ -150,16 +159,12 @@ const Endereco = ({ id }: { id: number }) => {
             </Form.Group>
             <Form.Group controlId="Tel">
               <Form.Label>Telefone</Form.Label>
-              <InputMask mask="(99)99999-9999" maskChar="" value={endereco?.Tel || ""} onChange={handleInputChange}>
-                {(inputProps: any) => <Form.Control type="text" name="Tel" {...inputProps} />}
-              </InputMask>
+              <Form.Control as={InputMask} mask="(99)99999-9999" maskChar={null} value={endereco?.Tel || ""} onChange={handleInputChange} type="text" name="Tel" required={true} />
             </Form.Group>
 
             <Form.Group controlId="Tel2">
               <Form.Label>Telefone 2</Form.Label>
-              <InputMask mask="(99) 9999-9999" maskChar="" value={endereco?.Tel2 || ""} onChange={handleInputChange} required>
-                {(inputProps: any) => <Form.Control type="text" name="Tel2" {...inputProps} />}
-              </InputMask>
+              <Form.Control as={InputMask} mask="(99) 9999-9999" maskChar={null} value={endereco?.Tel2 || ""} onChange={handleInputChange} type="text" name="Tel2" required={true} />
             </Form.Group>
 
             <Form.Group controlId="CampoLivre">

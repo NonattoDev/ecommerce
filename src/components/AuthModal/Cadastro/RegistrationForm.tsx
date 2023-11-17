@@ -21,7 +21,6 @@ const RegistrationForm = () => {
     estado: "",
     cep: "",
     email: "",
-    chave: "",
     complementoEndereco: "",
     campoLivre: "",
     cgc: "",
@@ -52,7 +51,6 @@ const RegistrationForm = () => {
             cgc: "",
             ie: "",
             email: "",
-            chave: "",
             endereco: "",
             numero: "",
             bairro: "",
@@ -194,18 +192,14 @@ const RegistrationForm = () => {
         <Form.Label className={styles.label}>Email</Form.Label>
         <Form.Control autoComplete="true" type="email" name="email" value={formValues.email} onChange={handleChange} className={styles.input} required={true} />
       </Form.Group>
-      <Form.Group controlId="chave">
-        <Form.Label className={styles.label}>Crie uma senha de acesso</Form.Label>
-        <Form.Control autoComplete="true" type="password" name="chave" value={formValues.chave} onChange={handleChange} className={styles.input} required={true} />
-      </Form.Group>
       <Form.Group controlId="ie">
         <Form.Label className={styles.label}>(IE) - Inscrição Estadual </Form.Label>
         <Form.Control type="text" name="ie" value={formValues.ie} onChange={handleChange} className={styles.input} required={true} />
       </Form.Group>
-      <Form.Group controlId="telent2">
-        <Form.Label className={styles.label}>Whatsapp</Form.Label>
-        <Form.Control as={InputMask} mask="(99)99999-9999" maskChar={null} value={formValues.telent2} onChange={handleChange} type="text" name="telent2" className={styles.input} required={true} />
-      </Form.Group>
+        <Form.Group controlId="telent2">
+          <Form.Label className={styles.label}>Whatsapp</Form.Label>
+          <Form.Control as={InputMask} mask="(99)99999-9999" maskChar={null} value={formValues.telent2} onChange={handleChange} type="text" name="telent2" className={styles.input} required={true} />
+        </Form.Group>
       <Form.Group controlId="endereco">
         <Form.Label className={styles.label}>Endereço</Form.Label>
         <Form.Control type="text" name="endereco" value={formValues.endereco} onChange={handleChange} className={styles.input} required={true} />

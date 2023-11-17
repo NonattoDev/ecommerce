@@ -2,7 +2,6 @@ import db from "@/db/db";
 import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
-import xml2js from "xml2js";
 import transporter from "@/services/nodeMailer";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
