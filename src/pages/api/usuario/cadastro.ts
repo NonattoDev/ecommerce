@@ -57,8 +57,6 @@ export default async function cadastrarUsuario(req: NextApiRequest, res: NextApi
       data_expiracao: new Date(Date.now() + 24 * 60 * 60 * 1000), // Expira em 24 horas
     });
 
-    // Configuração do nodemailer e envio de e-mail (ajuste conforme necessário)
-    // ...
     const mailOptions = {
       from: {
         name: "Soft Line Sistemas",
@@ -87,14 +85,18 @@ export default async function cadastrarUsuario(req: NextApiRequest, res: NextApi
     `,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error(error);
-        // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
-      } else {
-        console.log("E-mail enviado com sucesso:");
-      }
-    });
+    try {
+      transporter.sendMail(mailOptions, (error) => {
+        if (error) {
+          console.error(error);
+          // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
+        } else {
+          console.log("E-mail enviado com sucesso:");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
     return res.json("ok");
   } catch (error: any) {
