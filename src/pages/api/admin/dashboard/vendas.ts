@@ -17,7 +17,7 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
             .where("requisi1.Pedido", "=", pedido.Pedido);
 
           // Terceira consulta: obter as informações do cliente
-          const clienteInfo = await db("clientes").select("Cliente", "CGC").where("CodCli", "=", pedido.CodCli).first(); // Supondo que haja apenas um registro por CodCli
+          const clienteInfo = await db("clientes").select("Cliente", "CGC").where("CodCli", pedido.CodCli).first(); // Supondo que haja apenas um registro por CodCli
 
           // Formatar a data do pedido usando moment
           const dataFormatada = moment(pedido.Data).format("DD/MM/YYYY");
@@ -30,6 +30,7 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
           };
         })
       );
+      console.log(vendas[0].Produtos);
 
       return res.status(200).json(vendas);
     } catch (error: any) {

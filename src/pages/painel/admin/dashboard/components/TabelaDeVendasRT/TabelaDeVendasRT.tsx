@@ -33,6 +33,8 @@ interface Venda {
 const useFetchVendas = () => {
   return useQuery<Venda[], Error>("vendas", async () => {
     const { data } = await axios.get<Venda[]>("/api/admin/dashboard/vendas");
+    console.log(data);
+
     return data;
   });
 };
@@ -92,7 +94,7 @@ const TabelaDeVendasRT = () => {
             <>
               <tr key={venda.Pedido}>
                 <td>{venda.Pedido}</td>
-                <td style={{ backgroundColor: getStatusColor(venda.statusPagamento) }}>{venda.statusPagamento}</td>
+                <td style={{ backgroundColor: getStatusColor(venda.statusPagamento ?? "") }}>{venda.statusPagamento}</td>
                 <td>{venda.Cliente.Cliente}</td>
                 <td>{venda.Cliente.CGC}</td>
                 <td>{venda.Data}</td>
