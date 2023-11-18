@@ -37,7 +37,6 @@ export default function LoginForm() {
           email,
           password,
           ip,
-          callbackUrl: "/",
           redirect: false,
         })
           .then((response) => {
