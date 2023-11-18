@@ -7,6 +7,8 @@ const containerStyle = {
   borderRadius: "10px",
   width: "300px",
   height: "300px",
+  maxWidth: "100%",
+  maxHeigth: "100%",
 };
 
 interface Informacoes {
