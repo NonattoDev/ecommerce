@@ -72,7 +72,7 @@ export default async function cadastrarUsuario(req: NextApiRequest, res: NextApi
         <p>Estamos emocionados por ter você conosco.</p>
         <p>Antes de começar a explorar o S-Commerce, precisamos que você confirme sua conta. Isso garante a segurança e a autenticidade do seu perfil.</p>
         <p>Clique no link abaixo para confirmar sua conta:</p>
-        <a href="http://localhost:3000/criar-senha/${tokenDeConfirmacao}" style="color: #27ae60;">Confirmar Conta</a>
+        <a href="${process.env.NEXTAUTH_URL}/criar-senha/${tokenDeConfirmacao}" style="color: #27ae60;">Confirmar Conta</a>
         <p>Após a confirmação, você poderá:</p>
         <ul>
           <li>Explorar uma ampla gama de produtos</li>
