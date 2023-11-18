@@ -9,7 +9,7 @@ const db = knex({
     database: process.env.DB_NAME,
     port: parseInt(process.env.DB_PORT || "1433", 10),
     options: {
-      encrypt: false, // Caso esteja utilizando uma conexão segura
+      encrypt: true, // Caso esteja utilizando uma conexão segura
       trustServerCertificate: true,
     },
   },
