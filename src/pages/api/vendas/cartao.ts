@@ -65,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               postal_code: CEPFormatado,
             },
           },
-          notification_urls: ["http://192.168.1.3:3001/pedido/notificacoespag"],
+          notification_urls: [`${process.env.WEBHOOK_ROTA}/api/vendas/notificacao`],
           charges: [
             {
               reference_id: valorAtualizado,

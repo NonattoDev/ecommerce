@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
         reference_id: valorAtualizado,
         items: formattedProducts,
-        notification_urls: ["http://10.71.0.119:3000/api/vendas/boleto"],
+        notification_urls: [`${process.env.WEBHOOK_ROTA}/api/vendas/notificacao`],
         charges: [
           {
             reference_id: valorAtualizado,
