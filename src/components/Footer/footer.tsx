@@ -2,6 +2,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import axios from "axios";
+import { Col, Container, Row } from "react-bootstrap";
 
 const containerStyle = {
   borderRadius: "10px",
@@ -46,31 +47,31 @@ const Footer = () => {
 
   return (
     <footer className="bg-success text-light py-4">
-      <div className="container">
-        <div className="row">
-          <div className="col-12 col-md-6">
+      <Container fluid>
+        <Row>
+          <Col xs={12} md={6}>
             {informacoes.map((info) => (
-              <div key={info.Empresa} className="row mb-3">
-                <div className="col-6">
+              <Row key={info.Empresa} className="mb-3">
+                <Col xs={7} md={6}>
                   <h5>{info.Empresa}</h5>
                   <p>Razão: {info.Razao}</p>
                   <p>Endereço: {info.Endereco}</p>
                   <p>Bairro: {info.bairro}</p>
                   <p>Cidade: {info.Cidade}</p>
-                </div>
-                <div className="col-6">
+                </Col>
+                <Col xs={6}>
                   <br />
                   <p>Estado: {info.Estado}</p>
                   <p>CEP: {info.Cep}</p>
                   <p>Telefone: {info.Tel}</p>
                   <p>Telefone 2: {info.tel2}</p>
                   <p>Email: {info.Email}</p>
-                </div>
-              </div>
+                </Col>
+              </Row>
             ))}
-          </div>
+          </Col>
 
-          <div className="col-12 col-md-6 d-flex justify-content-md-end">
+          <Col xs={12} md={6} className="d-flex justify-content-md-end">
             <div>
               <Link href="https://softlineinfo.com.br" style={{ textDecoration: "none", color: "#fff", textAlign: "center" }}>
                 <span>Site produzido por Soft Line Sistemas</span>
@@ -81,9 +82,9 @@ const Footer = () => {
                 </GoogleMap>
               </LoadScript>
             </div>
-          </div>
-        </div>
-      </div>
+          </Col>
+        </Row>
+      </Container>
     </footer>
   );
 };
