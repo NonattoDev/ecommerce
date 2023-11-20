@@ -151,17 +151,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Definindo o enum para os estados de pagamento
         enum StatusPagamento {
-          PAID = "Pago",
-          AUTHORIZED = "Autorizado",
-          DECLINED = "Recusado",
-          CANCELED = "Cancelado",
+          paid = "Pago",
+          authorized = "Autorizado",
+          declined = "Recusado",
+          canceled = "Cancelado",
         }
 
         const statusPagamentoMap = {
-          PAID: StatusPagamento.PAID,
-          AUTHORIZED: StatusPagamento.AUTHORIZED,
-          DECLINED: StatusPagamento.DECLINED,
-          CANCELED: StatusPagamento.CANCELED,
+          paid: StatusPagamento.paid,
+          authorized: StatusPagamento.authorized,
+          declined: StatusPagamento.declined,
+          canceled: StatusPagamento.canceled,
         };
         // 3. Inserir em Requisi
         const inserirVendaRequisi = await db("requisi").insert({
