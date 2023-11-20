@@ -65,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               postal_code: CEPFormatado,
             },
           },
-          notification_urls: [`${process.env.VERCEL_URL}/api/vendas/notificacao`],
+          notification_urls: [`${process.env.NEXTAUTH_URL}/api/vendas/notificacao`],
           charges: [
             {
               reference_id: valorAtualizado,

@@ -22,7 +22,7 @@ export default NextAuth({
         password: { label: "Senha", type: "password" },
       },
       async authorize(credentials, req) {
-        let response = await axios.post(process.env.VERCEL_URL + "/api/usuario/login", credentials);
+        let response = await axios.post(process.env.NEXTAUTH_URL + "/api/usuario/login", credentials);
         const user = await response.data;
         if (user) {
           return user;
@@ -35,7 +35,7 @@ export default NextAuth({
   callbacks: {
     redirect: async ({ url, baseUrl }) => {
       // Essa aqui é a Base URL do NEXTAUTH, ou seja, se caso vc redirecionar o usuário para '/', será a baseURL que ele irá buscar, fiz isso para rede interna
-      return (baseUrl = process.env.VERCEL_URL ?? "");
+      return (baseUrl = process.env.NEXTAUTH_URL ?? "");
     },
 
     jwt: async ({ token, user }) => {
