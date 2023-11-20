@@ -12,40 +12,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let ultimaVenda = await db("numero").select("Venda").first();
     let valorAtualizado = ultimaVenda.Venda + 1; // Adicione 1 ao valor da última venda
 
-    const options = {
-      method: "POST",
-      url: "https://sandbox.api.pagseguro.com/orders",
-      headers: {
-        accept: "application/json",
-        Authorization: process.env.PAGSEGURO_BEARER_TOKEN,
-        "content-type": "application/json",
-      },
-      data: {
-        customer: {
-          name: dadosPessoais.name,
-          email: dadosPessoais.email.toLowerCase(),
-          tax_id: dadosPessoais.cpfCnpj.replace(/[.-]/g, ""),
-          phones: [{ country: "55", area: dadosTelefone.area, number: dadosTelefone.number, type: "MOBILE" }],
-        },
-        shipping: {
-          address: {
-            street: endereco.Endereco,
-            number: endereco.Numero,
-            complement: endereco.ComplementoEndereco,
-            locality: endereco.Bairro,
-            city: endereco.Cidade,
-            region_code: endereco.Estado,
-            country: "BRA",
-            postal_code: endereco.CEP.replace("-", ""),
-          },
-        },
-        reference_id: valorAtualizado,
-        items: formattedProducts,
-        qr_codes: [{ amount: { value: Math.round(valorCompra * 100) }, expiration_date: moment().add(10, "minutes").format() }],
-        notification_urls: [`${process.env.WEBHOOK_ROTA}/api/vendas/notificacao`],
-      },
-    };
     try {
+      const options = {
+        method: "POST",
+        url: "https://sandbox.api.pagseguro.com/orders",
+        headers: {
+          accept: "application/json",
+          Authorization: process.env.PAGSEGURO_BEARER_TOKEN,
+          "content-type": "application/json",
+        },
+        data: {
+          customer: {
+            name: dadosPessoais.name,
+            email: dadosPessoais.email.toLowerCase(),
+            tax_id: dadosPessoais.cpfCnpj.replace(/[.-]/g, ""),
+            phones: [{ country: "55", area: dadosTelefone.area, number: dadosTelefone.number, type: "MOBILE" }],
+          },
+          shipping: {
+            address: {
+              street: endereco.Endereco,
+              number: endereco.Numero,
+              complement: endereco.ComplementoEndereco,
+              locality: endereco.Bairro,
+              city: endereco.Cidade,
+              region_code: endereco.Estado,
+              country: "BRA",
+              postal_code: endereco.CEP.replace("-", ""),
+            },
+          },
+          reference_id: valorAtualizado,
+          items: formattedProducts,
+          qr_codes: [{ amount: { value: Math.round(valorCompra * 100) }, expiration_date: moment().add(10, "minutes").format() }],
+          notification_urls: [`${process.env.NEXTAUTH_URL}/api/vendas/notificacao`],
+        },
+      };
       const response = await axios.post(options.url, options.data, {
         headers: options.headers,
       });
@@ -189,7 +189,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(200).json({ dadosPix: response.data.qr_codes[0], idVenda: valorAtualizado, idCharge: response.data.id });
       }
     } catch (error: any) {
-      return res.json(error);
+      console.log("Erro ao gerar o pagamento:", error);
+      return res.json(error.response.data);
     }
   }
 
@@ -204,7 +205,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       if (!response?.data?.charges?.[0]) {
-        console.log("Pagamento ainda não realizado");
         return res.status(404).json({ message: "Pagamento ainda não realizado" });
       }
 
@@ -244,8 +244,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          console.error(error);
-          // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
         } else {
           console.log("E-mail enviado com sucesso:");
         }
@@ -253,7 +251,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.json(response.data.charges[0]);
     } catch (error: any) {
-      console.error("Erro ao verificar o pagamento:", error);
+      console.error("Erro ao verificar o pagamento:", error.response.data);
       return res.status(500).json({ message: "Erro interno do servidor" });
     }
   }

@@ -21,7 +21,7 @@ export default async function calculoJurosCartao(req: NextApiRequest, res: NextA
         params: {
           payment_methods: "CREDIT_CARD",
           value: totalAmount,
-          max_installments: 1,
+          max_installments: process.env.PAGSEGURO_MAX_INSTALLMENTS,
           max_installments_no_interest: 0,
           credit_card_bin: numeroCartao,
         },

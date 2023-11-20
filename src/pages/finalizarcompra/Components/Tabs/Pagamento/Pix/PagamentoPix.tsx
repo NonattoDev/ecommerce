@@ -117,10 +117,9 @@ const PagamentoPix = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     setLoading(true);
     try {
-      const resposta = await axios.post("/api/vendas/pix", {
+      const resposta = await axios.post("/api/vendas/pix/", {
         dadosPessoais,
         dadosTelefone,
         endereco,
@@ -152,9 +151,6 @@ const PagamentoPix = () => {
 
       return toast.error(error.message);
     }
-    // Aqui você pode chamar a API para processar os dados do formulário
-
-    // Você pode combinar os dadosPessoais e dadosTelefone se precisar
   };
 
   const copiarTexto = (texto: string) => {

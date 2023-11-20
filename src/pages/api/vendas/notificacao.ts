@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (notificationCode && notificationType) {
       let credenciais = {
-        email: "robsonnonatoiii@gmail.com",
+        email: process.env.PAGSEGURO_EMAIL,
         token_api: process.env.PAGSEGURO_TOKEN_API,
       };
 
