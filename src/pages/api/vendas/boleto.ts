@@ -91,6 +91,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const { CodBoleto } = await db("empresa").select("CodBoleto").where("CodEmp", 1).first();
 
+        // Definindo o enum para os estados de pagamento
+        enum StatusPagamento {
+          WAITING = "Aguardando",
+          PAID = "Pago",
+          CANCELED = "Cancelado",
+        }
+
+        const statusPagamentoMap = {
+          PAID: StatusPagamento.PAID,
+          WAITING: StatusPagamento.WAITING,
+          CANCELED: StatusPagamento.CANCELED,
+        };
+
         // 3. Inserir em Requisi
         const inserirVendaRequisi = await db("requisi").insert({
           Pedido: valorAtualizado,
@@ -112,7 +125,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           Data1: response.data.charges[0].payment_method.boleto.due_date,
           Parc1: 1,
           //FAZER AS MUDANÇAS DE ACORDO FORMA DE PAGAMENTO
-          StatusPagamento: response.data.charges[0].status,
+          StatusPagamento: statusPagamentoMap[response.data.charges[0].status.toLowerCase() as keyof typeof statusPagamentoMap] || "Status Desconhecido",
           CodAutorizacaoNumber: response.data.charges[0].payment_response.code,
           idStatus: response.data.id,
           idPagamento: response.data.charges[0].id,

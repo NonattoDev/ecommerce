@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           "content-type": "application/json",
         },
         data: {
-          reference_id: "credito_card-00001",
+          reference_id: "credit_card-00001",
           customer: {
             name: dadosPessoais.nomeCompleto,
             email: dadosPessoais.email,
@@ -148,6 +148,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // - Chamada no banco que pega o codigo referente ao pagamento em BOLETO
         const { CodCartao } = await db("empresa").select("CodCartao").where("CodEmp", 1).first();
         const Pagamento = await response.data;
+
+        // Definindo o enum para os estados de pagamento
+        enum StatusPagamento {
+          PAID = "Pago",
+          AUTHORIZED = "Autorizado",
+          DECLINED = "Recusado",
+          CANCELED = "Cancelado",
+        }
+
+        const statusPagamentoMap = {
+          PAID: StatusPagamento.PAID,
+          AUTHORIZED: StatusPagamento.AUTHORIZED,
+          DECLINED: StatusPagamento.DECLINED,
+          CANCELED: StatusPagamento.CANCELED,
+        };
         // 3. Inserir em Requisi
         const inserirVendaRequisi = await db("requisi").insert({
           Pedido: valorAtualizado,
@@ -168,7 +183,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           CodForma1: CodCartao,
           Data1: moment().format("YYYY-MM-DD"),
           Parc1: Pagamento.charges[0].payment_method.installments,
-          StatusPagamento: Pagamento.charges[0].status,
+          StatusPagamento: statusPagamentoMap[response.data.charges[0].status.toLowerCase() as keyof typeof statusPagamentoMap] || "Status Desconhecido",
           CodAutorizacaoNumber: Pagamento.charges[0].payment_response.code,
           idStatus: Pagamento.id,
           idPagamento: Pagamento.charges[0].id,
