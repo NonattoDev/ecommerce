@@ -37,7 +37,7 @@ export default function LoginForm() {
           email,
           password,
           ip,
-          callbackUrl: process.env.NEXTAUTH_URL,
+          callbackUrl: process.env.URL,
           redirect: false,
         })
           .then((response) => {

@@ -39,7 +39,6 @@ const RegistrationForm = () => {
     event.preventDefault();
     if (formValues.complementoEndereco.length > 30) return toast.error("O campo complemento de endereço deve ter no máximo 30 caracteres");
     setLoading(true);
-
     const response = axios
       .post("/api/usuario/cadastro", formValues)
       .then((response) => {
@@ -223,7 +222,7 @@ const RegistrationForm = () => {
       </Form.Group>
       <Form.Group controlId="complementoEndereco">
         <Form.Label className={styles.label}>Complemento de Endereço</Form.Label>
-        <Form.Control type="text" name="complementoEndereco" value={formValues.complementoEndereco} onChange={handleChange} className={styles.input} max={30} required={true} />
+        <Form.Control type="text" name="complementoEndereco" value={formValues.complementoEndereco} onChange={handleChange} className={styles.input} maxLength={30} required={true} />
       </Form.Group>
       <Form.Group controlId="campoLivre">
         <Form.Label className={styles.label}>Referencia</Form.Label>

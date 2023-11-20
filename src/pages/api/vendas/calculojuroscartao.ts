@@ -27,7 +27,7 @@ export default async function calculoJurosCartao(req: NextApiRequest, res: NextA
         },
         headers: {
           accept: "application/json",
-          Authorization: "Bearer B871F6967C2341489D37924D761FF1BD", // Certifique-se de que esta chave de API seja protegida e não hardcoded como esta
+          Authorization: process.env.PAGSEGURO_BEARER_TOKEN,
         },
       };
 

@@ -28,8 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   try {
     if (req.method === "GET") {
-      console.log("GET");
-
       const enderecoPrincipal = await db("clientes")
         .where("CodCli", id)
         .select("Endereco", "Bairro", "Cidade", "Estado", "CEP", "TelEnt as Tel2", "TelEnt2 as Tel", "CampoLivre", "ComplementoEndereco", "Numero", "CodMun")
@@ -38,8 +36,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
       return res.json({ enderecoPrincipal, enderecosEntrega });
     } else if (req.method === "POST") {
-      console.log("POST ");
-
       const endereco = req.body;
       const enderecoCompleto = {
         CodCli: parseInt(id as string),

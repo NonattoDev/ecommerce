@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (notificationCode && notificationType) {
       let credenciais = {
         email: "robsonnonatoiii@gmail.com",
-        token_api: "B871F6967C2341489D37924D761FF1BD",
+        token_api: process.env.PAGSEGURO_TOKEN_API,
       };
 
       const url = `https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/${notificationCode}?email=${credenciais.email}&token=${credenciais.token_api}`;

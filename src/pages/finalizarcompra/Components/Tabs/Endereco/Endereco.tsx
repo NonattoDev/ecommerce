@@ -51,6 +51,7 @@ const Endereco = ({ id }: { id: number }) => {
 
   const adicionarNovoEndereco = async () => {
     if (!endereco) return toast.warn("Preencha os dados de endereço");
+    if (endereco.ComplementoEndereco.length > 30) return toast.warn("O campo complemento de endereço deve ter no máximo 30 caracteres");
     if (!cepDinamico) return toast.warn("Informe o CEP");
     if (!endereco.Endereco) return toast.warn("Informe o Endereço");
     if (!endereco.Cidade) return toast.warn("Informe a Cidade");
@@ -173,7 +174,7 @@ const Endereco = ({ id }: { id: number }) => {
 
             <Form.Group controlId="ComplementoEndereco">
               <Form.Label>Complemento do Endereço</Form.Label>
-              <Form.Control type="text" name="ComplementoEndereco" value={endereco?.ComplementoEndereco || ""} onChange={handleInputChange} />
+              <Form.Control type="text" name="ComplementoEndereco" value={endereco?.ComplementoEndereco || ""} onChange={handleInputChange} maxLength={30} />
             </Form.Group>
 
             <Form.Group controlId="Numero">

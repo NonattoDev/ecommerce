@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         url: "https://sandbox.api.pagseguro.com/orders",
         headers: {
           accept: "application/json",
-          Authorization: "Bearer B871F6967C2341489D37924D761FF1BD",
+          Authorization: process.env.PAGSEGURO_BEARER_TOKEN,
           "content-type": "application/json",
         },
         data: {

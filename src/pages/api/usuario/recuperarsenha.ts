@@ -22,7 +22,7 @@ export default async function recuperarSenha(req: NextApiRequest, res: NextApiRe
           <p>Olá ${cliente.cliente},</p>
           <p>Recebemos uma solicitação para alterar a senha da sua conta.</p>
           <p>Clique no botão abaixo para redefinir sua senha:</p>
-          <a href="${process.env.NEXTAUTH_URL}/usuario/recuperarsenha/${token}" style="background-color: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; transition: background-color 0.3s;">
+          <a href="${process.env.URL}/usuario/recuperarsenha/${token}" style="background-color: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; transition: background-color 0.3s;">
             Recuperar Senha
           </a>
           <p style="margin-top: 20px;">Se você não solicitou essa alteração, por favor ignore este e-mail ou entre em contato conosco.</p>
