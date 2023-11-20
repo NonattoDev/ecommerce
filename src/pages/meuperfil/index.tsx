@@ -9,8 +9,18 @@ import db from "@/db/db";
 import { GetServerSideProps } from "next";
 import moment from "moment";
 import styles from "./MeuPerfil.module.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import InputMask from "react-input-mask";
 
 const MeuPerfil = ({ dadosDoCliente }: any) => {
+  const [dadosCliente, setDadosCliente] = useState(dadosDoCliente);
+
+  useEffect(() => {
+    // Atualiza o estado sempre que os dados do cliente mudam
+    setDadosCliente(dadosDoCliente);
+  }, [dadosDoCliente]);
+
   const router = useRouter();
   const { data: session, status } = useSession({
     required: true,
@@ -29,8 +39,58 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Lógica de atualização aqui.
-    toast("Atualizado com sucesso!");
+    if (!dadosCliente.EMail) return toast.error("O campo email é obrigatório!");
+    if (!dadosCliente.IE) return toast.error("O campo IE é obrigatório!");
+    if (!dadosCliente.Cep) return toast.error("O campo CEP é obrigatório!");
+    if (dadosCliente.Cep.length < 8) return toast.error("O campo CEP deve conter 8 dígitos!");
+    if (!dadosCliente.Bairro) return toast.error("O campo Bairro é obrigatório!");
+    if (!dadosCliente.Cidade) return toast.error("O campo Cidade é obrigatório!");
+    if (!dadosCliente.Estado) return toast.error("O campo Estado é obrigatório!");
+    if (!dadosCliente.Endereco) return toast.error("O campo Endereço é obrigatório!");
+
+    // Atualiza os dados do cliente no banco de dados
+    const resposta = await axios.put("/api/usuario/alterarenderecoperfil", dadosCliente);
+
+    if (resposta.data.error) return toast.error(resposta.data.error);
+
+    toast.success("Atualizado com sucesso!");
+  };
+
+  // Função para lidar com mudanças nos inputs
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    const { value } = e.target;
+    // Atualiza o estado com os novos valores
+    setDadosCliente((prevState: any) => ({
+      ...prevState,
+      [field]: value,
+    }));
+
+    if (field === "Cep") {
+      // Remove caracteres que não são dígitos
+      const cepFormatado = value.replace(/\D/g, "");
+      if (cepFormatado.length >= 8) {
+        try {
+          const resposta = await axios.get(`https://viacep.com.br/ws/${cepFormatado}/json/`);
+
+          if (!resposta.data.erro) {
+            setDadosCliente((prevState: any) => ({
+              ...prevState,
+              Cep: resposta.data.cep,
+              Endereco: resposta.data.logradouro,
+              Bairro: resposta.data.bairro,
+              Cidade: resposta.data.localidade,
+              Estado: resposta.data.uf,
+            }));
+          } else {
+            // CEP não encontrado
+            toast.error("CEP não encontrado.");
+          }
+        } catch (error) {
+          // Tratamento de erro da chamada da API
+          toast.error("Erro ao buscar o CEP.");
+        }
+      }
+    }
   };
 
   return (
@@ -43,7 +103,7 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
         <Row>
           <Form.Group controlId="formCodCli">
             <Form.Label>Código do Cliente</Form.Label>
-            <Form.Control type="text" placeholder="Código do Cliente" value={session?.user?.id} readOnly disabled style={{ width: "70px", textAlign: "center" }} />
+            <Form.Control type="text" placeholder="Código do Cliente" defaultValue={session?.user?.id} readOnly disabled style={{ width: "70px", textAlign: "center" }} />
           </Form.Group>
         </Row>
       </Col>
@@ -52,19 +112,19 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
           <Col md={4}>
             <Form.Group controlId="formCliente">
               <Form.Label>Cliente</Form.Label>
-              <Form.Control type="text" placeholder="Nome do cliente" value={dadosDoCliente.Cliente} disabled />
+              <Form.Control type="text" placeholder="Nome do cliente" value={dadosDoCliente.Cliente} readOnly disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formRazao">
               <Form.Label>Razão Social</Form.Label>
-              <Form.Control type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} disabled />
+              <Form.Control type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} readOnly disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formComplemento">
-              <Form.Label>Complemento</Form.Label>
-              <Form.Control type="text" placeholder="Complemento" value={dadosDoCliente.Complemento} readOnly />
+              <Form.Label>Origem</Form.Label>
+              <Form.Control type="text" placeholder="Complemento" value={dadosDoCliente.Complemento} readOnly disabled />
             </Form.Group>
           </Col>
         </Row>
@@ -72,53 +132,53 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
           <Col md={4}>
             <Form.Group controlId="formEMail">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" placeholder="Email" value={dadosDoCliente.EMail} readOnly />
+              <Form.Control type="email" placeholder="Email" value={dadosCliente.EMail} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "EMail")} />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formCGC">
               <Form.Label>CNPJ</Form.Label>
-              <Form.Control type="text" placeholder="CNPJ" value={dadosDoCliente.CGC} disabled />
+              <Form.Control type="text" placeholder="CNPJ" value={dadosDoCliente.CGC} readOnly disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formIE">
               <Form.Label>IE</Form.Label>
-              <Form.Control type="text" placeholder="IE" value={dadosDoCliente.IE} readOnly />
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={4}>
-            <Form.Group controlId="formTelEnt">
-              <Form.Label>Telefone</Form.Label>
-              <Form.Control type="text" placeholder="Telefone" value={dadosDoCliente.TelEnt} readOnly />
+              <Form.Control type="text" placeholder="IE" value={dadosCliente.IE} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "IE")} />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formDataCad">
               <Form.Label>Data Cadastro</Form.Label>
-              <Form.Control type="text" placeholder="Data Cadastro" value={moment(dadosDoCliente.DataCad).format("DD/MM/YYYY")} readOnly />
+              <Form.Control type="text" placeholder="Data Cadastro" value={moment(dadosDoCliente.DataCad).format("DD/MM/YYYY")} readOnly disabled />
             </Form.Group>
           </Col>
         </Row>
         <Row>
           <Col md={4}>
-            <Form.Group controlId="formEndereco">
-              <Form.Label>Endereço</Form.Label>
-              <Form.Control type="text" placeholder="Endereço" value={dadosDoCliente.Endereco} readOnly />
+            <Form.Group controlId="formCep">
+              <Form.Label>CEP</Form.Label>
+              <Form.Control
+                as={InputMask}
+                mask="99999-999"
+                maskChar={null}
+                type="text"
+                placeholder="CEP"
+                value={dadosCliente.Cep}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "Cep")}
+              />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formBairro">
               <Form.Label>Bairro</Form.Label>
-              <Form.Control type="text" placeholder="Bairro" value={dadosDoCliente.Bairro} readOnly />
+              <Form.Control type="text" placeholder="Bairro" value={dadosCliente.Bairro} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "Bairro")} />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formCidade">
               <Form.Label>Cidade</Form.Label>
-              <Form.Control type="text" placeholder="Cidade" value={dadosDoCliente.Cidade} readOnly />
+              <Form.Control type="text" placeholder="Cidade" value={dadosCliente.Cidade} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "Cidade")} />
             </Form.Group>
           </Col>
         </Row>
@@ -126,13 +186,13 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
           <Col md={4}>
             <Form.Group controlId="formEstado">
               <Form.Label>Estado</Form.Label>
-              <Form.Control type="text" placeholder="Estado" value={dadosDoCliente.Estado} readOnly />
+              <Form.Control type="text" placeholder="Estado" value={dadosCliente.Estado} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "Estado")} />
             </Form.Group>
           </Col>
           <Col md={4}>
-            <Form.Group controlId="formCep">
-              <Form.Label>Cep</Form.Label>
-              <Form.Control type="text" placeholder="Cep" value={dadosDoCliente.Cep} readOnly />
+            <Form.Group controlId="formEndereco">
+              <Form.Label>Endereço</Form.Label>
+              <Form.Control type="text" placeholder="Endereço" value={dadosCliente.Endereco} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "Endereco")} />
             </Form.Group>
           </Col>
         </Row>
@@ -149,8 +209,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (!session) {
     return {
-      props: {
-        dadosDoCliente: null,
+      redirect: {
+        destination: "/",
+        permanent: false,
       },
     };
   }
