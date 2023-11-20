@@ -37,7 +37,7 @@ export default function LoginForm() {
           email,
           password,
           ip,
-          callbackUrl: process.env.URL,
+          callbackUrl: process.env.VERCEL_URL,
           redirect: false,
         })
           .then((response) => {
