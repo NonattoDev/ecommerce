@@ -36,7 +36,7 @@ function UsuarioOptions() {
       ) : (
         <Dropdown className={styles.container}>
           <Dropdown.Toggle variant="transparent" className={styles.DropDowncontainer}>
-            <FontAwesomeIcon icon={faUser} style={{ color: "blue", height: "30px", width: "30px" }} />
+            <FontAwesomeIcon icon={faUser} style={{ color: "blue", height: "30px", width: "30px", marginRight: "-5px" }} />
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {session?.user?.admin && <Dropdown.Item href="/painel/admin">Admin</Dropdown.Item>}

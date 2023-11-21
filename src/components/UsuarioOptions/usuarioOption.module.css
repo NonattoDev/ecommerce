@@ -3,13 +3,12 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    margin-right: 50px;
 }
 
 .DropDowncontainer {
     display: flex;
     align-items: center;
-    margin-right: -15px;
+    margin-right: -20px;
 }
 
 /* Para telas menores (dispositivos móveis) */
