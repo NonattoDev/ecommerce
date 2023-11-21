@@ -5,7 +5,6 @@ import { Card, Col, Row } from "react-bootstrap";
 import styles from "./Produto.module.css";
 import Image from "next/image";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
-import imagemSubstituicao from "../../../public/fotosProdutos/erro/semProduto.png";
 import { Produto, ProdutosSimilaresType, ResponseData } from "@/Types/Produto";
 import ProdutosSimilares from "@/components/ProdutosSimilares/produtosSimilares";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
@@ -24,7 +23,7 @@ function Produto() {
   const [imagemCarregada, setImagemCarregada] = useState(true);
   const [imagemPrincipal, setImagemPrincipal] = useState("");
   const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilaresType[]>([]);
-  const { handleAdicionarProdutosAoCarrinho, produtosNoCarrinho } = useCarrinhoContext();
+  const { handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -116,7 +115,7 @@ function Produto() {
                     <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho)}>
                       <Image
                         src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}`}
-                        alt="Thumbnail 2"
+                        alt="Thumbnail 1"
                         width={80}
                         height={80}
                         priority
@@ -182,26 +181,13 @@ function Produto() {
                   </div>
                 </Col>
                 <Col xs={12} md={6} lg={4}>
-                  {imagemCarregada ? (
+                  {imagemCarregada && (
                     <Image
                       src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}`}
                       alt="Imagem do produto"
                       width={500}
                       height={500}
                       onError={handleImagemErro}
-                      priority
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain", // ou 'cover', dependendo do que você precisa
-                      }}
-                    />
-                  ) : (
-                    <Image
-                      src={imagemSubstituicao}
-                      alt="Imagem de substituição"
-                      width={500}
-                      height={500}
                       priority
                       style={{
                         width: "100%",

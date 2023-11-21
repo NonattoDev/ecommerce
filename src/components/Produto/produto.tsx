@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Link from "next/link";
@@ -29,18 +29,6 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-
-  useEffect(() => {
-    const image = new Image();
-    image.src = `/fotosProdutos/${Caminho}`;
-    image.onload = () => {
-      setIsLoading(false);
-    };
-    image.onerror = () => {
-      setIsLoading(false);
-      setImageError(true);
-    };
-  }, [Caminho]);
 
   return (
     <Card className={`${styles["produto-card"]} ${Estoque <= 0 ? styles.unavailable : ""}`}>

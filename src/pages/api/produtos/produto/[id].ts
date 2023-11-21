@@ -1,4 +1,5 @@
 import db from "@/db/db"; // Ajuste o caminho conforme necessário
+import { log } from "console";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 // Definindo as interfaces para os tipos de dados retornados
@@ -25,13 +26,13 @@ export default async function produtoPorID(req: NextApiRequest, res: NextApiResp
 
       // Consulta para produtos similares
       const produtosSimilares = await db("Produto_Similar as A")
-        // Lista de campos
         .join("Produto as B", "A.CodPro1", "B.CodPro")
-        .where("A.CodPro", id) // Substitua codPro pelo valor desejado
+        .where("A.CodPro", id) // Substitua id pelo valor desejado
         .where("B.ECommerce", "X")
         .andWhere(function () {
           this.whereNull("B.Inativo").orWhereNot("B.Inativo", "X");
         })
+        .select("B.CodPro", "B.Produto", "B.Preco1", "B.Caminho") // Adicionando Preco1 à seleção
         .orderBy("B.Produto");
 
       return res.json({ produto: produtos[0], produtosSimilares });

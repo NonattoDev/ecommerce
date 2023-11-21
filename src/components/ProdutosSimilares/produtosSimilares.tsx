@@ -20,7 +20,7 @@ const ProdutosSimilares: React.FC<ProdutosSimilaresProps> = ({ produtos }) => {
         {produtos.map((produto) => (
           <Link key={produto.CodPro} href={`/produto/${produto.CodPro}`} style={{ textDecoration: "none" }}>
             <Card style={{ width: "200px", margin: "10px" }}>
-              <Card.Img variant="top" src={`/fotosProdutos/${produto.Caminho}`} style={{ objectFit: "cover", height: "200px" }} />
+              <Card.Img variant="top" src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}`} style={{ objectFit: "cover", height: "200px" }} />
               <Card.Body>
                 <Card.Title>{produto.Produto}</Card.Title>
                 <Card.Text>R$ {produto.Preco1.toLocaleString("pt-BR", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</Card.Text>
