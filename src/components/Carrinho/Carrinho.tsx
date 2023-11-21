@@ -96,25 +96,9 @@ function Carrinho() {
 
   return (
     <>
-      <div className={styles.estiloIconeFlutuante}>
+      <div className={styles["notificacao-carrinho"]}>
         <FontAwesomeIcon icon={faCartShopping} onClick={handleShow} cursor={"pointer"} style={{ color: "blue", height: "30px" }} />
-        <span
-          style={{
-            position: "absolute",
-            top: "-15px",
-            right: "-10px",
-            background: "red",
-            color: "white",
-            borderRadius: "50%",
-            width: "22px",
-            height: "22px",
-            fontSize: "12px",
-            textAlign: "center",
-            lineHeight: "22px",
-          }}
-        >
-          {quantidadeTotal}
-        </span>
+        <span>{quantidadeTotal}</span>
       </div>
       <Offcanvas show={show} onHide={handleClose} placement="end">
         <Offcanvas.Header closeButton>
