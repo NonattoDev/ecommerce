@@ -127,7 +127,7 @@ function Carrinho() {
             ) : (
               produtosNoCarrinho.map((produto) => (
                 <div className={styles.itemCarrinho} key={produto.CodPro}>
-                  <img src={`/fotosProdutos/${produto.Caminho}`} alt={produto.Produto} className={styles.imagemProduto} />
+                  <img src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}`} alt={produto.Produto} className={styles.imagemProduto} />
                   <div className={styles.detalhesProduto}>
                     <div className={styles.detalhesProdutoRow}>
                       <p>{produto.Produto}</p>
