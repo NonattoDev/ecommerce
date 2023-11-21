@@ -30,7 +30,6 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
           };
         })
       );
-      console.log(vendas[0].Produtos);
 
       return res.status(200).json(vendas);
     } catch (error: any) {

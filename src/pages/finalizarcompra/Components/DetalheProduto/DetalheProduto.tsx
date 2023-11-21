@@ -15,7 +15,7 @@ const DetalheProduto: React.FC<{ produto: Produto }> = ({ produto }) => {
   const { handleRemoverProduto, handleAtualizarQuantidadeProduto } = useCarrinhoContext();
 
   // Adicione uma verificação para garantir que o produto e a propriedade Caminho existam
-  const imagePath = produto?.Caminho ? `/fotosProdutos/${produto.Caminho}` : "/fotosProdutos/erro/semProduto.png"; // Caminho padrão ou imagem padrão
+  const imagePath = produto?.Caminho ? `${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}` : `${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/erro/semProduto.png`;
 
   return (
     <Card key={produto?.CodPro} className={styles.cardContainer}>
@@ -23,7 +23,6 @@ const DetalheProduto: React.FC<{ produto: Produto }> = ({ produto }) => {
         <div className={styles.cardProdutoDetalheContainer}>
           <div className={styles.produtoInfo}>
             <div>
-              {/* Use a variável imagePath para o atributo src da imagem */}
               <Image src={imagePath} alt={produto?.Produto} width={100} height={100} />
             </div>
             <div>

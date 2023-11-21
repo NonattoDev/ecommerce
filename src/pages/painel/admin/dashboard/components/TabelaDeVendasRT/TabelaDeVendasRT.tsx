@@ -33,7 +33,6 @@ interface Venda {
 const useFetchVendas = () => {
   return useQuery<Venda[], Error>("vendas", async () => {
     const { data } = await axios.get<Venda[]>("/api/admin/dashboard/vendas");
-    console.log(data);
 
     return data;
   });

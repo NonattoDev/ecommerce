@@ -115,7 +115,7 @@ function Produto() {
                   {produto.Caminho && (
                     <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho)}>
                       <Image
-                        src={`/fotosProdutos/${produto.Caminho}`}
+                        src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}`}
                         alt="Thumbnail 2"
                         width={80}
                         height={80}
@@ -133,7 +133,7 @@ function Produto() {
                     {produto.Caminho2 && (
                       <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho2)}>
                         <Image
-                          src={`/fotosProdutos/${produto.Caminho2}`}
+                          src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho2}`}
                           alt="Thumbnail 2"
                           width={80}
                           height={80}
@@ -149,7 +149,7 @@ function Produto() {
                     {produto.Caminho3 && (
                       <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho3)}>
                         <Image
-                          src={`/fotosProdutos/${produto.Caminho3}`}
+                          src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho3}`}
                           alt="Thumbnail 3"
                           width={80}
                           height={80}
@@ -165,7 +165,7 @@ function Produto() {
                     {produto.Caminho4 && (
                       <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho4)}>
                         <Image
-                          src={`/fotosProdutos/${produto.Caminho4}`}
+                          src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho4}`}
                           alt="Thumbnail 3"
                           width={80}
                           height={80}
@@ -184,7 +184,7 @@ function Produto() {
                 <Col xs={12} md={6} lg={4}>
                   {imagemCarregada ? (
                     <Image
-                      src={`/fotosProdutos/${imagemPrincipal}`}
+                      src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}`}
                       alt="Imagem do produto"
                       width={500}
                       height={500}

@@ -126,7 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           Data1: moment().format("YYYY-MM-DD"),
           Parc1: 1,
           //FAZER AS MUDANÇAS DE ACORDO FORMA DE PAGAMENTO
-          StatusPagamento: "Waiting",
+          StatusPagamento: "Aguardando Pagamento",
           idStatus: response.data.id,
           Nome: response.data.customer.name,
           Autorizacao: `E${valorAtualizado}`,

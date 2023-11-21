@@ -5,8 +5,8 @@ import Link from "next/link";
 import styles from "./produto.module.css";
 import Loading from "../Loading/Loading";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
-import { Produto } from "@/Types/Produto";
 import { useSession } from "next-auth/react";
+import { Produto } from "../../Types/Produto";
 
 export type ProdutoComponenteProps = {
   CodPro: number;
@@ -22,6 +22,7 @@ export type ProdutoComponenteProps = {
 
 function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, PromocaoData, Caminho, Categoria, Estoque }: ProdutoComponenteProps) {
   const [isLoading, setIsLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
   const { data: session, status } = useSession();
   const { handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
   const preco = Preco1.toLocaleString("pt-BR", {
@@ -37,13 +38,14 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
     };
     image.onerror = () => {
       setIsLoading(false);
+      setImageError(true);
     };
   }, [Caminho]);
 
   return (
     <Card className={`${styles["produto-card"]} ${Estoque <= 0 ? styles.unavailable : ""}`}>
       {isLoading && <Loading />}
-      <Link href={`/produto/${CodPro}`} style={{ textDecoration: "none" }} passHref>
+      <Link href={`/produto/${CodPro}`} passHref>
         <div className={styles["produto-card-img-container"]}>
           {Estoque <= 0 && (
             <div className={styles["produto-card-unavailable"]}>
@@ -52,14 +54,19 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
           )}
 
           <Card.Img
-            src={`/fotosProdutos/${Caminho}`}
+            src={!imageError ? `${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${Caminho}` : `${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/erro/semProduto.png`}
             alt={Produto}
             className={styles["produto-card-img"]}
             style={{ display: isLoading ? "none" : "block" }}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = "../fotosProdutos/erro/semProduto.png";
-            }}
+            onError={
+              imageError
+                ? undefined
+                : (e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = `${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/erro/semProduto.png`;
+                    setImageError(true);
+                  }
+            }
             onLoad={() => {
               setIsLoading(false);
             }}

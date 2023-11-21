@@ -93,15 +93,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Definindo o enum para os estados de pagamento
         enum StatusPagamento {
-          WAITING = "Aguardando",
-          PAID = "Pago",
-          CANCELED = "Cancelado",
+          paid = "Pago",
+          waiting = "Aguardando",
+          canceled = "Cancelado",
         }
 
         const statusPagamentoMap = {
-          PAID: StatusPagamento.PAID,
-          WAITING: StatusPagamento.WAITING,
-          CANCELED: StatusPagamento.CANCELED,
+          paid: StatusPagamento.paid,
+          waiting: StatusPagamento.waiting,
+          canceled: StatusPagamento.canceled,
         };
 
         // 3. Inserir em Requisi
