@@ -1,5 +1,7 @@
 // pages/api/uploadImages.js
 
+// Esse arquivo serve para fazer o upload das imagens para o S3 da AWS em grande quantidade
+
 import AWS from "aws-sdk";
 import fs from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -24,11 +26,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const filePath = path.join(localFolderPath, file);
         const fileContent = fs.readFileSync(filePath);
 
-        const params = {
-          Bucket: process.env.AWS_BUCKET_NAME,
+        const params: AWS.S3.PutObjectRequest = {
+          Bucket: process.env.AWS_BUCKET_NAME || "", // Ensure that AWS_BUCKET_NAME is defined
           Key: `fotosProdutos/${file}`,
           Body: fileContent,
-          ContentType: "image/jpeg", // Ajuste conforme necessário
+          ContentType: "image/jpeg", // Adjust as needed
         };
 
         return s3.upload(params).promise();
