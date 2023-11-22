@@ -14,15 +14,15 @@ import Loading from "@/components/Loading/Loading";
 import { format } from "date-fns";
 import MyVerticallyCenteredModal from "@/components/AuthModal/ModalAuth/authModal";
 import axios from "axios";
+import { GetServerSideProps } from "next";
+import db from "@/db/db";
 
-function Produto() {
+function Produto({ produto, produtosSimilares }: { produto: Produto; produtosSimilares: ProdutosSimilaresType[] }) {
   const router = useRouter();
   const { productId } = router.query;
-  const [produto, setProduto] = useState<Produto>({} as Produto);
   const [quantidade, setQuantidade] = useState(1);
   const [imagemCarregada, setImagemCarregada] = useState(true);
   const [imagemPrincipal, setImagemPrincipal] = useState("");
-  const [produtosSimilares, setProdutosSimilares] = useState<ProdutosSimilaresType[]>([]);
   const { handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
@@ -35,31 +35,6 @@ function Produto() {
   const handleImagemErro = () => {
     setImagemCarregada(false);
   };
-
-  useEffect(() => {
-    const fetchProduto = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get<ResponseData>(`/api/produtos/produto/${productId}`);
-
-        if (!response.data.produto) {
-          toast.warn("produto não encontrado");
-          setLoading(false);
-          router.push("/");
-          return;
-        }
-
-        setProduto(response.data.produto);
-        setImagemPrincipal(response.data.produto.Caminho); // Define a primeira imagem como principal ao carregar o produto
-        setProdutosSimilares(response.data.produtosSimilares);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchProduto();
-  }, [productId]);
 
   const handleQuantidadeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedQuantidade = parseInt(event.target.value);
@@ -267,4 +242,63 @@ function Produto() {
   );
 }
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { params } = context;
+  let produto = {};
+  let produtosSimilares: any[] = [];
+
+  if (params?.productId) {
+    try {
+      // Ajuste conforme o tipo real do ID
+      const id = params.productId as string;
+
+      // Consulta para o produto
+      const produtos = await db("produto").where("CodPro", id).where("Ecommerce", "X");
+
+      // Consulta para produtos similares
+      const produtosSimilaresQuery = await db("Produto_Similar as A")
+        .join("Produto as B", "A.CodPro1", "B.CodPro")
+        .where("A.CodPro", id)
+        .where("B.ECommerce", "X")
+        .andWhere(function () {
+          this.whereNull("B.Inativo").orWhereNot("B.Inativo", "X");
+        })
+        .select("B.CodPro", "B.Produto", "B.Preco1", "B.Caminho")
+        .orderBy("B.Produto");
+
+      if (produtos.length > 0) {
+        produto = JSON.parse(JSON.stringify(produtos[0]));
+        produtosSimilares = JSON.parse(JSON.stringify(produtosSimilaresQuery));
+      } else {
+        // Redireciona para a página inicial se o produto não for encontrado
+        return {
+          redirect: {
+            destination: "/",
+            permanent: false,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("Erro ao buscar os produtos:", error);
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
+  } else {
+    return {
+      notFound: true,
+    };
+  }
+
+  // Retorna as props para o componente Produto
+  return {
+    props: {
+      produto,
+      produtosSimilares,
+    },
+  };
+};
 export default Produto;

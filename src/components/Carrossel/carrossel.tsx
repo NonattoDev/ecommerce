@@ -30,9 +30,9 @@ function Carrossel() {
               src={`${process.env.NEXT_PUBLIC_BANNERSIMAGEMURL}/${fileName}`}
               alt={`Imagem ${index}`}
               fill
-              priority
               sizes="(max-width: 1920px) 100vw, (max-width: 1080px) 50vw, 33vw"
-              loading="eager"
+              loading="lazy"
+              blurDataURL={`${process.env.NEXT_PUBLIC_BANNERSIMAGEMURL}/${fileName}`}
             />
           </Carousel.Item>
         ))}
