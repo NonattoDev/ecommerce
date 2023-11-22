@@ -17,6 +17,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
       <QueryClientProvider client={queryClient}>
         <Head>
           <title>E-commerce Soft Line</title>
+          <link rel="shortcut icon" href={`${process.env.NEXT_PUBLIC_FAVICON}`} type="image/x-icon" />
         </Head>
         <CarrinhoProvider>
           <Header />
