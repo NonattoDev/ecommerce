@@ -71,6 +71,7 @@ const CadastroProduto: React.FC = () => {
     CodGrp: "",
     Caminho: "",
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { data: productCount, isLoading: isProductCountLoading, error: productCountError } = useQuery("productCount", fetchProductCount);
   const { data: regimeEmpresa, isLoading: isRegimeEmpresaLoading, error: regimeEmpresaError } = useQuery("regimeEmpresa", fetchRegimeEmpresa);
@@ -92,15 +93,37 @@ const CadastroProduto: React.FC = () => {
     setProduct({ ...product, [name]: value });
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null; // Pegando o primeiro arquivo selecionado ou definindo como null caso não exista
+    setSelectedFile(file);
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const response = await axios.post("/api/admin/produtos/adicionar", product);
+    // Primeiro, faça o upload do arquivo
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
 
-    if (response.data.error) return toast.error(response.data.error);
+      try {
+        const fileResponse = await axios.post("/api/admin/produtos/uploadImage", formData);
+        const filePath = fileResponse.data.path; // Substitua com a resposta real do seu servidor
 
-    toast.success(`Produto nº ${response.data} cadastrado com sucesso!`);
+        // Agora, envie os dados do produto, incluindo o caminho do arquivo
+        const productData = { ...product, Caminho: filePath };
+        const response = await axios.post("/api/admin/produtos/adicionar", productData);
 
-    return fetchProductCount();
+        if (response.data.error) {
+          toast.error(response.data.error);
+        } else {
+          toast.success(`Produto nº ${response.data} cadastrado com sucesso!`);
+          fetchProductCount();
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Erro ao enviar dados");
+      }
+    }
   };
 
   return (
@@ -325,8 +348,8 @@ const CadastroProduto: React.FC = () => {
           </Col>
           <Col>
             <Form.Group controlId="Caminho">
-              <Form.Label className={styles["form-label"]}>URL Imagem</Form.Label>
-              <Form.Control required={true} type="text" name="Caminho" value={product.Caminho} onChange={handleInputChange} />
+              <Form.Label className={styles["form-label"]}>Imagem do Produto</Form.Label>
+              <Form.Control required={true} type="file" name="Caminho" accept="image/*" onChange={handleFileChange} />
             </Form.Group>
           </Col>
         </Row>
