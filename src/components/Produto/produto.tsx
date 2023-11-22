@@ -32,7 +32,6 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
 
   return (
     <Card className={`${styles["produto-card"]} ${Estoque <= 0 ? styles.unavailable : ""}`}>
-      {isLoading && <Loading />}
       <Link href={`/produto/${CodPro}`} passHref>
         <div className={styles["produto-card-img-container"]}>
           {Estoque <= 0 && (
@@ -40,6 +39,7 @@ function ProdutoCard({ CodPro, Produto, Referencia, Preco1, PrecoPromocao, Promo
               <span>Produto indisponível</span>
             </div>
           )}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", width: "100%", alignItems: "center" }}>{isLoading && <Loading />}</div>
 
           <Card.Img
             src={!imageError ? `${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${Caminho}` : `${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/erro/semProduto.png`}
