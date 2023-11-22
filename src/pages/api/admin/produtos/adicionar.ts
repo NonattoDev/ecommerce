@@ -6,8 +6,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === "POST") {
     const produto = req.body;
 
-    console.log(produto);
-
     try {
       //Verificar se existe algum produto com a mesma referencia
       const refencia = await db("Produto").where("Referencia", produto.Referencia).first();

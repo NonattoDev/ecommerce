@@ -38,6 +38,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
       try {
         const data = await s3.upload(params).promise();
+
+        // Remover o arquivo da pasta uploads
+        fs.unlink(file.path, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error("Erro ao remover o arquivo:", unlinkErr);
+          }
+        });
+
         res.status(200).json({ message: "Arquivo enviado com sucesso", path: file.originalname });
       } catch (uploadError) {
         res.status(500).json({ message: "Erro ao enviar para o Backblaze" });
