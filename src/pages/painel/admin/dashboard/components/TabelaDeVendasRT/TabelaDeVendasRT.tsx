@@ -31,11 +31,15 @@ interface Venda {
 
 // Hook para buscar vendas com tipagem adequada
 const useFetchVendas = () => {
-  return useQuery<Venda[], Error>("vendas", async () => {
-    const { data } = await axios.get<Venda[]>("/api/admin/dashboard/vendas");
+  return useQuery<Venda[], Error>(
+    "vendas",
+    async () => {
+      const { data } = await axios.get<Venda[]>("/api/admin/dashboard/vendas");
 
-    return data;
-  });
+      return data;
+    },
+    { refetchInterval: 60000, refetchIntervalInBackground: true }
+  );
 };
 
 const TabelaDeVendasRT = () => {
@@ -74,7 +78,7 @@ const TabelaDeVendasRT = () => {
 
   // Função para calcular o valor total da venda
   const calcularValorTotal = (produtos: Produto[]) => {
-    return produtos.reduce((total, produto) => total + produto.Preco * produto.QTD, 0).toLocaleString("pt-br");
+    return produtos.reduce((total, produto) => total + produto.Preco * produto.QTD, 0).toLocaleString("pt-br", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   return (
@@ -126,7 +130,7 @@ const TabelaDeVendasRT = () => {
                             <td>{produto.COdPro}</td>
                             <td>{produto.Produto}</td>
                             <td>{produto.QTD}</td>
-                            <td>{produto.Preco}</td>
+                            <td>{produto.Preco.toLocaleString("pt-br", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                           </tr>
                         ))}
                       </tbody>

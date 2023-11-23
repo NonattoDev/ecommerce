@@ -1,6 +1,4 @@
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { useSession } from "next-auth/react";
 import Loading from "@/components/Loading/Loading";
 import { toast } from "react-toastify";
@@ -10,6 +8,8 @@ import { useState } from "react";
 import axios from "axios";
 import styles from "./clientes.module.css";
 import InputMask from "react-input-mask";
+import { GrUpdate } from "react-icons/gr";
+import { IoPersonCircleSharp } from "react-icons/io5";
 
 interface Cliente {
   CodCli?: number;
@@ -83,14 +83,14 @@ const Clientes = () => {
 
   return (
     <Container>
-      <h2>
-        <FontAwesomeIcon icon={faUser} style={{ width: "30px", color: "blue" }} />
+      <h2 className={styles.Title}>
+        <IoPersonCircleSharp size={35} style={{ color: "#0D6EFD" }} />
         Atualizar dados do Cliente
       </h2>
       <Col md={2}>
         <Row>
           <Form.Group controlId="formCodCli">
-            <Form.Label>Código do Cliente</Form.Label>
+            <Form.Label className={styles["form-label"]}>Código do Cliente</Form.Label>
             <Form.Control type="text" placeholder="Código do Cliente" value={dadosDoCliente.CodCli} style={{ width: "70px", textAlign: "center" }} onChange={handleFetchCliente} />
           </Form.Group>
         </Row>
@@ -99,19 +99,19 @@ const Clientes = () => {
         <Row>
           <Col md={4}>
             <Form.Group controlId="formCliente">
-              <Form.Label>Cliente</Form.Label>
+              <Form.Label className={styles["form-label"]}>Cliente</Form.Label>
               <Form.Control name="Cliente" type="text" placeholder="Nome do cliente" value={dadosDoCliente.Cliente} onChange={handleChange} disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formRazao">
-              <Form.Label>Razão Social</Form.Label>
+              <Form.Label className={styles["form-label"]}>Razão Social</Form.Label>
               <Form.Control name="Razao" type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} onChange={handleChange} disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formComplemento">
-              <Form.Label>Complemento</Form.Label>
+              <Form.Label className={styles["form-label"]}>Complemento</Form.Label>
               <Form.Control name="Complemento" type="text" placeholder="Complemento" value={dadosDoCliente.Complemento} onChange={handleChange} />
             </Form.Group>
           </Col>
@@ -119,7 +119,7 @@ const Clientes = () => {
         <Row>
           <Col md={4}>
             <Form.Group controlId="formEMail">
-              <Form.Label>Email</Form.Label>
+              <Form.Label className={styles["form-label"]}>Email</Form.Label>
               <Form.Control
                 name="EMail"
                 type="email"
@@ -134,13 +134,13 @@ const Clientes = () => {
           </Col>
           <Col md={4}>
             <Form.Group controlId="formCGC">
-              <Form.Label>CNPJ</Form.Label>
+              <Form.Label className={styles["form-label"]}>CNPJ</Form.Label>
               <Form.Control type="text" placeholder="CNPJ" value={dadosDoCliente.CGC} disabled />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formIE">
-              <Form.Label>IE</Form.Label>
+              <Form.Label className={styles["form-label"]}>IE</Form.Label>
               <Form.Control name="IE" type="text" placeholder="IE" value={dadosDoCliente.IE} onChange={handleChange} />
             </Form.Group>
           </Col>
@@ -148,7 +148,7 @@ const Clientes = () => {
         <Row>
           <Col md={4}>
             <Form.Group controlId="formTelEnt">
-              <Form.Label>Telefone</Form.Label>
+              <Form.Label className={styles["form-label"]}>Telefone</Form.Label>
               <Form.Control
                 as={InputMask}
                 mask="(99)99999-9999"
@@ -163,7 +163,7 @@ const Clientes = () => {
           </Col>
           <Col md={4}>
             <Form.Group controlId="formDataCad">
-              <Form.Label>Data Cadastro</Form.Label>
+              <Form.Label className={styles["form-label"]}>Data Cadastro</Form.Label>
               <Form.Control disabled type="text" placeholder="Data Cadastro" value={moment(dadosDoCliente.DataCad).format("DD/MM/YYYY")} />
             </Form.Group>
           </Col>
@@ -171,19 +171,19 @@ const Clientes = () => {
         <Row>
           <Col md={4}>
             <Form.Group controlId="formEndereco">
-              <Form.Label>Endereço</Form.Label>
+              <Form.Label className={styles["form-label"]}>Endereço</Form.Label>
               <Form.Control name="Endereco" type="text" placeholder="Endereço" value={dadosDoCliente.Endereco} onChange={handleChange} />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formBairro">
-              <Form.Label>Bairro</Form.Label>
+              <Form.Label className={styles["form-label"]}>Bairro</Form.Label>
               <Form.Control name="Bairro" type="text" placeholder="Bairro" value={dadosDoCliente.Bairro} onChange={handleChange} />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formCidade">
-              <Form.Label>Cidade</Form.Label>
+              <Form.Label className={styles["form-label"]}>Cidade</Form.Label>
               <Form.Control name="Cidade" type="text" placeholder="Cidade" value={dadosDoCliente.Cidade} onChange={handleChange} />
             </Form.Group>
           </Col>
@@ -191,13 +191,13 @@ const Clientes = () => {
         <Row>
           <Col md={4}>
             <Form.Group controlId="formEstado">
-              <Form.Label>Estado</Form.Label>
+              <Form.Label className={styles["form-label"]}>Estado</Form.Label>
               <Form.Control name="Estado" type="text" placeholder="Estado" value={dadosDoCliente.Estado} onChange={handleChange} />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group controlId="formCep">
-              <Form.Label>Cep</Form.Label>
+              <Form.Label className={styles["form-label"]}>Cep</Form.Label>
               <Form.Control
                 as={InputMask}
                 mask="99999-999"
@@ -211,9 +211,11 @@ const Clientes = () => {
             </Form.Group>
           </Col>
         </Row>
-        <Button variant="primary" type="submit" style={{ margin: "10px 0 10px 0" }}>
-          Atualizar <FontAwesomeIcon icon={faRefresh} style={{ width: "30px" }} />
-        </Button>
+        <Row>
+          <Button variant="primary" type="submit" className={styles.ButtonSubmit}>
+            <GrUpdate />
+          </Button>
+        </Row>
       </Form>
     </Container>
   );

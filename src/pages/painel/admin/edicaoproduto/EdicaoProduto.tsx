@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaSave } from "react-icons/fa";
 import { Badge, Button, Col, Container, Form, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
-import styles from "./cadastroproduto.module.css";
+import styles from "./EdicaoProduto.module.css";
 import axios from "axios";
 import { useQuery } from "react-query";
 import Loading from "@/components/Loading/Loading";
@@ -52,7 +52,7 @@ const fetchGruposEmpresa = async () => {
   return response.data;
 };
 
-const CadastroProduto: React.FC = () => {
+const EdicaoProduto: React.FC = () => {
   const router = useRouter();
   const [product, setProduct] = useState<Product>({
     Produto: "",
@@ -74,7 +74,6 @@ const CadastroProduto: React.FC = () => {
   const { data: productCount, isLoading: isProductCountLoading, error: productCountError } = useQuery("productCount", fetchProductCount);
   const { data: regimeEmpresa, isLoading: isRegimeEmpresaLoading, error: regimeEmpresaError } = useQuery("regimeEmpresa", fetchRegimeEmpresa);
   const { data, isLoading: isgruposEmpresaLoading, error: isGruposEmpresaError } = useQuery("gruposEmpresa", fetchGruposEmpresa);
-
   const [precoFormatado, setPrecoFormatado] = useState("");
 
   if (isProductCountLoading || isRegimeEmpresaLoading || isgruposEmpresaLoading) return <Loading />;
@@ -150,7 +149,7 @@ const CadastroProduto: React.FC = () => {
     <Container>
       <Row>
         <Col>
-          <h2 className={styles.Title}>Cadastro de Produto</h2>
+          <h2 className={styles.Title}>Editar um Produto</h2>
           <div className={styles.Badges}>
             <h6>
               Total de Produtos: <Badge bg="secondary">{productCount}</Badge>
@@ -383,4 +382,4 @@ const CadastroProduto: React.FC = () => {
   );
 };
 
-export default CadastroProduto;
+export default EdicaoProduto;

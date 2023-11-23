@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Container, Row, Col, Nav, Tab } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faTable, faUserCheck, faPlus, faGear } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faTable, faUserCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import styles from "./admin.module.css"; // Adicionando um arquivo de estilos separado
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
@@ -10,9 +10,10 @@ import Loading from "@/components/Loading/Loading";
 import Clientes from "./clientes/clientes";
 import Dashboard from "./dashboard/dashboard";
 import CadastroProduto from "./cadastroproduto/cadastroproduto";
+import EdicaoProduto from "./edicaoproduto/EdicaoProduto";
+import Configuracoes from "./configurarportal/configuracoes";
 
 const AdminPage: React.FC = () => {
-  const [expanded, setExpanded] = useState(false);
   const router = useRouter();
   const { data: session, status } = useSession({
     required: true,
@@ -57,6 +58,16 @@ const AdminPage: React.FC = () => {
                   <FontAwesomeIcon icon={faPlus} className={styles.icon} />
                 </Nav.Link>
               </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="edicaoproduto">
+                  <FontAwesomeIcon icon={faPlus} className={styles.icon} />
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="configurarportal">
+                  <FontAwesomeIcon icon={faPlus} className={styles.icon} />
+                </Nav.Link>
+              </Nav.Item>
             </Nav>
           </Col>
           <Col xs={12} sm={12} md={12} lg={10} xl={10}>
@@ -69,6 +80,12 @@ const AdminPage: React.FC = () => {
               </Tab.Pane>
               <Tab.Pane eventKey="cadastroProduto">
                 <CadastroProduto />
+              </Tab.Pane>
+              <Tab.Pane eventKey="edicaoproduto">
+                <EdicaoProduto />
+              </Tab.Pane>
+              <Tab.Pane eventKey="configurarportal">
+                <Configuracoes />
               </Tab.Pane>
             </Tab.Content>
           </Col>
