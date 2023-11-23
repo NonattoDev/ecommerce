@@ -58,6 +58,7 @@ const TabelaDeVendasRT = () => {
       case "aguardando":
         return "yellow";
       case "paga":
+      case "pago":
       case "aprovado":
       case "disponível":
       case "paid":
