@@ -7,12 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const produto = req.body;
 
     try {
-      //Verificar se existe algum produto com a mesma referencia
-      const refencia = await db("Produto").where("Referencia", produto.Referencia).first();
-      if (refencia) {
-        return res.json({ error: "Já existe um produto com essa referência" });
-      }
-
       const dataAtual = moment().format("YYYY-MM-DD");
 
       const result = await db("Produto").max("CodPro as maxCodPro").first();

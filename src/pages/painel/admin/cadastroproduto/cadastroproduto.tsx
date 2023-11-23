@@ -100,11 +100,24 @@ const CadastroProduto: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // Verificar se já existe um produto com a mesma referência.
+
+    try {
+      const exists = await axios.get(`/api/admin/produtos/exists/${product.Referencia}`);
+
+      if (exists.data.exists) {
+        return toast.error("Já existe um produto com a mesma referência");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao verificar se o produto já existe");
+    }
+
     // Primeiro, faça o upload do arquivo
     if (selectedFile) {
       const formData = new FormData();
       formData.append("file", selectedFile);
-
       try {
         const fileResponse = await axios.post("/api/admin/produtos/uploadImage", formData);
         const filePath = fileResponse.data.path; // Substitua com a resposta real do seu servidor

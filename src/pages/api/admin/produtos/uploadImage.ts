@@ -30,7 +30,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       const fileContent = fs.readFileSync(file.path);
 
       const params = {
-        Bucket: process.env.AWS_BUCKET_NAME ?? "", // Provide a default value for the Bucket property
+        Bucket: process.env.AWS_BUCKET_NAME ?? "",
         Key: `fotosProdutos/${file.originalname}`,
         Body: fileContent,
         ContentType: file.mimetype,
@@ -48,6 +48,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
         res.status(200).json({ message: "Arquivo enviado com sucesso", path: file.originalname });
       } catch (uploadError) {
+        console.log(uploadError);
         res.status(500).json({ message: "Erro ao enviar para o Backblaze" });
       }
     });
