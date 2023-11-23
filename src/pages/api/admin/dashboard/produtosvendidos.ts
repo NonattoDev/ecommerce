@@ -17,12 +17,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .orderBy("contadorQtd", "desc")
         .limit(10);
 
-      res.status(200).json(produtosMaisVendidos);
+      return res.status(200).json(produtosMaisVendidos);
     } catch (error: any) {
       console.log(error.message);
-
       return res.status(500).json({ error: error.message });
     }
+  } else {
+    // Este bloco será executado apenas se o método não for GET
+    return res.status(405).json({ message: "Method not allowed" });
   }
-  res.status(405).json({ message: "Method not allowed" });
 }
