@@ -90,7 +90,7 @@ const TabelaDeVendasRT = () => {
       <tbody>
         {vendas &&
           vendas.map((venda) => (
-            <>
+            <React.Fragment key={venda.Pedido}>
               <tr key={venda.Pedido}>
                 <td>{venda.Pedido}</td>
                 <td style={{ backgroundColor: getStatusColor(venda.statusPagamento ?? "") }}>{venda.statusPagamento}</td>
@@ -131,7 +131,7 @@ const TabelaDeVendasRT = () => {
                   </td>
                 </tr>
               )}
-            </>
+            </React.Fragment>
           ))}
       </tbody>
     </Table>

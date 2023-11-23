@@ -1,6 +1,5 @@
 import db from "@/db/db";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
@@ -20,6 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json(produtosMaisVendidos);
     } catch (error: any) {
+      console.log(error.message);
+
       return res.status(500).json({ error: error.message });
     }
   }
