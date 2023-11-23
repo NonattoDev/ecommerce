@@ -1,5 +1,5 @@
 // ProdutosMaisVendidosChart.js ou ProdutosMaisVendidosChart.jsx
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Card, Button, Form } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 import { useQuery } from "react-query";
@@ -8,6 +8,7 @@ import Loading from "@/components/Loading/Loading";
 import { toast } from "react-toastify";
 import moment from "moment";
 import styles from "../../dashboard.module.css";
+import { debounce } from "lodash";
 
 interface ProdutoVendido {
   codpro: number;
@@ -18,20 +19,17 @@ interface ProdutoVendido {
 const fetchProdutosMaisVendidos = async (startDate: string, endDate: string) => {
   // Verificar se as datas são válidas
   if (!moment(startDate, "YYYY-MM-DD", true).isValid() || !moment(endDate, "YYYY-MM-DD", true).isValid()) {
-    toast.error("Formato de data inválido. Use 'YYYY-MM-DD'.");
     return;
   }
 
   // Verificar se a data de início é anterior à data de término
   if (moment(startDate).isAfter(moment(endDate))) {
-    toast.error("A data de início deve ser anterior à data de término.");
     return;
   }
   try {
     const { data } = await axios.get(`/api/admin/dashboard/produtosvendidos/?start=${startDate}&end=${endDate}`);
     return data;
   } catch (error: any) {
-    toast.error(`Erro ao buscar os dados: ${error.response?.data?.error || error.message}`);
     return;
   }
 };
@@ -39,11 +37,33 @@ const fetchProdutosMaisVendidos = async (startDate: string, endDate: string) => 
 const ProdutosMaisVendidosChart = () => {
   const [startDate, setStartDate] = useState(moment().subtract(1, "months").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"));
+  const {
+    data: produtosVendidos,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery(
+    ["produtosVendidos", startDate, endDate],
+    () => fetchProdutosMaisVendidos(startDate, endDate),
+    { enabled: false } // Desativa a execução automática
+  );
 
-  const { data: produtosVendidos, isLoading, error, refetch } = useQuery(["produtosVendidos", startDate, endDate], () => fetchProdutosMaisVendidos(startDate, endDate), { enabled: true });
+  const debouncedRefetch = useCallback(
+    debounce(() => {
+      refetch();
+    }, 1500), // Espera por 1 segundo após o último evento de mudança
+    [refetch, startDate, endDate] // Dependências do useCallback
+  );
 
-  const handleSearch = () => {
+  // Executar refetch na montagem do componente para carregar os dados iniciais
+  useEffect(() => {
     refetch();
+  }, [refetch]);
+
+  const handleDateChange = (start: string, end: string) => {
+    setStartDate(start);
+    setEndDate(end);
+    debouncedRefetch();
   };
 
   const options = {
@@ -64,9 +84,9 @@ const ProdutosMaisVendidosChart = () => {
       <Card.Body>
         <Card.Title>Produtos Mais Vendidos</Card.Title>
         <div className={styles.DatePicker}>
-          <Form.Control type="date" size="sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-          <Form.Control type="date" size="sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          <Button onClick={handleSearch}>Filtrar</Button>
+          <Form.Control type="date" size="sm" value={startDate} onChange={(e) => handleDateChange(e.target.value, endDate)} />
+          <Form.Control type="date" size="sm" value={endDate} onChange={(e) => handleDateChange(startDate, e.target.value)} />
+          <Button onClick={() => refetch()}>Filtrar</Button>
         </div>
         {isLoading && <Loading />}
         {error && <p>Erro ao carregar...</p>}

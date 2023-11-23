@@ -1,15 +1,15 @@
 // SalesChart.js ou SalesChart.jsx
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Card, Button, Form } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 import { useQuery } from "react-query";
 import axios from "axios";
 import Loading from "@/components/Loading/Loading";
-import { toast } from "react-toastify";
 import moment from "moment";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 import styles from "../../dashboard.module.css";
+import { debounce } from "lodash";
 
 interface Vendedor {
   "Código do Vendedor": number;
@@ -44,10 +44,26 @@ const GraficoVendedor = () => {
   const [startDate, setStartDate] = useState(moment().subtract(1, "months").format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"));
 
-  const { data: vendedorDados, isLoading, error, refetch } = useQuery(["vendedorDados", startDate, endDate], () => fetchVendedorDados(startDate, endDate), { enabled: true });
+  // Desative a execução automática da query ao alterar as datas
+  const { data: vendedorDados, isLoading, error, refetch } = useQuery(["vendedorDados", startDate, endDate], () => fetchVendedorDados(startDate, endDate), { enabled: false });
+  // Função debounced para refetch
+  const debouncedRefetch = useCallback(
+    debounce(() => {
+      refetch();
+    }, 1500),
+    [] // Este array vazio significa que o debouncedRefetch nunca vai mudar entre as renderizações
+  );
 
-  const handleSearch = () => {
+  // Executar refetch na montagem do componente para carregar os dados iniciais
+  useEffect(() => {
     refetch();
+  }, [refetch]);
+
+  // Atualize o estado e execute a busca debounced
+  const handleDateChange = (start: string, end: string) => {
+    setStartDate(start);
+    setEndDate(end);
+    debouncedRefetch();
   };
 
   const options = {
@@ -68,9 +84,9 @@ const GraficoVendedor = () => {
       <Card.Body>
         <Card.Title>Maior número de vendas</Card.Title>
         <div className={styles.DatePicker}>
-          <Form.Control type="date" size="sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-          <Form.Control type="date" size="sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          <Button onClick={handleSearch}>Filtrar</Button>
+          <Form.Control type="date" size="sm" value={startDate} onChange={(e) => handleDateChange(e.target.value, endDate)} />
+          <Form.Control type="date" size="sm" value={endDate} onChange={(e) => handleDateChange(startDate, e.target.value)} />
+          <Button onClick={debouncedRefetch}>Filtrar</Button>
         </div>
         {isLoading && <Loading />}
         {error && <p>Erro ao carregar...</p>}

@@ -59,10 +59,12 @@ const TabelaDeVendasRT = () => {
         return "yellow";
       case "paga":
       case "aprovado":
+      case "disponível":
       case "paid":
         return "green";
       case "cancelada":
       case "cancelado":
+      case "devolvida":
         return "red";
       default:
         return "gray";
