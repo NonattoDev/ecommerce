@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { FaSave } from "react-icons/fa";
-import { Badge, Button, Col, Container, Form, Row } from "react-bootstrap";
+import React, { useState, useRef, useEffect } from "react";
+import { FaSave, FaPlus, FaMinus } from "react-icons/fa";
+import { Badge, Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 import styles from "./EdicaoProduto.module.css";
 import axios from "axios";
 import { useQuery } from "react-query";
 import Loading from "@/components/Loading/Loading";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 interface Grupo {
   CodGrp: number;
@@ -19,23 +20,27 @@ interface Subgrupo {
 }
 
 interface Product {
-  Produto: string;
-  Categoria: string;
-  Referencia: string;
-  CodigoBarras: string;
-  Unidade: string;
-  Preco1: number;
-  Origem: string;
-  CstCompra: string;
-  Situacao: string;
-  CSOSN: string;
-  CodSub: string;
-  CodGrp: string;
-  Caminho: string;
+  CodPro?: number;
+  Produto?: string;
+  Categoria?: string;
+  Referencia?: string;
+  CodigoBarras?: string;
+  Unidade?: string;
+  Preco1?: number;
+  Origem?: string;
+  CSTCompra?: string;
+  Situacao?: string;
+  CSOSN?: string;
+  CodSub?: string;
+  Codgrp?: string;
+  Caminho?: string;
+  Caminho2?: string;
+  Caminho3?: string;
+  Caminho4?: string;
+  Caminho5?: string;
+  Caminho6?: string;
 }
-interface Props {
-  error: { message: string };
-}
+
 //Fetchs
 const fetchProductCount = async () => {
   const { data } = await axios.get("/api/admin/produtos/contagem"); // Atualize com o caminho correto do seu endpoint
@@ -54,27 +59,13 @@ const fetchGruposEmpresa = async () => {
 
 const EdicaoProduto: React.FC = () => {
   const router = useRouter();
-  const [product, setProduct] = useState<Product>({
-    Produto: "",
-    Categoria: "",
-    Referencia: "",
-    CodigoBarras: "",
-    Unidade: "",
-    Preco1: 0,
-    Origem: "",
-    CstCompra: "",
-    Situacao: "",
-    CSOSN: "",
-    CodSub: "",
-    CodGrp: "",
-    Caminho: "",
-  });
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  const [product, setProduct] = useState<Product>({} as Product);
   const { data: productCount, isLoading: isProductCountLoading, error: productCountError } = useQuery("productCount", fetchProductCount);
   const { data: regimeEmpresa, isLoading: isRegimeEmpresaLoading, error: regimeEmpresaError } = useQuery("regimeEmpresa", fetchRegimeEmpresa);
   const { data, isLoading: isgruposEmpresaLoading, error: isGruposEmpresaError } = useQuery("gruposEmpresa", fetchGruposEmpresa);
   const [precoFormatado, setPrecoFormatado] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (isProductCountLoading || isRegimeEmpresaLoading || isgruposEmpresaLoading) return <Loading />;
 
@@ -90,58 +81,79 @@ const EdicaoProduto: React.FC = () => {
     setProduct({ ...product, [name]: value });
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null; // Pegando o primeiro arquivo selecionado ou definindo como null caso não exista
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (product.CodPro === undefined) return toast.error("Selecione um produto antes de adicionar uma imagem");
+      let arquivo = event.target.files?.[0];
+      if (!arquivo) return;
+      if (!arquivo.type.includes("image")) return toast.error("O arquivo selecionado não é uma imagem");
+      if (arquivo.size > 3000000) return toast.error("O tamanho máximo permitido é de 3MB");
+      setSelectedFile(arquivo);
+      // Outras lógicas após a seleção do arquivo
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      const caminho = event.target.getAttribute("data-imagepath");
 
-    const maxSize = 3 * 1024 * 1024; // 3 MB
-
-    if (file && file.size > maxSize) {
-      alert("O arquivo é muito grande! Por favor, selecione um arquivo de até 3 MB.");
-      event.target.value = ""; // Limpa o campo de arquivo
-    } else {
-      // Processa o arquivo aqui (se necessário)
-      setSelectedFile(file);
+      const response = await axios.post(`/api/admin/produtos/imagem/${product.CodPro}/${caminho}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response?.data) {
+        return toast.success("Imagem adicionada com sucesso!");
+      }
+    } catch (error: any) {
+      toast.error(error?.response.data.message);
     }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    // Verificar se já existe um produto com a mesma referência.
-
     try {
-      const exists = await axios.get(`/api/admin/produtos/exists/${product.Referencia}`);
+      //Atualizando Produto com Rota PUT
+      const response = await axios.put(`/api/admin/produtos/editar/${product.CodPro}`, product);
 
-      if (exists.data.exists) {
-        return toast.error("Já existe um produto com a mesma referência");
+      if (response?.data) {
+        toast.success("Produto atualizado com sucesso!");
+      } else {
+        toast.error("Erro ao atualizar o produto!");
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Erro ao verificar se o produto já existe");
+    } catch (error: any) {
+      toast.error(error?.response.data.message);
     }
+  };
 
-    // Primeiro, faça o upload do arquivo
-    if (selectedFile) {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
+  const handleFetchProduto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Se o campo estiver vazio, define o CodCli como 0
+    const CodProValue = e.target.value === "" ? "0" : e.target.value;
+    setProduct((prevState) => ({
+      ...prevState,
+      CodPro: parseInt(CodProValue, 10) || 0,
+    }));
+
+    if (CodProValue !== "0") {
       try {
-        const fileResponse = await axios.post("/api/admin/produtos/uploadImage", formData);
-        const filePath = fileResponse.data.path; // Substitua com a resposta real do seu servidor
-
-        // Agora, envie os dados do produto, incluindo o caminho do arquivo
-        const productData = { ...product, Caminho: filePath };
-        const response = await axios.post("/api/admin/produtos/adicionar", productData);
-
-        if (response.data.error) {
-          toast.error(response.data.error);
-        } else {
-          toast.success(`Produto nº ${response.data} cadastrado com sucesso!`);
-          fetchProductCount();
+        const response = await axios.get(`/api/admin/produtos/editar/${CodProValue}`);
+        if (response?.data) {
+          setProduct(response.data);
         }
-      } catch (error) {
-        console.error(error);
-        toast.error("Erro ao enviar dados");
+        console.log(product);
+      } catch (error: any) {
+        toast.warn(error?.response.data.message);
       }
+    }
+  };
+
+  const handleDeleteImage = (image: string) => async () => {
+    try {
+      const response = await axios.delete(`/api/admin/produtos/imagem/${product.CodPro}/${image}`);
+
+      if (response?.data) {
+        toast.success("Imagem deletada com sucesso!");
+        setProduct(response.data);
+      }
+    } catch (error: any) {
+      toast.error(error?.response.data.message);
     }
   };
 
@@ -150,13 +162,20 @@ const EdicaoProduto: React.FC = () => {
       <Row>
         <Col>
           <h2 className={styles.Title}>Editar um Produto</h2>
-          <div className={styles.Badges}>
-            <h6>
-              Total de Produtos: <Badge bg="secondary">{productCount}</Badge>
-            </h6>
-            <h6>
-              Regime da empresa: <Badge bg="info">{regimeEmpresa}</Badge>
-            </h6>
+          <div className={styles.SubTitle}>
+            <Form.Group controlId="formCodPro" className={styles.CodPro}>
+              <Form.Label className={styles.CodProLabel}>Código do Produto: </Form.Label>
+              <Form.Control type="text" placeholder="COD" value={product.CodPro} style={{ width: "70px", textAlign: "center" }} onChange={handleFetchProduto} />
+            </Form.Group>
+
+            <div className={styles.Badges}>
+              <h6>
+                Total de Produtos: <Badge bg="secondary">{productCount}</Badge>
+              </h6>
+              <h6>
+                Regime da empresa: <Badge bg="info">{regimeEmpresa}</Badge>
+              </h6>
+            </div>
           </div>
         </Col>
       </Row>
@@ -185,7 +204,7 @@ const EdicaoProduto: React.FC = () => {
                 value={product.Referencia}
                 onChange={handleInputChange}
                 onBlur={() => {
-                  if (product.Referencia.length <= 0) return toast.error("Preencha o campo referência");
+                  if (!product.Referencia || product.Referencia.length <= 0) return toast.error("Preencha o campo referência");
                 }}
               />
             </Form.Group>
@@ -208,7 +227,7 @@ const EdicaoProduto: React.FC = () => {
                   }
                 }}
                 onBlur={() => {
-                  if (product.CodigoBarras.length < 13) return toast.error("O Código de barras não é válido");
+                  if ((product.CodigoBarras ?? "").length < 13) return toast.error("O Código de barras não é válido");
                 }}
               />
             </Form.Group>
@@ -240,21 +259,17 @@ const EdicaoProduto: React.FC = () => {
                 required={true}
                 type="text"
                 name="Preco1"
-                value={precoFormatado}
+                value={product.Preco1?.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   let { value } = event.target;
                   // Remove tudo que não é dígito
                   value = value.replace(/\D/g, "");
-
                   // Divide por 100 para obter o valor correto em reais
                   const valueInReais = value ? (parseInt(value, 10) / 100).toFixed(2) : "";
-
                   // Substitui o ponto decimal por vírgula
                   const formattedValue = valueInReais.toString().replace(".", ",");
-
                   // Atualiza o estado formatado com o novo valor formatado
                   setPrecoFormatado(formattedValue);
-
                   // Atualiza o estado do produto com o valor numérico para cálculos ou envio ao servidor
                   setProduct({ ...product, Preco1: parseFloat(valueInReais) });
                 }}
@@ -283,7 +298,7 @@ const EdicaoProduto: React.FC = () => {
           <Col>
             <Form.Group controlId="CstCompra">
               <Form.Label className={styles["form-label"]}>CST de Compra</Form.Label>
-              <Form.Control as="select" required={true} name="CstCompra" value={product.CstCompra} onChange={handleInputChange}>
+              <Form.Control as="select" required={true} name="CstCompra" value={product.CSTCompra} onChange={handleInputChange}>
                 <option value="">Selecione uma opção</option>
                 <option value="00">00 - Tributada integralmente</option>
                 <option value="10">10 - Tributada e com cobrança do ICMS por substituição tributária</option>
@@ -341,7 +356,7 @@ const EdicaoProduto: React.FC = () => {
           <Col>
             <Form.Group controlId="CodGrp">
               <Form.Label className={styles["form-label"]}>Grupo</Form.Label>
-              <Form.Control as="select" required={true} name="CodGrp" value={product.CodGrp} onChange={handleInputChange}>
+              <Form.Control as="select" required={true} name="CodGrp" value={product.Codgrp} onChange={handleInputChange}>
                 <option value="">Selecione uma opção</option>
                 {grupos.map((grupo: Grupo) => (
                   <option key={grupo.CodGrp} value={grupo.CodGrp}>
@@ -365,11 +380,126 @@ const EdicaoProduto: React.FC = () => {
               </Form.Control>
             </Form.Group>
           </Col>
+        </Row>
+        <hr />
+
+        <Row className={styles.imagensProduto}>
+          <h6>Imagens do produto</h6>
           <Col>
-            <Form.Group controlId="Caminho">
-              <Form.Label className={styles["form-label"]}>Imagem do Produto</Form.Label>
-              <Form.Control required={true} type="file" name="Caminho" accept="image/*" onChange={handleFileChange} />
-            </Form.Group>
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${product?.Caminho != null ? product?.Caminho : "erro/semProduto.png"}`}
+                    width={130}
+                    height={130}
+                    alt={product?.Produto || ""}
+                  />
+                </Card.Text>
+              </Card.Body>
+              <Card.Footer className={styles.CardButtons}>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  style={{ display: "none" }}
+                  ref={fileInputRef} // Usando a referência aqui
+                  data-imagepath="Caminho"
+                />
+                <FaPlus onClick={() => fileInputRef.current?.click()} />
+                {product.Caminho && <FaMinus onClick={handleDeleteImage("Caminho")} style={{ cursor: "pointer" }} />}
+              </Card.Footer>
+            </Card>
+          </Col>
+          <Col>
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${product?.Caminho2 != null ? product?.Caminho2 : "erro/semProduto.png"}`}
+                    width={130}
+                    height={130}
+                    alt={product?.Produto || ""}
+                  />
+                </Card.Text>
+              </Card.Body>
+              <Card.Footer className={styles.CardButtons}>
+                <FaPlus />
+                {product.Caminho2 && <FaMinus onClick={handleDeleteImage("Caminho2")} style={{ cursor: "pointer" }} />}
+              </Card.Footer>
+            </Card>
+          </Col>
+          <Col>
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${product?.Caminho3 != null ? product?.Caminho3 : "erro/semProduto.png"}`}
+                    width={130}
+                    height={130}
+                    alt={product?.Produto || ""}
+                  />
+                </Card.Text>
+              </Card.Body>
+              <Card.Footer className={styles.CardButtons}>
+                <FaPlus />
+                {product.Caminho3 && <FaMinus onClick={handleDeleteImage("Caminho3")} style={{ cursor: "pointer" }} />}
+              </Card.Footer>
+            </Card>
+          </Col>
+          <Col>
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${product?.Caminho4 != null ? product?.Caminho4 : "erro/semProduto.png"}`}
+                    width={130}
+                    height={130}
+                    alt={product?.Produto || ""}
+                  />
+                </Card.Text>
+              </Card.Body>
+              <Card.Footer className={styles.CardButtons}>
+                <FaPlus />
+                {product.Caminho4 && <FaMinus onClick={handleDeleteImage("Caminho4")} style={{ cursor: "pointer" }} />}
+              </Card.Footer>
+            </Card>
+          </Col>
+          <Col>
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${product?.Caminho5 != null ? product?.Caminho5 : "erro/semProduto.png"}`}
+                    width={130}
+                    height={130}
+                    alt={product?.Produto || ""}
+                  />
+                </Card.Text>
+              </Card.Body>
+              <Card.Footer className={styles.CardButtons}>
+                <FaPlus />
+                {product.Caminho5 && <FaMinus onClick={handleDeleteImage("Caminho5")} style={{ cursor: "pointer" }} />}
+              </Card.Footer>
+            </Card>
+          </Col>
+          <Col>
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${product?.Caminho6 != null ? product?.Caminho6 : "erro/semProduto.png"}`}
+                    width={130}
+                    height={130}
+                    alt={product?.Produto || ""}
+                  />
+                </Card.Text>
+              </Card.Body>
+              <Card.Footer className={styles.CardButtons}>
+                <FaPlus />
+                {product.Caminho6 && <FaMinus onClick={handleDeleteImage("Caminho6")} style={{ cursor: "pointer" }} />}
+              </Card.Footer>
+            </Card>
           </Col>
         </Row>
         <Row>

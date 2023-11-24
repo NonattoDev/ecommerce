@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Nav, Tab } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faTable, faUserCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faTable, faUserCheck, faPlus, faPencil, faGear } from "@fortawesome/free-solid-svg-icons";
 import styles from "./admin.module.css"; // Adicionando um arquivo de estilos separado
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
@@ -60,12 +60,12 @@ const AdminPage: React.FC = () => {
               </Nav.Item>
               <Nav.Item>
                 <Nav.Link eventKey="edicaoproduto">
-                  <FontAwesomeIcon icon={faPlus} className={styles.icon} />
+                  <FontAwesomeIcon icon={faPencil} className={styles.icon} />
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item>
                 <Nav.Link eventKey="configurarportal">
-                  <FontAwesomeIcon icon={faPlus} className={styles.icon} />
+                  <FontAwesomeIcon icon={faGear} className={styles.icon} />
                 </Nav.Link>
               </Nav.Item>
             </Nav>

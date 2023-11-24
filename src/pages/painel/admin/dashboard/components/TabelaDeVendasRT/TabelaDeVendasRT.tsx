@@ -88,7 +88,7 @@ const TabelaDeVendasRT = () => {
           <th>Pedido</th>
           <th>Status</th>
           <th>Cliente</th>
-          <th>CGC</th>
+          <th>CNPJ</th>
           <th>Data</th>
           <th>Valor Total</th>
           <th>Detalhes</th>

@@ -1,0 +1,79 @@
+.botaoSalvar {
+    width: auto;
+    margin: 10px auto;
+}
+
+.form-label {
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: -5px;
+}
+
+.SubTitle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+.CodPro {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.CodProLabel {
+    margin: auto 10px auto auto;
+    font-weight: bold;
+}
+
+.CodPro h6 {
+    font-weight: bold;
+    margin-bottom: 0px;
+}
+
+.CardButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto 15px;
+}
+
+.imagensProduto {
+    margin: 20px auto;
+}
+
+.imagensProduto h6 {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+
+
+.Badges {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 30px;
+}
+
+.Badges h6 {
+    font-weight: bold;
+    margin-bottom: 0px;
+
+}
+
+
+.Title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
+}

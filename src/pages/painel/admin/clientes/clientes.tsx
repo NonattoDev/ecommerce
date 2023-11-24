@@ -43,7 +43,7 @@ const Clientes = () => {
 
   if (status === "authenticated" && !session?.user?.admin) {
     toast.warn("Você não está autorizado a acessar esta página");
-    router.push("/painel/admin");
+    router.push("/");
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
