@@ -60,7 +60,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === "POST") {
-    log("entrei no post");
     upload.single("file")(req as any, {} as any, async (err: any) => {
       if (err) {
         return res.status(500).json({ message: "Erro no upload do arquivo" });
@@ -69,6 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const file = (req as any).file;
 
       if (!file) {
+        console.log("Arquivo não enviado");
         return res.status(400).json({ message: "Arquivo não enviado" });
       }
 

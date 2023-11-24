@@ -67,6 +67,8 @@ const EdicaoProduto: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {}, [selectedFile]);
+
   if (isProductCountLoading || isRegimeEmpresaLoading || isgruposEmpresaLoading) return <Loading />;
 
   if (productCountError || regimeEmpresaError || isGruposEmpresaError) {
@@ -83,15 +85,22 @@ const EdicaoProduto: React.FC = () => {
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      if (product.CodPro === undefined) return toast.error("Selecione um produto antes de adicionar uma imagem");
+      if (product.CodPro === undefined) {
+        event.target.value = ""; // Resetando o input file
+        toast.error("Selecione um produto antes de adicionar uma imagem");
+        return;
+      }
       let arquivo = event.target.files?.[0];
-      if (!arquivo) return;
+      if (!arquivo) {
+        toast.error("Selecione um arquivo");
+        return;
+      }
       if (!arquivo.type.includes("image")) return toast.error("O arquivo selecionado não é uma imagem");
       if (arquivo.size > 3000000) return toast.error("O tamanho máximo permitido é de 3MB");
-      setSelectedFile(arquivo);
-      // Outras lógicas após a seleção do arquivo
+
+      // Utilize o arquivo diretamente aqui
       const formData = new FormData();
-      formData.append("file", selectedFile);
+      formData.append("file", arquivo); // Usando o arquivo diretamente do evento
       const caminho = event.target.getAttribute("data-imagepath");
 
       const response = await axios.post(`/api/admin/produtos/imagem/${product.CodPro}/${caminho}`, formData, {
@@ -100,9 +109,11 @@ const EdicaoProduto: React.FC = () => {
         },
       });
       if (response?.data) {
+        event.target.value = ""; // Resetando o input file
         return toast.success("Imagem adicionada com sucesso!");
       }
     } catch (error: any) {
+      event.target.value = ""; // Resetando o input file
       toast.error(error?.response.data.message);
     }
   };
@@ -137,7 +148,6 @@ const EdicaoProduto: React.FC = () => {
         if (response?.data) {
           setProduct(response.data);
         }
-        console.log(product);
       } catch (error: any) {
         toast.warn(error?.response.data.message);
       }
@@ -147,7 +157,6 @@ const EdicaoProduto: React.FC = () => {
   const handleDeleteImage = (image: string) => async () => {
     try {
       const response = await axios.delete(`/api/admin/produtos/imagem/${product.CodPro}/${image}`);
-
       if (response?.data) {
         toast.success("Imagem deletada com sucesso!");
         setProduct(response.data);
