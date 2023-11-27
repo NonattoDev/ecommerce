@@ -147,7 +147,6 @@ const EdicaoProduto: React.FC = () => {
         const response = await axios.get(`/api/admin/produtos/editar/${CodProValue}`);
         if (response?.data) {
           setProduct(response.data);
-          console.log(response.data);
         }
       } catch (error: any) {
         toast.warn(error?.response.data.message);
@@ -428,8 +427,8 @@ const EdicaoProduto: React.FC = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho")}
                   ref={fileInputRefCaminho} // Usando a referência aqui
                 />
-                {product.Caminho === "semProduto.png" || (!product.Caminho && <FaPlus onClick={() => fileInputRefCaminho.current?.click()} style={{ cursor: "pointer" }} />)}
-                {product.Caminho && <FaMinus onClick={handleDeleteImage("Caminho")} style={{ cursor: "pointer" }} />}
+                {product.Caminho === "semProduto.png" && <FaPlus onClick={() => fileInputRefCaminho.current?.click()} style={{ cursor: "pointer" }} />}
+                {product.Caminho != "semProduto.png" && <FaMinus onClick={handleDeleteImage("Caminho")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
           </Col>
@@ -453,8 +452,8 @@ const EdicaoProduto: React.FC = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho2")}
                   ref={fileInputRefCaminho2} // Usando a referência aqui
                 />
-                {product.Caminho2 === "semProduto.png" || (!product.Caminho2 && <FaPlus onClick={() => fileInputRefCaminho2.current?.click()} style={{ cursor: "pointer" }} />)}
-                {product.Caminho2 && <FaMinus onClick={handleDeleteImage("Caminho2")} style={{ cursor: "pointer" }} />}
+                {product.Caminho2 === "semProduto.png" && <FaPlus onClick={() => fileInputRefCaminho2.current?.click()} style={{ cursor: "pointer" }} />}
+                {product.Caminho2 != "semProduto.png" && <FaMinus onClick={handleDeleteImage("Caminho2")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
           </Col>
@@ -478,8 +477,8 @@ const EdicaoProduto: React.FC = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho3")}
                   ref={fileInputRefCaminho3} // Usando a referência aqui
                 />
-                {product.Caminho3 === "semProduto.png" || (!product.Caminho3 && <FaPlus onClick={() => fileInputRefCaminho3.current?.click()} style={{ cursor: "pointer" }} />)}
-                {product.Caminho3 && <FaMinus onClick={handleDeleteImage("Caminho3")} style={{ cursor: "pointer" }} />}
+                {product.Caminho3 === "semProduto.png" && <FaPlus onClick={() => fileInputRefCaminho3.current?.click()} style={{ cursor: "pointer" }} />}
+                {product.Caminho3 != "semProduto.png" && <FaMinus onClick={handleDeleteImage("Caminho3")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
           </Col>
@@ -503,8 +502,8 @@ const EdicaoProduto: React.FC = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho4")}
                   ref={fileInputRefCaminho4} // Usando a referência aqui
                 />
-                {product.Caminho4 === "semProduto.png" || (!product.Caminho4 && <FaPlus onClick={() => fileInputRefCaminho4.current?.click()} style={{ cursor: "pointer" }} />)}
-                {product.Caminho4 && <FaMinus onClick={handleDeleteImage("Caminho4")} style={{ cursor: "pointer" }} />}
+                {product.Caminho4 === "semProduto.png" && <FaPlus onClick={() => fileInputRefCaminho4.current?.click()} style={{ cursor: "pointer" }} />}
+                {product.Caminho4 != "semProduto.png" && <FaMinus onClick={handleDeleteImage("Caminho4")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
           </Col>
@@ -528,8 +527,8 @@ const EdicaoProduto: React.FC = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho5")}
                   ref={fileInputRefCaminho5} // Usando a referência aqui
                 />
-                {product.Caminho5 === "semProduto.png" || (!product.Caminho5 && <FaPlus onClick={() => fileInputRefCaminho5.current?.click()} style={{ cursor: "pointer" }} />)}
-                {product.Caminho5 && <FaMinus onClick={handleDeleteImage("Caminho5")} style={{ cursor: "pointer" }} />}
+                {product.Caminho5 === "semProduto.png" && <FaPlus onClick={() => fileInputRefCaminho5.current?.click()} style={{ cursor: "pointer" }} />}
+                {product.Caminho5 != "semProduto.png" && <FaMinus onClick={handleDeleteImage("Caminho5")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
           </Col>

@@ -6,9 +6,9 @@ import multer from "multer";
 import AWS from "aws-sdk";
 
 const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  endpoint: process.env.AWS_S3_ENDPOINT,
+  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+  endpoint: process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT,
   s3ForcePathStyle: true,
 });
 
@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       await db("produto")
         .where({ codpro })
-        .update({ [caminho]: null });
+        .update({ [caminho]: "semProduto.png" });
     } catch (error) {
       log(error);
       return res.status(400).json({ message: "Erro ao deletar imagem" });
@@ -47,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       const params = {
-        Bucket: process.env.AWS_BUCKET_NAME ?? "",
+        Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME ?? "",
         Key: `fotosProdutos/${imagem}`,
       };
       const data = await s3.deleteObject(params).promise();
@@ -78,37 +78,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .where({ codpro })
           .update({ [caminho]: file.originalname });
 
-        return res.status(200).json({ message: "Arquivo enviado com sucesso", path: file.originalname });
+        //Enviar para o backblaze
+        try {
+          const fileContent = fs.readFileSync(file.path);
+
+          const params = {
+            Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME ?? "",
+            Key: `fotosProdutos/${file.originalname}`,
+            Body: fileContent,
+            ContentType: file.mimetype,
+          };
+          const data = await s3.upload(params).promise();
+
+          // Remover o arquivo da pasta uploads
+          fs.unlink(file.path, (unlinkErr) => {
+            if (unlinkErr) {
+              console.error("Erro ao remover o arquivo:", unlinkErr);
+            }
+          });
+
+          return res.status(200).json({ message: "Arquivo enviado com sucesso", path: file.originalname });
+        } catch (error) {
+          log(error);
+          return res.status(400).json({ message: "Erro ao salvar imagem" });
+        }
       } catch (error) {
         log(error);
         return res.status(400).json({ message: "Erro ao salvar imagem" });
       }
-
-      //Enviar para o backblaze
-      try {
-        const fileContent = fs.readFileSync(file.path);
-
-        const params = {
-          Bucket: process.env.AWS_BUCKET_NAME ?? "",
-          Key: `fotosProdutos/${file.originalname}`,
-          Body: fileContent,
-          ContentType: file.mimetype,
-        };
-        const data = await s3.upload(params).promise();
-
-        // Remover o arquivo da pasta uploads
-        fs.unlink(file.path, (unlinkErr) => {
-          if (unlinkErr) {
-            console.error("Erro ao remover o arquivo:", unlinkErr);
-          }
-        });
-
-        res.status(200).json({ message: "Arquivo enviado com sucesso", path: file.originalname });
-      } catch (error) {
-        log(error);
-        return res.status(400).json({ message: "Erro ao salvar imagem" });
-      }
-      return;
     });
   }
 }

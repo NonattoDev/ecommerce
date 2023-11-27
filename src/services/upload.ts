@@ -8,9 +8,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 
 const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  endpoint: process.env.AWS_S3_ENDPOINT,
+  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+  endpoint: process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT,
   s3ForcePathStyle: true,
 });
 
@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const fileContent = fs.readFileSync(filePath);
 
         const params: AWS.S3.PutObjectRequest = {
-          Bucket: process.env.AWS_BUCKET_NAME || "", // Ensure that AWS_BUCKET_NAME is defined
+          Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME || "", // Ensure that NEXT_PUBLIC_AWS_BUCKET_NAME is defined
           Key: `fotosProdutos/${file}`,
           Body: fileContent,
           ContentType: "image/jpeg", // Adjust as needed

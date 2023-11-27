@@ -108,7 +108,6 @@ function Produto({ produto, produtosSimilares }: { produto: Produto; produtosSim
                           alt="Thumbnail 2"
                           width={80}
                           height={80}
-                          priority
                           style={{
                             width: "100%",
                             height: "100%",
@@ -175,7 +174,6 @@ function Produto({ produto, produtosSimilares }: { produto: Produto; produtosSim
                       width={500}
                       height={500}
                       onError={handleImagemErro}
-                      priority
                       style={{
                         maxWidth: "500px",
                         maxHeight: "500px",
