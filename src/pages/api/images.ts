@@ -6,9 +6,9 @@ import db from "@/db/db";
 import path from "path";
 
 const s3 = new AWS.S3({
-  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-  endpoint: process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  endpoint: process.env.AWS_S3_ENDPOINT,
   s3ForcePathStyle: true,
 });
 
@@ -30,7 +30,7 @@ const apiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const urls = await Promise.all(
       fileNames.map((fileName: string) => {
         const params = {
-          Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME,
+          Bucket: process.env.AWS_BUCKET_NAME,
           Key: fileName,
           Expires: 60, // URL expira em 60 segundos, ajuste conforme necessário.
         };

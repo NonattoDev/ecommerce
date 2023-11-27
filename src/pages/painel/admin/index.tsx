@@ -36,7 +36,7 @@ const AdminPage: React.FC = () => {
     <Container fluid>
       <Tab.Container defaultActiveKey="analise">
         <Row>
-          <Col xs={12} sm={6} md={6} lg={1} xl={1}>
+          <Col xs={12} sm={6} md={6} lg={1} xl={1} style={{ maxWidth: "60px" }}>
             <Nav variant="pills">
               <Nav.Item>
                 <Nav.Link eventKey="home" href="/">
