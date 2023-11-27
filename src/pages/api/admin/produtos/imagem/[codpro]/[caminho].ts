@@ -68,6 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const file = (req as any).file;
 
       if (!file) {
+        console.log("Arquivo não enviado");
         return res.status(400).json({ message: "Arquivo não enviado" });
       }
 

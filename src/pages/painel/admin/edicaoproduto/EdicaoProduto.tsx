@@ -113,6 +113,7 @@ const EdicaoProduto: React.FC = () => {
         return toast.success("Imagem adicionada com sucesso!");
       }
     } catch (error: any) {
+      event.target.value = ""; // Resetando o input file
       toast.error(error?.response.data.message);
       return;
     }
@@ -157,7 +158,6 @@ const EdicaoProduto: React.FC = () => {
   const handleDeleteImage = (image: string) => async () => {
     try {
       const response = await axios.delete(`/api/admin/produtos/imagem/${product.CodPro}/${image}`);
-
       if (response?.data) {
         toast.success("Imagem deletada com sucesso!");
         setProduct((prevState) => ({ ...prevState, [image]: "semProduto.png" }));
