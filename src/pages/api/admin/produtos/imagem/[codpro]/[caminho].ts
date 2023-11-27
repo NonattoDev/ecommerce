@@ -60,7 +60,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === "POST") {
-    log("entrei no post");
     upload.single("file")(req as any, {} as any, async (err: any) => {
       if (err) {
         return res.status(500).json({ message: "Erro no upload do arquivo" });
@@ -77,6 +76,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await db("produto")
           .where({ codpro })
           .update({ [caminho]: file.originalname });
+
+        return res.status(200).json({ message: "Arquivo enviado com sucesso", path: file.originalname });
       } catch (error) {
         log(error);
         return res.status(400).json({ message: "Erro ao salvar imagem" });

@@ -38,7 +38,7 @@ interface Product {
   Caminho3?: string;
   Caminho4?: string;
   Caminho5?: string;
-  Caminho6?: string;
+  ECommerce?: string;
 }
 
 //Fetchs
@@ -64,8 +64,11 @@ const EdicaoProduto: React.FC = () => {
   const { data: regimeEmpresa, isLoading: isRegimeEmpresaLoading, error: regimeEmpresaError } = useQuery("regimeEmpresa", fetchRegimeEmpresa);
   const { data, isLoading: isgruposEmpresaLoading, error: isGruposEmpresaError } = useQuery("gruposEmpresa", fetchGruposEmpresa);
   const [precoFormatado, setPrecoFormatado] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRefCaminho = useRef<HTMLInputElement>(null);
+  const fileInputRefCaminho2 = useRef<HTMLInputElement>(null);
+  const fileInputRefCaminho3 = useRef<HTMLInputElement>(null);
+  const fileInputRefCaminho4 = useRef<HTMLInputElement>(null);
+  const fileInputRefCaminho5 = useRef<HTMLInputElement>(null);
 
   if (isProductCountLoading || isRegimeEmpresaLoading || isgruposEmpresaLoading) return <Loading />;
 
@@ -77,22 +80,27 @@ const EdicaoProduto: React.FC = () => {
   const { grupos, subgrupos } = data;
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setProduct({ ...product, [name]: value });
+    const { name, value, type, checked } = event.target;
+
+    if (type === "checkbox") {
+      // Se for um checkbox, atribui 'X' para true e 'F' para false
+      setProduct({ ...product, [name]: checked ? "X" : "F" });
+    } else {
+      // Para outros tipos de input, usa o valor como está
+      setProduct({ ...product, [name]: value });
+    }
   };
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>, caminho: string) => {
     try {
       if (product.CodPro === undefined) return toast.error("Selecione um produto antes de adicionar uma imagem");
-      let arquivo = event.target.files?.[0];
+      let arquivo = event.currentTarget.files?.[0];
       if (!arquivo) return;
       if (!arquivo.type.includes("image")) return toast.error("O arquivo selecionado não é uma imagem");
       if (arquivo.size > 3000000) return toast.error("O tamanho máximo permitido é de 3MB");
-      setSelectedFile(arquivo);
       // Outras lógicas após a seleção do arquivo
       const formData = new FormData();
-      formData.append("file", selectedFile);
-      const caminho = event.target.getAttribute("data-imagepath");
+      formData.append("file", arquivo);
 
       const response = await axios.post(`/api/admin/produtos/imagem/${product.CodPro}/${caminho}`, formData, {
         headers: {
@@ -100,10 +108,13 @@ const EdicaoProduto: React.FC = () => {
         },
       });
       if (response?.data) {
+        // Atualizar componente com a imagem
+        setProduct((prevState) => ({ ...prevState, [caminho]: response.data.path }));
         return toast.success("Imagem adicionada com sucesso!");
       }
     } catch (error: any) {
       toast.error(error?.response.data.message);
+      return;
     }
   };
 
@@ -112,7 +123,6 @@ const EdicaoProduto: React.FC = () => {
     try {
       //Atualizando Produto com Rota PUT
       const response = await axios.put(`/api/admin/produtos/editar/${product.CodPro}`, product);
-
       if (response?.data) {
         toast.success("Produto atualizado com sucesso!");
       } else {
@@ -136,8 +146,8 @@ const EdicaoProduto: React.FC = () => {
         const response = await axios.get(`/api/admin/produtos/editar/${CodProValue}`);
         if (response?.data) {
           setProduct(response.data);
+          console.log(response.data);
         }
-        console.log(product);
       } catch (error: any) {
         toast.warn(error?.response.data.message);
       }
@@ -150,7 +160,7 @@ const EdicaoProduto: React.FC = () => {
 
       if (response?.data) {
         toast.success("Imagem deletada com sucesso!");
-        setProduct(response.data);
+        setProduct((prevState) => ({ ...prevState, [image]: "semProduto.png" }));
       }
     } catch (error: any) {
       toast.error(error?.response.data.message);
@@ -380,9 +390,22 @@ const EdicaoProduto: React.FC = () => {
               </Form.Control>
             </Form.Group>
           </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label className={styles["form-label"]}>Adicionar produto ao Ecommerce?</Form.Label>
+              <Form.Check>
+                <Form.Check.Input
+                  type="checkbox"
+                  name="ECommerce"
+                  checked={product.ECommerce === "X"} // Simplificado para comparação direta
+                  onChange={handleInputChange}
+                />
+                <Form.Check.Label>Sim</Form.Check.Label>
+              </Form.Check>
+            </Form.Group>
+          </Col>
         </Row>
         <hr />
-
         <Row className={styles.imagensProduto}>
           <h6>Imagens do produto</h6>
           <Col>
@@ -401,12 +424,11 @@ const EdicaoProduto: React.FC = () => {
                 <Form.Control
                   type="file"
                   accept="image/*"
-                  onChange={handleFileSelect}
                   style={{ display: "none" }}
-                  ref={fileInputRef} // Usando a referência aqui
-                  data-imagepath="Caminho"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho")}
+                  ref={fileInputRefCaminho} // Usando a referência aqui
                 />
-                <FaPlus onClick={() => fileInputRef.current?.click()} />
+                {product.Caminho === "semProduto.png" || (!product.Caminho && <FaPlus onClick={() => fileInputRefCaminho.current?.click()} style={{ cursor: "pointer" }} />)}
                 {product.Caminho && <FaMinus onClick={handleDeleteImage("Caminho")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
@@ -424,7 +446,14 @@ const EdicaoProduto: React.FC = () => {
                 </Card.Text>
               </Card.Body>
               <Card.Footer className={styles.CardButtons}>
-                <FaPlus />
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho2")}
+                  ref={fileInputRefCaminho2} // Usando a referência aqui
+                />
+                {product.Caminho2 === "semProduto.png" || (!product.Caminho2 && <FaPlus onClick={() => fileInputRefCaminho2.current?.click()} style={{ cursor: "pointer" }} />)}
                 {product.Caminho2 && <FaMinus onClick={handleDeleteImage("Caminho2")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
@@ -442,7 +471,14 @@ const EdicaoProduto: React.FC = () => {
                 </Card.Text>
               </Card.Body>
               <Card.Footer className={styles.CardButtons}>
-                <FaPlus />
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho3")}
+                  ref={fileInputRefCaminho3} // Usando a referência aqui
+                />
+                {product.Caminho3 === "semProduto.png" || (!product.Caminho3 && <FaPlus onClick={() => fileInputRefCaminho3.current?.click()} style={{ cursor: "pointer" }} />)}
                 {product.Caminho3 && <FaMinus onClick={handleDeleteImage("Caminho3")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
@@ -460,7 +496,14 @@ const EdicaoProduto: React.FC = () => {
                 </Card.Text>
               </Card.Body>
               <Card.Footer className={styles.CardButtons}>
-                <FaPlus />
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho4")}
+                  ref={fileInputRefCaminho4} // Usando a referência aqui
+                />
+                {product.Caminho4 === "semProduto.png" || (!product.Caminho4 && <FaPlus onClick={() => fileInputRefCaminho4.current?.click()} style={{ cursor: "pointer" }} />)}
                 {product.Caminho4 && <FaMinus onClick={handleDeleteImage("Caminho4")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
@@ -478,26 +521,15 @@ const EdicaoProduto: React.FC = () => {
                 </Card.Text>
               </Card.Body>
               <Card.Footer className={styles.CardButtons}>
-                <FaPlus />
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileSelect(e, "Caminho5")}
+                  ref={fileInputRefCaminho5} // Usando a referência aqui
+                />
+                {product.Caminho5 === "semProduto.png" || (!product.Caminho5 && <FaPlus onClick={() => fileInputRefCaminho5.current?.click()} style={{ cursor: "pointer" }} />)}
                 {product.Caminho5 && <FaMinus onClick={handleDeleteImage("Caminho5")} style={{ cursor: "pointer" }} />}
-              </Card.Footer>
-            </Card>
-          </Col>
-          <Col>
-            <Card>
-              <Card.Body>
-                <Card.Text>
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${product?.Caminho6 != null ? product?.Caminho6 : "erro/semProduto.png"}`}
-                    width={130}
-                    height={130}
-                    alt={product?.Produto || ""}
-                  />
-                </Card.Text>
-              </Card.Body>
-              <Card.Footer className={styles.CardButtons}>
-                <FaPlus />
-                {product.Caminho6 && <FaMinus onClick={handleDeleteImage("Caminho6")} style={{ cursor: "pointer" }} />}
               </Card.Footer>
             </Card>
           </Col>

@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import { Card, Col, Row } from "react-bootstrap";
 import styles from "./Produto.module.css";
 import Image from "next/image";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
-import { Produto, ProdutosSimilaresType, ResponseData } from "@/Types/Produto";
+import { Produto, ProdutosSimilaresType } from "@/Types/Produto";
 import ProdutosSimilares from "@/components/ProdutosSimilares/produtosSimilares";
 import { useCarrinhoContext } from "@/context/CarrinhoContext";
 import { useSession } from "next-auth/react";
@@ -13,16 +13,14 @@ import { toast } from "react-toastify";
 import Loading from "@/components/Loading/Loading";
 import { format } from "date-fns";
 import MyVerticallyCenteredModal from "@/components/AuthModal/ModalAuth/authModal";
-import axios from "axios";
 import { GetServerSideProps } from "next";
 import db from "@/db/db";
 
 function Produto({ produto, produtosSimilares }: { produto: Produto; produtosSimilares: ProdutosSimilaresType[] }) {
   const router = useRouter();
-  const { productId } = router.query;
   const [quantidade, setQuantidade] = useState(1);
   const [imagemCarregada, setImagemCarregada] = useState(true);
-  const [imagemPrincipal, setImagemPrincipal] = useState("");
+  const [imagemPrincipal, setImagemPrincipal] = useState(produto.Caminho);
   const { handleAdicionarProdutosAoCarrinho } = useCarrinhoContext();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
@@ -85,25 +83,24 @@ function Produto({ produto, produtosSimilares }: { produto: Produto; produtosSim
                 </div>
               </Row>
               <Row>
-                <Col xs={12} md={6} lg={4}>
-                  {produto.Caminho && (
-                    <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho)}>
-                      <Image
-                        src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}`}
-                        alt="Thumbnail 1"
-                        width={80}
-                        height={80}
-                        priority
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "contain", // ou 'cover', dependendo do que você precisa
-                        }}
-                      />
-                    </div>
-                  )}
-
+                <Col xs={12} md={6} lg={2}>
                   <div className={styles.imagensThumbnail}>
+                    {produto.Caminho && (
+                      <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho)}>
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}`}
+                          alt="Thumbnail 1"
+                          width={80}
+                          height={80}
+                          priority
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain", // ou 'cover', dependendo do que você precisa
+                          }}
+                        />
+                      </div>
+                    )}
                     {produto.Caminho2 && (
                       <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho2)}>
                         <Image
@@ -140,7 +137,7 @@ function Produto({ produto, produtosSimilares }: { produto: Produto; produtosSim
                       <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho4)}>
                         <Image
                           src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho4}`}
-                          alt="Thumbnail 3"
+                          alt="Thumbnail 4"
                           width={80}
                           height={80}
                           priority
@@ -152,19 +149,36 @@ function Produto({ produto, produtosSimilares }: { produto: Produto; produtosSim
                         />
                       </div>
                     )}
-                    {/* Adicione outros thumbnails aqui */}
+                    {produto.Caminho5 && (
+                      <div className={styles.imagemThumbnail} onClick={() => handleThumbnailClick(produto.Caminho5)}>
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho5}`}
+                          alt="Thumbnail 5"
+                          width={80}
+                          height={80}
+                          priority
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain", // ou 'cover', dependendo do que você precisa
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </Col>
-                <Col xs={12} md={6} lg={4}>
+                <Col xs={12} md={6} lg={4} style={{ marginRight: "40px" }}>
                   {imagemCarregada && (
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${produto.Caminho}`}
+                      src={`${process.env.NEXT_PUBLIC_FOTOSPRODUTOSURL}/${imagemPrincipal}`}
                       alt="Imagem do produto"
                       width={500}
                       height={500}
                       onError={handleImagemErro}
                       priority
                       style={{
+                        maxWidth: "500px",
+                        maxHeight: "500px",
                         width: "100%",
                         height: "100%",
                         objectFit: "contain", // ou 'cover', dependendo do que você precisa
@@ -172,7 +186,7 @@ function Produto({ produto, produtosSimilares }: { produto: Produto; produtosSim
                     />
                   )}
                 </Col>
-                <Col>
+                <Col xs={12} md={6} lg={5}>
                   <Card>
                     <div className={styles.descricao}>
                       {status === "authenticated" && (
