@@ -4,7 +4,7 @@ import { s3 } from "@/services/s3BackBlaze";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
     // Verifica se o nome do bucket está definido
-    const bucketName = process.env.NEXT_PUBLIC_AWS_BUCKET_NAME;
+    const bucketName = process.env.AWS_BUCKET_NAME;
     if (!bucketName) {
       return res.status(500).json({ message: "Nome do bucket não configurado" });
     }

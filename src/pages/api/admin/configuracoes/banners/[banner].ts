@@ -3,13 +3,7 @@ import { log } from "console";
 import { NextApiRequest, NextApiResponse } from "next";
 import AWS from "aws-sdk";
 import multer from "multer";
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  endpoint: process.env.AWS_S3_ENDPOINT,
-  s3ForcePathStyle: true,
-});
+import { s3 } from "@/services/s3BackBlaze";
 
 const upload = multer({ dest: "uploads/" }); // Salva arquivos na pasta 'uploads'
 export const config = {
@@ -68,7 +62,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log("Arquivo não enviado");
         return res.status(400).json({ message: "Arquivo não enviado" });
       }
-      console.log(file);
 
       //Enviar para o backblaze
       try {

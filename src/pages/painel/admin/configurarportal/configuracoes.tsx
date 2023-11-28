@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useQuery } from "react-query";
 import { toast } from "react-toastify";
 import Loading from "@/components/Loading/Loading";
+import styles from "./configuracoes.module.css";
+import { FaPencilAlt, FaTrash } from "react-icons/fa";
 
 const listBanners = async () => {
   const { data } = await axios.get("/api/admin/configuracoes/banners/banners");
@@ -63,15 +65,17 @@ const Configuracoes: React.FC = () => {
   if (error) return <>Erro ao carregar as informações!</>;
 
   return (
-    <Container>
-      <h2>Configurações do portal</h2>
-      <Button onClick={triggerFileInput}>Adicionar um novo banner</Button>
-      <input type="file" ref={fileInputRef} onChange={handleUpload} style={{ display: "none" }} accept="image/*" />
+    <Container className={styles.container}>
+      <h2 className={styles.title}>Configurações do portal</h2>
+      <Button className={styles.uploadButton} onClick={triggerFileInput}>
+        <FaPencilAlt className={styles.icon} /> Adicionar um novo banner
+      </Button>
+      <input type="file" ref={fileInputRef} onChange={handleUpload} className={styles.hiddenInput} accept="image/*" />
       {images.map((image: string) => (
-        <div key={image} style={{ margin: "10px auto" }}>
-          <Image src={`${process.env.NEXT_PUBLIC_BANNERSIMAGEMURL}/${image}`} alt={image} width={1000} height={300} />
-          <Button variant="danger" onClick={() => handleDelete(image)}>
-            Excluir
+        <div key={image} className={styles.imageContainer}>
+          <Image src={`${process.env.NEXT_PUBLIC_BANNERSIMAGEMURL}/${image}`} alt={image} width={1000} height={300} className={styles.image} />
+          <Button variant="danger" className={styles.deleteButton} onClick={() => handleDelete(image)}>
+            <FaTrash className={styles.icon} /> Excluir
           </Button>
         </div>
       ))}
