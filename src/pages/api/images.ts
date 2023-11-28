@@ -1,5 +1,3 @@
-// pages/api/getImages.ts
-
 import type { NextApiRequest, NextApiResponse } from "next";
 import db from "@/db/db";
 import path from "path";
