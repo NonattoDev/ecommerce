@@ -47,7 +47,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-success text-light py-4">
-      <Container fluid>
+      <Container>
         <Row>
           <Col xs={12} md={6}>
             {informacoes.map((info) => (

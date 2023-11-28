@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const fileContent = fs.readFileSync(filePath);
 
         const params: AWS.S3.PutObjectRequest = {
-          Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME || "", // Ensure that NEXT_PUBLIC_AWS_BUCKET_NAME is defined
+          Bucket: process.env.AWS_BUCKET_NAME || "", // Ensure that AWS_BUCKET_NAME is defined
           Key: `fotosProdutos/${file}`,
           Body: fileContent,
           ContentType: "image/jpeg", // Adjust as needed

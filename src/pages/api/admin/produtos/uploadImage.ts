@@ -2,7 +2,13 @@ import fs from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
 import multer from "multer";
 import AWS from "aws-sdk";
-import { s3 } from "@/services/s3BackBlaze";
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  endpoint: process.env.AWS_S3_ENDPOINT,
+  s3ForcePathStyle: true,
+});
 
 const upload = multer({ dest: "uploads/" }); // Salva arquivos na pasta 'uploads'
 
@@ -24,7 +30,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       const fileContent = fs.readFileSync(file.path);
 
       const params = {
-        Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME ?? "",
+        Bucket: process.env.AWS_BUCKET_NAME ?? "",
         Key: `fotosProdutos/${file.originalname}`,
         Body: fileContent,
         ContentType: file.mimetype,
