@@ -1,12 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import AWS from "aws-sdk";
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-  endpoint: process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT,
-  s3ForcePathStyle: true,
-});
+import { s3 } from "@/services/s3BackBlaze";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {

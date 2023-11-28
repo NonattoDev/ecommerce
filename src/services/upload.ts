@@ -1,18 +1,8 @@
-// pages/api/uploadImages.js
-
-// Esse arquivo serve para fazer o upload das imagens para o S3 da AWS em grande quantidade
-
 import AWS from "aws-sdk";
 import fs from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-  endpoint: process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT,
-  s3ForcePathStyle: true,
-});
+import { s3 } from "./s3BackBlaze";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import AWS from "aws-sdk";
+import { s3 } from "@/services/s3BackBlaze";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
@@ -8,13 +9,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!bucketName) {
       return res.status(500).json({ message: "Nome do bucket não configurado" });
     }
-
-    const s3 = new AWS.S3({
-      accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-      endpoint: process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT,
-      s3ForcePathStyle: true,
-    });
 
     const params = {
       Bucket: bucketName,
