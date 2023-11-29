@@ -1,9 +1,8 @@
-import fs from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
 import multer from "multer";
 import { s3 } from "@/services/s3BackBlaze";
 
-const upload = multer({ dest: "uploads/" }); // Salva arquivos na pasta 'uploads'
+const upload = multer({ storage: multer.memoryStorage() });
 
 export const config = {
   api: {
@@ -20,25 +19,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const file = (req as any).file;
 
-      const fileContent = fs.readFileSync(file.path);
-
       const params = {
         Bucket: process.env.AWS_BUCKET_NAME ?? "",
         Key: `fotosProdutos/${file.originalname}`,
-        Body: fileContent,
+        Body: file.buffer,
         ContentType: file.mimetype,
       };
 
       try {
         const data = await s3.upload(params).promise();
-
-        // Remover o arquivo da pasta uploads
-        fs.unlink(file.path, (unlinkErr) => {
-          if (unlinkErr) {
-            console.error("Erro ao remover o arquivo:", unlinkErr);
-          }
-        });
-
         res.status(200).json({ message: "Arquivo enviado com sucesso", path: file.originalname });
       } catch (uploadError) {
         console.log(uploadError);

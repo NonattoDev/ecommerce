@@ -1,11 +1,9 @@
-import fs from "fs";
 import { log } from "console";
 import { NextApiRequest, NextApiResponse } from "next";
-import AWS from "aws-sdk";
 import multer from "multer";
 import { s3 } from "@/services/s3BackBlaze";
+const upload = multer({ storage: multer.memoryStorage() });
 
-const upload = multer({ dest: "uploads/" }); // Salva arquivos na pasta 'uploads'
 export const config = {
   api: {
     bodyParser: false, // Desativa o bodyParser padrão do Next.js para permitir que o multer processe o corpo
@@ -65,22 +63,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       //Enviar para o backblaze
       try {
-        const fileContent = fs.readFileSync(file.path);
-
         const params = {
           Bucket: process.env.AWS_BUCKET_NAME ?? "",
           Key: `banners/${file.originalname}`,
-          Body: fileContent,
+          Body: file.buffer,
           ContentType: file.mimetype,
         };
         const data = await s3.upload(params).promise();
-
-        // Remover o arquivo da pasta uploads
-        fs.unlink(file.path, (unlinkErr) => {
-          if (unlinkErr) {
-            console.error("Erro ao remover o arquivo:", unlinkErr);
-          }
-        });
 
         return res.status(200).json({ message: "Arquivo enviado com sucesso", path: file.originalname });
       } catch (error) {

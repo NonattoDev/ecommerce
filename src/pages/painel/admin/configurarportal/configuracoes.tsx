@@ -33,8 +33,6 @@ const handleDelete = async (imagem: string) => {
 const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
   if (event.target.files && event.target.files[0]) {
     const file = event.target.files[0];
-    // Aqui você pode implementar o upload do arquivo
-    // Por exemplo, enviar para um endpoint da sua API que lida com uploads
     try {
       const formData = new FormData();
       formData.append("banner", file);
