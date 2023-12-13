@@ -86,14 +86,8 @@ export default async function cadastrarUsuario(req: NextApiRequest, res: NextApi
     };
 
     try {
-      transporter.sendMail(mailOptions, (error) => {
-        if (error) {
-          console.error(error);
-          // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
-        } else {
-          console.log("E-mail enviado com sucesso:");
-        }
-      });
+      const enviarEmail = await transporter.sendMail(mailOptions);
+      console.log("Email enviado: ", enviarEmail.response);
     } catch (error) {
       console.log(error);
     }
