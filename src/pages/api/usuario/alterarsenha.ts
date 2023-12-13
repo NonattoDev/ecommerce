@@ -35,13 +35,12 @@ export default async function alterarSenha(req: NextApiRequest, res: NextApiResp
       `,
       };
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error(error);
-        } else {
-          console.log("E-mail enviado com sucesso:");
-        }
-      });
+      try {
+        const enviarEmail = await transporter.sendMail(mailOptions);
+        console.log("Email enviado: ", enviarEmail.response);
+      } catch (error) {
+        console.log(error);
+      }
 
       return res.status(200).json("Senha alterada com sucesso!");
     } catch (error: any) {

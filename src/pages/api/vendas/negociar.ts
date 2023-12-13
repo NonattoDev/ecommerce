@@ -70,14 +70,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         `,
       };
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error(error);
-          // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
-        } else {
-          console.log("E-mail enviado com sucesso:");
-        }
-      });
+      try {
+        const enviarEmail = await transporter.sendMail(mailOptions);
+        console.log("Email enviado: ", enviarEmail.response);
+      } catch (error) {
+        console.log(error);
+      }
 
       return res.json({ message: "Vendedor recebeu a Proposta", idProposta: valorAtualizado });
     } catch (error: any) {

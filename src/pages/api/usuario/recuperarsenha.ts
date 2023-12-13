@@ -38,14 +38,12 @@ export default async function recuperarSenha(req: NextApiRequest, res: NextApiRe
       `,
       };
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error(error);
-          // Se ocorrer um erro ao enviar o e-mail, você pode lidar com ele aqui
-        } else {
-          console.log("E-mail enviado com sucesso:");
-        }
-      });
+      try {
+        const enviarEmail = await transporter.sendMail(mailOptions);
+        console.log("Email enviado: ", enviarEmail.response);
+      } catch (error) {
+        console.log(error);
+      }
 
       return res.json("Email de recuperação de senha enviado com sucesso!");
     } catch (error) {
