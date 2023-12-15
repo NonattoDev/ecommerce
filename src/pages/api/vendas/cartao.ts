@@ -76,7 +76,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 installments: parcelaSelecionada,
                 capture: true,
                 card: {
-                  number: dadosCartao.numeroCartao,
+                  number: dadosCartao.numeroCartao.replace(/\D/g, ""),
                   exp_month: dadosCartao.expMonth,
                   exp_year: dadosCartao.expYear,
                   security_code: dadosCartao.cvv,

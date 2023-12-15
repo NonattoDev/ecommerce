@@ -269,7 +269,16 @@ const Cartao = () => {
       <Row>
         <Col md={3}>
           <InputGroup className="mb-3">
-            <Form.Control name="numeroCartao" type="text" placeholder="0000 0000 0000 0000" onChange={handleDadosCartaoChange} value={dadosCartao.numeroCartao} maxLength={16} />
+            <Form.Control
+              as={InputMask}
+              mask="9999 9999 9999 9999"
+              maskChar={null}
+              name="numeroCartao"
+              type="text"
+              placeholder="0000 0000 0000 0000"
+              onChange={handleDadosCartaoChange}
+              value={dadosCartao.numeroCartao}
+            />
           </InputGroup>
         </Col>
         <Col md={1}>
