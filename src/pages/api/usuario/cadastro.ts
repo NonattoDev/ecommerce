@@ -20,10 +20,20 @@ export default async function cadastrarUsuario(req: NextApiRequest, res: NextApi
       return res.status(400).json({ error: "Email já cadastrado no banco" });
     }
 
-    const cnpjExiste = await db("clientes").where("cgc", req.body.cgc).select("cgc").first();
+    if (req.body.cpf) {
+      const cpfExistente = await db("clientes").where("cpf", req.body.cpf).select("cpf").first();
 
-    if (cnpjExiste) {
-      return res.status(400).json({ error: "CNPJ já cadastrado no banco, experimente recuperar a senha" });
+      if (cpfExistente) {
+        return res.status(400).json({ error: "CPF já cadastrado no banco, experimente recuperar a senha" });
+      }
+    }
+
+    if (req.body.cgc) {
+      const cnpjExistente = await db("clientes").where("cgc", req.body.cgc).select("cgc").first();
+
+      if (cnpjExistente) {
+        return res.status(400).json({ error: "CNPJ já cadastrado no banco, experimente recuperar a senha" });
+      }
     }
 
     const ultimoID = await db("clientes").select("CodCli").orderBy("CodCli", "desc").first();
@@ -37,7 +47,7 @@ export default async function cadastrarUsuario(req: NextApiRequest, res: NextApi
       DataCad: dataFormatada,
       CodPais: 1058,
       CodSeg: 0,
-      Tipo: "J",
+      Tipo: req.body.cpf ? "F" : "J",
       Complemento: "ECOMMERCE",
       Situacao: "B",
       CodMun,

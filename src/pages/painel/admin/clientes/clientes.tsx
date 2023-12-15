@@ -26,6 +26,9 @@ interface Cliente {
   Cidade?: string;
   Estado?: string;
   Cep?: string;
+  CPF?: string;
+  RG?: string;
+  TelEnt2?: string;
 }
 
 const Clientes = () => {
@@ -82,7 +85,7 @@ const Clientes = () => {
   };
 
   return (
-    <Container>
+    <Container style={{ margin: "0 40px" }}>
       <h2 className={styles.Title}>
         <IoPersonCircleSharp size={35} style={{ color: "#0D6EFD" }} />
         Atualizar dados do Cliente
@@ -103,12 +106,14 @@ const Clientes = () => {
               <Form.Control name="Cliente" type="text" placeholder="Nome do cliente" value={dadosDoCliente.Cliente} onChange={handleChange} disabled />
             </Form.Group>
           </Col>
-          <Col md={4}>
-            <Form.Group controlId="formRazao">
-              <Form.Label className={styles["form-label"]}>Razão Social</Form.Label>
-              <Form.Control name="Razao" type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} onChange={handleChange} disabled />
-            </Form.Group>
-          </Col>
+          {!dadosDoCliente.CPF && (
+            <Col md={4}>
+              <Form.Group controlId="formRazao">
+                <Form.Label className={styles["form-label"]}>Razão Social</Form.Label>
+                <Form.Control name="Razao" type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} onChange={handleChange} disabled />
+              </Form.Group>
+            </Col>
+          )}
           <Col md={4}>
             <Form.Group controlId="formComplemento">
               <Form.Label className={styles["form-label"]}>Complemento</Form.Label>
@@ -132,18 +137,37 @@ const Clientes = () => {
               />
             </Form.Group>
           </Col>
-          <Col md={4}>
-            <Form.Group controlId="formCGC">
-              <Form.Label className={styles["form-label"]}>CNPJ</Form.Label>
-              <Form.Control type="text" placeholder="CNPJ" value={dadosDoCliente.CGC} disabled />
-            </Form.Group>
-          </Col>
-          <Col md={4}>
-            <Form.Group controlId="formIE">
-              <Form.Label className={styles["form-label"]}>IE</Form.Label>
-              <Form.Control name="IE" type="text" placeholder="IE" value={dadosDoCliente.IE} onChange={handleChange} />
-            </Form.Group>
-          </Col>
+          {dadosDoCliente.CPF ? (
+            <>
+              <Col md={4}>
+                <Form.Group controlId="formCPF">
+                  <Form.Label className={styles["form-label"]}>CPF</Form.Label>
+                  <Form.Control type="text" placeholder="CPF" value={dadosDoCliente?.CPF} disabled />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group controlId="formRG">
+                  <Form.Label className={styles["form-label"]}>RG</Form.Label>
+                  <Form.Control name="RG" type="text" placeholder="RG" value={dadosDoCliente?.RG} onChange={handleChange} />
+                </Form.Group>
+              </Col>
+            </>
+          ) : (
+            <>
+              <Col md={4}>
+                <Form.Group controlId="formCGC">
+                  <Form.Label className={styles["form-label"]}>CNPJ</Form.Label>
+                  <Form.Control type="text" placeholder="CNPJ" value={dadosDoCliente.CGC} disabled />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group controlId="formIE">
+                  <Form.Label className={styles["form-label"]}>IE</Form.Label>
+                  <Form.Control name="IE" type="text" placeholder="IE" value={dadosDoCliente.IE} onChange={handleChange} />
+                </Form.Group>
+              </Col>
+            </>
+          )}
         </Row>
         <Row>
           <Col md={4}>
@@ -155,7 +179,7 @@ const Clientes = () => {
                 name="TelEnt"
                 type="text"
                 placeholder="Telefone"
-                value={dadosDoCliente.TelEnt}
+                value={dadosDoCliente?.TelEnt2}
                 onChange={handleChange}
                 className="form-control" // Classe de estilo do Bootstrap
               />

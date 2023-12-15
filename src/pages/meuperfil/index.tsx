@@ -115,12 +115,14 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
               <Form.Control type="text" placeholder="Nome do cliente" value={dadosDoCliente.Cliente} readOnly disabled />
             </Form.Group>
           </Col>
-          <Col md={4}>
-            <Form.Group controlId="formRazao">
-              <Form.Label>Razão Social</Form.Label>
-              <Form.Control type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} readOnly disabled />
-            </Form.Group>
-          </Col>
+          {!dadosDoCliente.CPF && (
+            <Col md={4}>
+              <Form.Group controlId="formRazao">
+                <Form.Label>Razão Social</Form.Label>
+                <Form.Control type="text" placeholder="Razão Social" value={dadosDoCliente.Razao} readOnly disabled />
+              </Form.Group>
+            </Col>
+          )}
           <Col md={4}>
             <Form.Group controlId="formComplemento">
               <Form.Label>Origem</Form.Label>
@@ -135,18 +137,37 @@ const MeuPerfil = ({ dadosDoCliente }: any) => {
               <Form.Control type="email" placeholder="Email" value={dadosCliente.EMail} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "EMail")} />
             </Form.Group>
           </Col>
-          <Col md={4}>
-            <Form.Group controlId="formCGC">
-              <Form.Label>CNPJ</Form.Label>
-              <Form.Control type="text" placeholder="CNPJ" value={dadosDoCliente.CGC} readOnly disabled />
-            </Form.Group>
-          </Col>
-          <Col md={4}>
-            <Form.Group controlId="formIE">
-              <Form.Label>IE</Form.Label>
-              <Form.Control type="text" placeholder="IE" value={dadosCliente.IE} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "IE")} />
-            </Form.Group>
-          </Col>
+          {dadosDoCliente.CPF ? (
+            <>
+              <Col md={4}>
+                <Form.Group controlId="formCPF">
+                  <Form.Label>CPF</Form.Label>
+                  <Form.Control type="text" placeholder="CPF" value={dadosDoCliente.CPF} readOnly disabled />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group controlId="formRG">
+                  <Form.Label>RG</Form.Label>
+                  <Form.Control type="text" placeholder="cpf" value={dadosCliente.RG} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "cpf")} />
+                </Form.Group>
+              </Col>
+            </>
+          ) : (
+            <>
+              <Col md={4}>
+                <Form.Group controlId="formCGC">
+                  <Form.Label>CNPJ</Form.Label>
+                  <Form.Control type="text" placeholder="CNPJ" value={dadosDoCliente.CGC} readOnly disabled />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group controlId="formIE">
+                  <Form.Label>IE</Form.Label>
+                  <Form.Control type="text" placeholder="IE" value={dadosCliente.IE} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, "IE")} />
+                </Form.Group>
+              </Col>
+            </>
+          )}
           <Col md={4}>
             <Form.Group controlId="formDataCad">
               <Form.Label>Data Cadastro</Form.Label>
@@ -230,6 +251,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       "Cep",
       "TelEnt",
       "CGC",
+      "CPF",
+      "RG",
       "IE",
       "DataCad",
       "Situacao",

@@ -10,7 +10,6 @@ import { useState } from "react";
 
 function Header() {
   const { data: session, status } = useSession();
-  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
 
   return (
     <Navbar expand="lg" style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#F8F6F4" }}>
@@ -22,13 +21,11 @@ function Header() {
             </Navbar.Brand>
           </Link>
         </div>
-
         <div className={style.searchBar}>
           <SearchBar />
         </div>
         <div className={style.usuarioOptions}>
           <UsuarioOptions />
-          {status === "authenticated" && <span style={{ color: "blue", fontSize: "16px" }}>Logado como {session?.user?.cliente}</span>}
         </div>
       </Container>
     </Navbar>

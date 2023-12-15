@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { codcli } = req.query;
     try {
       const cliente = await db("Clientes")
-        .select("CodCli", "Cliente", "Razao", "Complemento", "EMail", "CGC", "IE", "TelEnt", "DataCad", "Endereco", "Bairro", "Cidade", "Estado", "Cep")
+        .select("CodCli", "Cliente", "Razao", "Complemento", "EMail", "CGC", "CPF", "RG", "IE", "TelEnt2", "TelEnt", "DataCad", "Endereco", "Bairro", "Cidade", "Estado", "Cep")
         .where("CodCLi", codcli)
         .first();
 
@@ -64,13 +64,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === "PUT") {
     const { codcli } = req.query;
-    const { Cliente, Razao, Complemento, EMail, CGC, IE, TelEnt, DataCad, Endereco, Bairro, Cidade, Estado, Cep } = req.body;
+    const { Cliente, Razao, Complemento, EMail, CGC, IE, RG, CPF, TelEnt, TelEnt2, Endereco, Bairro, Cidade, Estado, Cep } = req.body;
 
     try {
-      const cliente = await db("Clientes")
-        .select("CodCli", "Cliente", "Razao", "Complemento", "EMail", "CGC", "IE", "TelEnt", "DataCad", "Endereco", "Bairro", "Cidade", "Estado", "Cep")
-        .where("CodCLi", codcli)
-        .first();
+      const cliente = await db("Clientes").where("CodCLi", codcli).first();
 
       if (!cliente) {
         return res.status(404).json("Cliente não encontrado");
@@ -83,7 +80,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         EMail,
         CGC,
         IE,
+        RG,
+        CPF,
         TelEnt,
+        TelEnt2,
         Endereco,
         Bairro,
         Cidade,

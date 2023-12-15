@@ -24,6 +24,12 @@ function UsuarioOptions() {
 
   useEffect(() => {}, [session]);
 
+  const getInitials = (name: string) => {
+    const names = name.split(" ");
+    const initials = names.map((part) => part[0]).join("");
+    return initials.length > 2 ? initials.substring(0, 2) : initials; // Limita a 2 caracteres
+  };
+
   return (
     <>
       {status === "loading" ? (
@@ -35,6 +41,11 @@ function UsuarioOptions() {
         </>
       ) : (
         <Dropdown className={styles.container}>
+          {session?.user.cliente ? (
+            <div className={styles.initialsCircle}>{getInitials(session.user.cliente)}</div>
+          ) : (
+            <FontAwesomeIcon icon={faUser} style={{ color: "blue", height: "30px", width: "30px", marginRight: "-5px" }} />
+          )}
           <Dropdown.Toggle variant="transparent" className={styles.DropDowncontainer}>
             <FontAwesomeIcon icon={faUser} style={{ color: "blue", height: "30px", width: "30px", marginRight: "-5px" }} />
           </Dropdown.Toggle>

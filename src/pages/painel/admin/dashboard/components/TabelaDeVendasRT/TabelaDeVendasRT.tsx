@@ -97,21 +97,21 @@ const TabelaDeVendasRT = () => {
       <tbody>
         {vendas &&
           vendas.map((venda) => (
-            <React.Fragment key={venda.Pedido}>
-              <tr key={venda.Pedido}>
-                <td>{venda.Pedido}</td>
-                <td style={{ backgroundColor: getStatusColor(venda.statusPagamento ?? "") }}>{venda.statusPagamento}</td>
-                <td>{venda.Cliente.Cliente}</td>
-                <td>{venda.Cliente.CGC}</td>
-                <td>{venda.Data}</td>
-                <td>{calcularValorTotal(venda.Produtos)}</td>
+            <React.Fragment key={venda?.Pedido}>
+              <tr key={venda?.Pedido}>
+                <td>{venda?.Pedido}</td>
+                <td style={{ backgroundColor: getStatusColor(venda?.statusPagamento ?? "") }}>{venda?.statusPagamento}</td>
+                <td>{venda?.Cliente?.Cliente}</td>
+                <td>{venda?.Cliente?.CGC}</td>
+                <td>{venda?.Data}</td>
+                <td>{calcularValorTotal(venda?.Produtos)}</td>
                 <td>
-                  <Button variant="light" onClick={() => toggleRow(venda.Pedido)}>
+                  <Button variant="light" onClick={() => toggleRow(venda?.Pedido)}>
                     <FontAwesomeIcon icon={faSearch} width={20} />
                   </Button>
                 </td>
               </tr>
-              {expandedRows[venda.Pedido] && (
+              {expandedRows[venda?.Pedido] && (
                 <tr>
                   <td colSpan={6}>
                     <strong>Produtos Comprados:</strong>
@@ -126,11 +126,11 @@ const TabelaDeVendasRT = () => {
                       </thead>
                       <tbody>
                         {venda.Produtos.map((produto) => (
-                          <tr key={produto.COdPro}>
-                            <td>{produto.COdPro}</td>
-                            <td>{produto.Produto}</td>
-                            <td>{produto.QTD}</td>
-                            <td>{produto.Preco.toLocaleString("pt-br", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <tr key={produto?.COdPro}>
+                            <td>{produto?.COdPro}</td>
+                            <td>{produto?.Produto}</td>
+                            <td>{produto?.QTD}</td>
+                            <td>{produto?.Preco.toLocaleString("pt-br", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                           </tr>
                         ))}
                       </tbody>
