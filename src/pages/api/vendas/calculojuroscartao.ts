@@ -23,7 +23,7 @@ export default async function calculoJurosCartao(req: NextApiRequest, res: NextA
           value: totalAmount,
           max_installments: process.env.PAGSEGURO_MAX_INSTALLMENTS,
           max_installments_no_interest: 0,
-          credit_card_bin: numeroCartao,
+          credit_card_bin: numeroCartao.replace(/\s/g, "").slice(0, 6),
         },
         headers: {
           accept: "application/json",

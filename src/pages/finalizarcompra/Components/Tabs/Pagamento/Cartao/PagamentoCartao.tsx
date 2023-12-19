@@ -195,10 +195,10 @@ const Cartao = () => {
     // Aqui você pode usar os dados armazenados nos estados para enviar a requisição ou executar outras ações necessárias
   };
   useEffect(() => {
-    if (dadosCartao.numeroCartao.length === 16 || dadosCartao.numeroCartao.length === 15) {
+    if (dadosCartao.numeroCartao.length === 19 || dadosCartao.numeroCartao.length === 15) {
       const fetchParcelas = async () => {
         const resposta = await axios.get("/api/vendas/calculojuroscartao", {
-          params: { totalAmount: Math.round(calcularTotalCompraComFrete() * 100), numeroCartao: dadosCartao.numeroCartao.substring(0, 6), parcelaSelecionada: parcelaSelecionada },
+          params: { totalAmount: Math.round(calcularTotalCompraComFrete() * 100), numeroCartao: dadosCartao.numeroCartao, parcelaSelecionada: parcelaSelecionada },
         });
 
         if (resposta.data.error_messages) {
@@ -224,7 +224,7 @@ const Cartao = () => {
 
       fetchParcelas();
     }
-  }, [dadosCartao.numeroCartao.length === 16, produtosNoCarrinho]);
+  }, [dadosCartao.numeroCartao.length === 19, produtosNoCarrinho]);
 
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = parseInt(event.target.value);

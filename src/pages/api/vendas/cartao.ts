@@ -93,43 +93,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const dataFormatada = dataAtual.format("YYYY-MM-DD HH:mm:ss.SSS");
 
-      const response = await axios.post(options.url, options.data, {
-        headers: options.headers,
-      });
+      try {
+        const response = await axios.post(options.url, options.data, {
+          headers: options.headers,
+        });
 
-      //! Se o Status é OK, ou seja, o cartao autorizou
-      if (response.data.charges[0].payment_response.code === "20000") {
-        let { CodInd } = await db("Clientes").where("CodCli", CodCli).select("CodInd").first();
+        //! Se o Status é OK, ou seja, o cartao autorizou
+        if (response.data.charges[0].payment_response.code === "20000") {
+          let { CodInd } = await db("Clientes").where("CodCli", CodCli).select("CodInd").first();
 
-        if (CodInd === null) {
-          CodInd = await db("indicado")
-            .select("CodInd")
-            .where("codseg", 1)
-            .andWhere(function () {
-              this.where("Inativo", "F").orWhereNull("Inativo");
-            })
-            .andWhere("statusFila", "FILA")
-            .orderBy("CodInd")
-            .first();
-
-          CodInd = CodInd.CodInd;
-
-          await db("Indicado").where("CodInd", CodInd).update({
-            statusFila: "OK",
-          });
-
-          if (!CodInd) {
-            await db("Indicado")
-              .where("codseg", 1)
-              .andWhere(function () {
-                this.where("Inativo", "F").orWhereNull("Inativo");
-              })
-              .update({
-                statusFila: "FILA",
-              });
-
+          if (CodInd === null) {
             CodInd = await db("indicado")
-              .select("CodInd", "Indicador", "Inativo")
+              .select("CodInd")
               .where("codseg", 1)
               .andWhere(function () {
                 this.where("Inativo", "F").orWhereNull("Inativo");
@@ -143,81 +118,107 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await db("Indicado").where("CodInd", CodInd).update({
               statusFila: "OK",
             });
+
+            if (!CodInd) {
+              await db("Indicado")
+                .where("codseg", 1)
+                .andWhere(function () {
+                  this.where("Inativo", "F").orWhereNull("Inativo");
+                })
+                .update({
+                  statusFila: "FILA",
+                });
+
+              CodInd = await db("indicado")
+                .select("CodInd", "Indicador", "Inativo")
+                .where("codseg", 1)
+                .andWhere(function () {
+                  this.where("Inativo", "F").orWhereNull("Inativo");
+                })
+                .andWhere("statusFila", "FILA")
+                .orderBy("CodInd")
+                .first();
+
+              CodInd = CodInd.CodInd;
+
+              await db("Indicado").where("CodInd", CodInd).update({
+                statusFila: "OK",
+              });
+            }
           }
-        }
-        // - Chamada no banco que pega o codigo referente ao pagamento em BOLETO
-        const { CodCartao } = await db("empresa").select("CodCartao").where("CodEmp", 1).first();
-        const Pagamento = await response.data;
+          // - Chamada no banco que pega o codigo referente ao pagamento em BOLETO
+          const { CodCartao } = await db("empresa").select("CodCartao").where("CodEmp", 1).first();
+          const Pagamento = await response.data;
 
-        // Definindo o enum para os estados de pagamento
-        enum StatusPagamento {
-          paid = "Pago",
-          authorized = "Autorizado",
-          declined = "Recusado",
-          canceled = "Cancelado",
-        }
+          // Definindo o enum para os estados de pagamento
+          enum StatusPagamento {
+            paid = "Pago",
+            authorized = "Autorizado",
+            declined = "Recusado",
+            canceled = "Cancelado",
+          }
 
-        const statusPagamentoMap = {
-          paid: StatusPagamento.paid,
-          authorized: StatusPagamento.authorized,
-          declined: StatusPagamento.declined,
-          canceled: StatusPagamento.canceled,
-        };
-        // 3. Inserir em Requisi
-        const inserirVendaRequisi = await db("requisi").insert({
-          Pedido: valorAtualizado,
-          Data: dataFormatada,
-          Tipo: "PEDIDO",
-          CodCli: CodCli,
-          Observacao: "PAGAMENTO REALIZADO NO ECOMMERCE VIA CARTAO",
-          Tipo_Preco: 1, //
-          CodCon: 0,
-          CodPros: 0,
-          CodEmp: 1,
-          Dimensao: 2,
-          CodInd: CodInd || CodInd.CodInd, //
-          Status: "VENDA",
-          FIB: valorFrete > 0 ? 0 : 9,
-          Ecommerce: "X",
-          Frete: valorFrete,
-          CodForma1: CodCartao,
-          Data1: moment().format("YYYY-MM-DD"),
-          Parc1: Pagamento.charges[0].payment_method.installments,
-          StatusPagamento: statusPagamentoMap[response.data.charges[0].status.toLowerCase() as keyof typeof statusPagamentoMap] || "Status Desconhecido",
-          CodAutorizacaoNumber: Pagamento.charges[0].payment_response.code,
-          idStatus: Pagamento.id,
-          idPagamento: Pagamento.charges[0].id,
-          Pago: Pagamento.charges[0].paid_at,
-          Bandeira: Pagamento.charges[0].payment_method.card.brand,
-          PDigito: Pagamento.charges[0].payment_method.card.first_digits,
-          UDigito: Pagamento.charges[0].payment_method.card.last_digits,
-          Nome: Pagamento.charges[0].payment_method.card.holder.name,
-          NSU: Pagamento.charges[0].payment_response.reference,
-          CodigoRazao: Pagamento.charges[0].payment_response.code,
-          Autorizacao: `E${valorAtualizado}`,
-        });
-        // 4. Inserir em Requisi1
-        for (const item of Pagamento.items) {
-          await db.raw(`Update Produto set EstoqueReservado1 = EstoqueReservado1 + ${parseFloat(item.quantity)} Where CodPro = ${parseInt(item.reference_id)}`);
-          await db("requisi1").insert({
+          const statusPagamentoMap = {
+            paid: StatusPagamento.paid,
+            authorized: StatusPagamento.authorized,
+            declined: StatusPagamento.declined,
+            canceled: StatusPagamento.canceled,
+          };
+          // 3. Inserir em Requisi
+          const inserirVendaRequisi = await db("requisi").insert({
             Pedido: valorAtualizado,
-            CodPro: parseInt(item.reference_id),
-            qtd: parseFloat(item.quantity),
-            preco: parseFloat(item.unit_amount) / 100,
-            preco1: item.Preco1,
-            preco2: item.Preco1,
-            Situacao: "000", //
-            Marca: "*",
+            Data: dataFormatada,
+            Tipo: "PEDIDO",
+            CodCli: CodCli,
+            Observacao: "PAGAMENTO REALIZADO NO ECOMMERCE VIA CARTAO",
+            Tipo_Preco: 1, //
+            CodCon: 0,
+            CodPros: 0,
+            CodEmp: 1,
+            Dimensao: 2,
+            CodInd: CodInd || CodInd.CodInd, //
+            Status: "VENDA",
+            FIB: valorFrete > 0 ? 0 : 9,
+            Ecommerce: "X",
+            Frete: valorFrete,
+            CodForma1: CodCartao,
+            Data1: moment().format("YYYY-MM-DD"),
+            Parc1: Pagamento.charges[0].payment_method.installments,
+            StatusPagamento: statusPagamentoMap[response.data.charges[0].status.toLowerCase() as keyof typeof statusPagamentoMap] || "Status Desconhecido",
+            CodAutorizacaoNumber: Pagamento.charges[0].payment_response.code,
+            idStatus: Pagamento.id,
+            idPagamento: Pagamento.charges[0].id,
+            Pago: Pagamento.charges[0].paid_at,
+            Bandeira: Pagamento.charges[0].payment_method.card.brand,
+            PDigito: Pagamento.charges[0].payment_method.card.first_digits,
+            UDigito: Pagamento.charges[0].payment_method.card.last_digits,
+            Nome: Pagamento.charges[0].payment_method.card.holder.name,
+            NSU: Pagamento.charges[0].payment_response.reference,
+            CodigoRazao: Pagamento.charges[0].payment_response.code,
+            Autorizacao: `E${valorAtualizado}`,
           });
-        }
+          // 4. Inserir em Requisi1
+          for (const item of Pagamento.items) {
+            await db.raw(`Update Produto set EstoqueReservado1 = EstoqueReservado1 + ${parseFloat(item.quantity)} Where CodPro = ${parseInt(item.reference_id)}`);
+            await db("requisi1").insert({
+              Pedido: valorAtualizado,
+              CodPro: parseInt(item.reference_id),
+              qtd: parseFloat(item.quantity),
+              preco: parseFloat(item.unit_amount) / 100,
+              preco1: item.Preco1,
+              preco2: item.Preco1,
+              Situacao: "000", //
+              Marca: "*",
+            });
+          }
 
-        const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
+          const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
 
-        const mailOptions = {
-          from: "softlinedocs@gmail.com",
-          to: email,
-          subject: `Confirmação de Compra Aprovada`,
-          html: `
+          const mailOptions = {
+            from: "softlinedocs@gmail.com",
+            to: email,
+            subject: `Confirmação de Compra Aprovada`,
+            html: `
             <div style="font-family: 'Arial', sans-serif; color: #333;">
               <h2>Parabéns, ${Cliente}!</h2>
               <p>Sua compra no valor de <strong>R$ ${totalAmount}</strong> foi <span style="color: #27ae60;"><strong>aprovada</strong></span> com sucesso!</p>
@@ -233,16 +234,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               <p>SoftlineDocs</p>
             </div>
           `,
-        };
+          };
 
-        try {
-          const enviarEmail = await transporter.sendMail(mailOptions);
-          console.log("Email enviado: ", enviarEmail.response);
-        } catch (error) {
-          console.log(error);
+          try {
+            const enviarEmail = await transporter.sendMail(mailOptions);
+            console.log("Email enviado: ", enviarEmail.response);
+          } catch (error) {
+            console.log(error);
+          }
+
+          return res.status(200).json({ message: "Venda concluída no banco de dados", idVenda: valorAtualizado });
         }
-
-        return res.status(200).json({ message: "Venda concluída no banco de dados", idVenda: valorAtualizado });
+      } catch (error: any) {
+        console.log(error.response.data);
+        return res.status(400).json({ message: error.response.data });
       }
     } catch (error) {
       return res.status(500).json({ message: "Erro interno do servidor" });
