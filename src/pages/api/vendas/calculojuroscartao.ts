@@ -31,11 +31,13 @@ export default async function calculoJurosCartao(req: NextApiRequest, res: NextA
         },
       };
 
+      console.log(options);
+
       const response = await axios.get<PagSeguroResponse>(options.url, options);
 
       return res.json(response.data);
     } catch (error: any) {
-      console.log(error.response.data);
+      console.log(error.message);
       if (axios.isAxiosError(error) && error.response) {
         return res.status(error.response.status).json(error.response.data);
       }
