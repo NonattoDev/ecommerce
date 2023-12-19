@@ -1,18 +1,10 @@
 import knex from "knex";
+const dbConnectionString = `Data Source=189.89.178.14,65533;Network Library=DBMSSOCN;
+Initial Catalog=IMPORT;User ID=Soft Line;Password=4321;`;
 
 const db = knex({
   client: "mssql",
-  connection: {
-    server: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PSWD,
-    database: process.env.DB_NAME,
-    port: parseInt(process.env.DB_PORT || "1433", 10),
-    options: {
-      encrypt: true, // Caso esteja utilizando uma conexão segura
-      trustServerCertificate: true,
-    },
-  },
+  connection: dbConnectionString,
 });
 
 export default db;
