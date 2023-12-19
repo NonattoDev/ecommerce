@@ -36,6 +36,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // 2. Atualize o valor da venda na tabela
       await db("numero").update({ Venda: valorAtualizado });
 
+      // Verifica se o frete existe e adiciona como um item
+      if (valorFrete && valorFrete !== 0) {
+        // Certifique-se de que valorFrete é um número para o cálculo
+        valorFrete = Number(valorFrete);
+
+        const freteComoProduto = {
+          reference_id: "99999", // Um ID único para o item de frete
+          name: "FRETE",
+          quantity: 1,
+          unit_amount: Math.round(valorFrete * 100), // Multiplica por 100, se valorFrete for um valor em reais
+        };
+
+        // Adiciona o item de frete no array de produtos
+        formattedProducts.push(freteComoProduto);
+      }
+
       const options = {
         method: "POST",
         url: "https://sandbox.api.pagseguro.com/orders",
