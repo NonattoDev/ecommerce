@@ -31,8 +31,6 @@ export default async function calculoJurosCartao(req: NextApiRequest, res: NextA
         },
       };
 
-      console.log(options);
-
       const response = await axios.get<PagSeguroResponse>(options.url, options);
 
       return res.json(response.data);
