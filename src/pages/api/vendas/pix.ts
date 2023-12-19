@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const options = {
         method: "POST",
-        url: "https://sandbox.api.pagseguro.com/orders",
+        url: `${process.env.PAGSEGURO_URL}/orders`,
         headers: {
           accept: "application/json",
           Authorization: process.env.PAGSEGURO_BEARER_TOKEN,
@@ -212,7 +212,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { pixCharge } = req.query;
 
     try {
-      const response = await axios.get(`https://sandbox.api.pagseguro.com/orders/${pixCharge}`, {
+      const response = await axios.get(`${process.env.PAGSEGURO_URL}/orders/${pixCharge}`, {
         headers: {
           Authorization: `Bearer B871F6967C2341489D37924D761FF1BD`,
         },

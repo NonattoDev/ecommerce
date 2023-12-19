@@ -17,7 +17,7 @@ export default async function calculoJurosCartao(req: NextApiRequest, res: NextA
       const { totalAmount, numeroCartao } = req.query as { totalAmount: string; numeroCartao: string };
 
       const options = {
-        url: `https://sandbox.api.pagseguro.com/charges/fees/calculate`,
+        url: `${process.env.PAGSEGURO_URL}/charges/fees/calculate`,
         params: {
           payment_methods: "CREDIT_CARD",
           value: totalAmount,

@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const options = {
       method: "POST",
-      url: "https://sandbox.api.pagseguro.com/orders",
+      url: `${process.env.PAGSEGURO_URL}/orders`,
       headers: {
         accept: "application/json",
         Authorization: process.env.PAGSEGURO_BEARER_TOKEN,
