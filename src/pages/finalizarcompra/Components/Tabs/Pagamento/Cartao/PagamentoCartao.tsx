@@ -197,27 +197,45 @@ const Cartao = () => {
   useEffect(() => {
     if (dadosCartao.numeroCartao.length === 19 || dadosCartao.numeroCartao.length === 15) {
       const fetchParcelas = async () => {
-        const resposta = await axios.get("/api/vendas/calculojuroscartao", {
-          params: { totalAmount: Math.round(calcularTotalCompraComFrete() * 100), numeroCartao: dadosCartao.numeroCartao, parcelaSelecionada: parcelaSelecionada },
-        });
-
-        if (resposta.data.error_messages) {
-          const erros = resposta.data.error_messages;
-          erros.forEach((erro: { description: string }) => {
-            return toast.warn(erro.description);
+        try {
+          const resposta = await axios.get("/api/vendas/calculojuroscartao", {
+            params: { totalAmount: Math.round(calcularTotalCompraComFrete() * 100), numeroCartao: dadosCartao.numeroCartao, parcelaSelecionada: parcelaSelecionada },
           });
-        }
 
-        // Adicione outras bandeiras, se necessário
-        const bandeiras = ["mastercard", "visa", "hipercard", "elo", "amex", "maestro", "mercadopago"];
+          if (resposta.data.error_messages) {
+            const erros = resposta.data.error_messages;
+            erros.forEach((erro: { description: string }) => {
+              return toast.warn(erro.description);
+            });
+          }
 
-        for (const bandeira of bandeiras) {
-          const paymentMethod = resposta.data?.payment_methods?.credit_card?.[bandeira];
+          // Adicione outras bandeiras, se necessário
+          const bandeiras = ["mastercard", "visa", "hipercard", "elo", "amex", "maestro", "mercadopago"];
 
-          if (paymentMethod) {
-            const parcelamento = await paymentMethod.installment_plans;
-            setFormasDeParcelar(parcelamento);
-            break; // Se encontrou uma bandeira válida, sai do loop
+          for (const bandeira of bandeiras) {
+            const paymentMethod = resposta.data?.payment_methods?.credit_card?.[bandeira];
+
+            if (paymentMethod) {
+              const parcelamento = await paymentMethod.installment_plans;
+              setFormasDeParcelar(parcelamento);
+              break; // Se encontrou uma bandeira válida, sai do loop
+            }
+          }
+        } catch (error: any) {
+          if (error?.response.data.error_messages[0].description === "credit_card_bin data not found.") {
+            setLoading(false);
+            // Limpa o numero do cartão para que o usuário digite novamente
+            setDadosCartao({
+              ...dadosCartao,
+              numeroCartao: "",
+            });
+
+            // Retorna Mensagem de erro
+            toast.warn("Número do cartão inválido", {
+              position: "top-center",
+              pauseOnHover: false,
+              autoClose: 2000,
+            });
           }
         }
       };
