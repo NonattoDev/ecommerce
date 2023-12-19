@@ -78,8 +78,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .join("Produto", "requisi1.CodPro", "Produto.CodPro")
     .where("requisi1.Pedido", chargeid);
 
-  console.log(CompraEspecifica);
-
   return {
     props: {
       CompraEspecifica: CompraEspecifica || null,

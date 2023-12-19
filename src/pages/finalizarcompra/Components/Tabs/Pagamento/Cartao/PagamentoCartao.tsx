@@ -31,7 +31,6 @@ type FormasDeParcelar = {
 const Cartao = () => {
   const { data: session, status } = useSession();
   const { produtosNoCarrinho, valorMinimoFreteGratis, handleAtualizarQuantidadeProduto, handleLimparCarrinho } = useCarrinhoContext();
-
   const { endereco } = useContext(EnderecoContext);
   const [parcelaSelecionada, setParcelaSelecionada] = useState(0);
   const [formasDeParcelar, setFormasDeParcelar] = useState<FormasDeParcelar[]>();
@@ -194,6 +193,7 @@ const Cartao = () => {
 
     // Aqui você pode usar os dados armazenados nos estados para enviar a requisição ou executar outras ações necessárias
   };
+
   useEffect(() => {
     if (dadosCartao.numeroCartao.length === 19 || dadosCartao.numeroCartao.length === 15) {
       const fetchParcelas = async () => {

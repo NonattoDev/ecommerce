@@ -6,13 +6,29 @@ import transporter from "@/services/nodeMailer";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { dadosPessoais, dadosTelefone, endereco, formattedProducts, valorCompra, CodCli, valorFrete } = req.body;
+    let { dadosPessoais, dadosTelefone, endereco, formattedProducts, valorCompra, CodCli, valorFrete } = req.body;
 
     // 1. Obtenha a última venda
     let ultimaVenda = await db("numero").select("Venda").first();
     let valorAtualizado = ultimaVenda.Venda + 1; // Adicione 1 ao valor da última venda
 
     try {
+      // Verifica se o frete existe e adiciona como um item
+      if (valorFrete && valorFrete !== 0) {
+        // Certifique-se de que valorFrete é um número para o cálculo
+        valorFrete = Number(valorFrete);
+
+        const freteComoProduto = {
+          reference_id: "99999", // Um ID único para o item de frete
+          name: "FRETE",
+          quantity: 1,
+          unit_amount: Math.round(valorFrete * 100), // Multiplica por 100, se valorFrete for um valor em reais
+        };
+
+        // Adiciona o item de frete no array de produtos
+        formattedProducts.push(freteComoProduto);
+      }
+
       const options = {
         method: "POST",
         url: "https://sandbox.api.pagseguro.com/orders",
