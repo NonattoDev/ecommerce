@@ -222,21 +222,19 @@ const Cartao = () => {
             }
           }
         } catch (error: any) {
-          if (error?.response.data.error_messages[0].description === "credit_card_bin data not found.") {
-            setLoading(false);
-            // Limpa o numero do cartão para que o usuário digite novamente
-            setDadosCartao({
-              ...dadosCartao,
-              numeroCartao: "",
-            });
+          setLoading(false);
+          // Limpa o numero do cartão para que o usuário digite novamente
+          setDadosCartao({
+            ...dadosCartao,
+            numeroCartao: "",
+          });
 
-            // Retorna Mensagem de erro
-            toast.warn("Número do cartão inválido", {
-              position: "top-center",
-              pauseOnHover: false,
-              autoClose: 2000,
-            });
-          }
+          // Retorna Mensagem de erro
+          toast.warn("Ocorreu um erro, por favor, digite novamente o número do cartão", {
+            position: "top-center",
+            pauseOnHover: false,
+            autoClose: 2000,
+          });
         }
       };
 

@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const options = {
       method: "POST",
-      url: "https://sandbox.api.pagseguro.com/orders",
+      url: `${process.env.PAGSEGURO_URL}/orders`,
       headers: {
         accept: "application/json",
         Authorization: process.env.PAGSEGURO_BEARER_TOKEN,
@@ -94,6 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const response = await axios.post(options.url, options.data, {
         headers: options.headers,
       });
+
 
       //! Se o Status é OK, ou seja, foi gerado o BOLETO, vamos agir no Enterprise
       if (response.data.charges[0].payment_response.code === "20000") {

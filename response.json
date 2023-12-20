@@ -1,0 +1,128 @@
+{
+  "id": "ORDE_22D0C9D8-9E60-4550-B69D-BDAC18BCEF2F",
+  "reference_id": "credit_card-00001",
+  "created_at": "2023-12-20T09:02:31.945-03:00",
+  "customer": {
+    "name": "Robson José Santos Nonato Filho",
+    "email": "robsonnonatoiii@sandbox.pagseguro.com.br",
+    "tax_id": "08362023503",
+    "phones": [
+      {
+        "type": "MOBILE",
+        "country": "55",
+        "area": "55",
+        "number": "719974396"
+      }
+    ]
+  },
+  "items": [
+    {
+      "reference_id": "5",
+      "name": "AGUA SANITÁRIA 1LT CLORAL",
+      "quantity": 1,
+      "unit_amount": 249
+    },
+    {
+      "reference_id": "1",
+      "name": "AGUA SANITÁRIA 1LT BRILUX BRANCA",
+      "quantity": 1,
+      "unit_amount": 364
+    },
+    {
+      "reference_id": "4",
+      "name": "AGUA SANITÁRIA 5LT BRILUX BRANCA",
+      "quantity": 1,
+      "unit_amount": 1734
+    }
+  ],
+  "shipping": {
+    "address": {
+      "street": "Rua Carlos Gomes",
+      "number": "1321",
+      "complement": "ANDAR 9 E 10",
+      "locality": "Centro",
+      "city": "Limeira",
+      "region_code": "SP",
+      "country": "BRA",
+      "postal_code": "13480013"
+    }
+  },
+  "charges": [
+    {
+      "id": "CHAR_70F2AC6D-8862-49EA-83C4-6504A8EB9FF5",
+      "reference_id": "216172",
+      "status": "PAID",
+      "created_at": "2023-12-20T09:02:32.395-03:00",
+      "paid_at": "2023-12-20T09:02:32.000-03:00",
+      "description": "Teste API PagSeguro",
+      "amount": {
+        "value": 2347,
+        "currency": "BRL",
+        "summary": {
+          "total": 2347,
+          "paid": 2347,
+          "refunded": 0
+        }
+      },
+      "payment_response": {
+        "code": "20000",
+        "message": "SUCESSO",
+        "reference": "032416400102",
+        "raw_data": {
+          "authorization_code": "145803",
+          "nsu": "032416400102",
+          "reason_code": "00"
+        }
+      },
+      "payment_method": {
+        "type": "CREDIT_CARD",
+        "installments": 1,
+        "capture": true,
+        "card": {
+          "id": "CARD_C891A0A5-03CF-4657-93E4-9BB54A4A2811",
+          "brand": "mastercard",
+          "first_digits": "516292",
+          "last_digits": "7417",
+          "exp_month": "11",
+          "exp_year": "2029",
+          "holder": {
+            "name": "Robson J S N Filho"
+          },
+          "store": true
+        },
+        "soft_descriptor": "sellervirtual"
+      },
+      "links": [
+        {
+          "rel": "SELF",
+          "href": "https://sandbox.api.pagseguro.com/charges/CHAR_70F2AC6D-8862-49EA-83C4-6504A8EB9FF5",
+          "media": "application/json",
+          "type": "GET"
+        },
+        {
+          "rel": "CHARGE.CANCEL",
+          "href": "https://sandbox.api.pagseguro.com/charges/CHAR_70F2AC6D-8862-49EA-83C4-6504A8EB9FF5/cancel",
+          "media": "application/json",
+          "type": "POST"
+        }
+      ]
+    }
+  ],
+  "notification_urls": [
+    "https://be8d-2804-6884-4b-eb00-20b6-8875-ef9e-e353.ngrok-free.app/api/vendas/notificacao"
+  ],
+  "links": [
+    {
+      "rel": "SELF",
+      "href": "https://sandbox.api.pagseguro.com/orders/ORDE_22D0C9D8-9E60-4550-B69D-BDAC18BCEF2F",
+      "media": "application/json",
+      "type": "GET"
+    },
+    {
+      "rel": "PAY",
+      "href": "https://sandbox.api.pagseguro.com/orders/ORDE_22D0C9D8-9E60-4550-B69D-BDAC18BCEF2F/pay",
+      "media": "application/json",
+      "type": "POST"
+    }
+  ]
+}

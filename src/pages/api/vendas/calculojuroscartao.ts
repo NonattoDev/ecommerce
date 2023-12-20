@@ -17,7 +17,7 @@ export default async function calculoJurosCartao(req: NextApiRequest, res: NextA
       const { totalAmount, numeroCartao } = req.query as { totalAmount: string; numeroCartao: string };
 
       const options = {
-        url: `https://sandbox.api.pagseguro.com/charges/fees/calculate`,
+        url: `${process.env.PAGSEGURO_URL}/charges/fees/calculate`,
         params: {
           payment_methods: "CREDIT_CARD",
           value: totalAmount,
@@ -35,7 +35,9 @@ export default async function calculoJurosCartao(req: NextApiRequest, res: NextA
 
       return res.json(response.data);
     } catch (error: any) {
+      console.log(error);
       console.log(error.response.data);
+      error.response.data.message ? console.log(error.response.data.message) : console.log(error.message);
       if (axios.isAxiosError(error) && error.response) {
         return res.status(error.response.status).json(error.response.data);
       }
