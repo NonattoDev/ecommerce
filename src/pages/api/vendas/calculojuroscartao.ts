@@ -35,7 +35,9 @@ export default async function calculoJurosCartao(req: NextApiRequest, res: NextA
 
       return res.json(response.data);
     } catch (error: any) {
-      console.log(error.message);
+      console.log(error);
+      console.log(error.response.data);
+      error.response.data.message ? console.log(error.response.data.message) : console.log(error.message);
       if (axios.isAxiosError(error) && error.response) {
         return res.status(error.response.status).json(error.response.data);
       }

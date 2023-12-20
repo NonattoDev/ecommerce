@@ -95,6 +95,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         headers: options.headers,
       });
 
+
       //! Se o Status é OK, ou seja, foi gerado o BOLETO, vamos agir no Enterprise
       if (response.data.charges[0].payment_response.code === "20000") {
         const dataAtual = moment().startOf("day"); // Zera horas, minutos, segundos e milissegundos

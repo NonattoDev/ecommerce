@@ -262,6 +262,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return res.status(200).json({ message: "Venda concluída no banco de dados", idVenda: valorAtualizado });
         }
       } catch (error: any) {
+        console.log(error);
         console.log(error.response.data);
         return res.status(400).json({ message: error.response.data });
       }
