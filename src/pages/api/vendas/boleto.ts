@@ -57,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
         reference_id: valorAtualizado,
         items: formattedProducts,
-        notification_urls: [`${process.env.WEBHOOK_ROTA}/api/vendas/notificacao`],
+        notification_urls: [`${process.env.NEXTAUTH_URL}/api/vendas/notificacao`],
         charges: [
           {
             reference_id: valorAtualizado,
@@ -94,7 +94,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const response = await axios.post(options.url, options.data, {
         headers: options.headers,
       });
-
 
       //! Se o Status é OK, ou seja, foi gerado o BOLETO, vamos agir no Enterprise
       if (response.data.charges[0].payment_response.code === "20000") {
