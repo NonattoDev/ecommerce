@@ -114,6 +114,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           headers: options.headers,
         });
 
+        try {
+          const fs = require("fs");
+          fs.writeFileSync("responseCartao.json", JSON.stringify(response.data, null, 2));
+        } catch (error) {
+          console.log(error);
+        }
+
         //! Se o Status é OK, ou seja, o cartao autorizou
         if (response.data.charges[0].payment_response.code === "20000") {
           let { CodInd } = await db("Clientes").where("CodCli", CodCli).select("CodInd").first();
@@ -267,6 +274,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ message: error.response.data });
       }
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ message: "Erro interno do servidor" });
     }
 

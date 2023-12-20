@@ -1,7 +1,7 @@
 {
-  "id": "ORDE_22D0C9D8-9E60-4550-B69D-BDAC18BCEF2F",
+  "id": "ORDE_493C9BA2-8312-40D8-9541-164B31B58996",
   "reference_id": "credit_card-00001",
-  "created_at": "2023-12-20T09:02:31.945-03:00",
+  "created_at": "2023-12-20T10:32:55.701-03:00",
   "customer": {
     "name": "Robson José Santos Nonato Filho",
     "email": "robsonnonatoiii@sandbox.pagseguro.com.br",
@@ -17,50 +17,44 @@
   },
   "items": [
     {
-      "reference_id": "5",
-      "name": "AGUA SANITÁRIA 1LT CLORAL",
+      "reference_id": "7",
+      "name": "AGUA SANITÁRIA 5LT QBOA",
       "quantity": 1,
-      "unit_amount": 249
+      "unit_amount": 1370
     },
     {
-      "reference_id": "1",
-      "name": "AGUA SANITÁRIA 1LT BRILUX BRANCA",
+      "reference_id": "99999",
+      "name": "FRETE",
       "quantity": 1,
-      "unit_amount": 364
-    },
-    {
-      "reference_id": "4",
-      "name": "AGUA SANITÁRIA 5LT BRILUX BRANCA",
-      "quantity": 1,
-      "unit_amount": 1734
+      "unit_amount": 10000
     }
   ],
   "shipping": {
     "address": {
-      "street": "Rua Carlos Gomes",
-      "number": "1321",
-      "complement": "ANDAR 9 E 10",
-      "locality": "Centro",
-      "city": "Limeira",
-      "region_code": "SP",
+      "street": "Rua do Paraíso",
+      "number": "34",
+      "complement": "CASA PORTAO DE FERRO",
+      "locality": "Itapuã",
+      "city": "Salvador",
+      "region_code": "BA",
       "country": "BRA",
-      "postal_code": "13480013"
+      "postal_code": "41610895"
     }
   },
   "charges": [
     {
-      "id": "CHAR_70F2AC6D-8862-49EA-83C4-6504A8EB9FF5",
-      "reference_id": "216172",
+      "id": "CHAR_234C3CE6-A99B-4C44-9A34-08490A342CED",
+      "reference_id": "300151",
       "status": "PAID",
-      "created_at": "2023-12-20T09:02:32.395-03:00",
-      "paid_at": "2023-12-20T09:02:32.000-03:00",
+      "created_at": "2023-12-20T10:32:55.935-03:00",
+      "paid_at": "2023-12-20T10:32:56.000-03:00",
       "description": "Teste API PagSeguro",
       "amount": {
-        "value": 2347,
+        "value": 11370,
         "currency": "BRL",
         "summary": {
-          "total": 2347,
-          "paid": 2347,
+          "total": 11370,
+          "paid": 11370,
           "refunded": 0
         }
       },
@@ -79,14 +73,14 @@
         "installments": 1,
         "capture": true,
         "card": {
-          "id": "CARD_C891A0A5-03CF-4657-93E4-9BB54A4A2811",
+          "id": "CARD_C6DD8014-AE0F-4A80-991F-F43895FDF284",
           "brand": "mastercard",
-          "first_digits": "516292",
-          "last_digits": "7417",
-          "exp_month": "11",
-          "exp_year": "2029",
+          "first_digits": "524870",
+          "last_digits": "9826",
+          "exp_month": "8",
+          "exp_year": "2025",
           "holder": {
-            "name": "Robson J S N Filho"
+            "name": "robson j s n "
           },
           "store": true
         },
@@ -95,13 +89,13 @@
       "links": [
         {
           "rel": "SELF",
-          "href": "https://sandbox.api.pagseguro.com/charges/CHAR_70F2AC6D-8862-49EA-83C4-6504A8EB9FF5",
+          "href": "https://sandbox.api.pagseguro.com/charges/CHAR_234C3CE6-A99B-4C44-9A34-08490A342CED",
           "media": "application/json",
           "type": "GET"
         },
         {
           "rel": "CHARGE.CANCEL",
-          "href": "https://sandbox.api.pagseguro.com/charges/CHAR_70F2AC6D-8862-49EA-83C4-6504A8EB9FF5/cancel",
+          "href": "https://sandbox.api.pagseguro.com/charges/CHAR_234C3CE6-A99B-4C44-9A34-08490A342CED/cancel",
           "media": "application/json",
           "type": "POST"
         }
@@ -109,18 +103,18 @@
     }
   ],
   "notification_urls": [
-    "https://be8d-2804-6884-4b-eb00-20b6-8875-ef9e-e353.ngrok-free.app/api/vendas/notificacao"
+    "https://96d0-200-128-15-130.ngrok-free.app/api/vendas/notificacao"
   ],
   "links": [
     {
       "rel": "SELF",
-      "href": "https://sandbox.api.pagseguro.com/orders/ORDE_22D0C9D8-9E60-4550-B69D-BDAC18BCEF2F",
+      "href": "https://sandbox.api.pagseguro.com/orders/ORDE_493C9BA2-8312-40D8-9541-164B31B58996",
       "media": "application/json",
       "type": "GET"
     },
     {
       "rel": "PAY",
-      "href": "https://sandbox.api.pagseguro.com/orders/ORDE_22D0C9D8-9E60-4550-B69D-BDAC18BCEF2F/pay",
+      "href": "https://sandbox.api.pagseguro.com/orders/ORDE_493C9BA2-8312-40D8-9541-164B31B58996/pay",
       "media": "application/json",
       "type": "POST"
     }

@@ -15,7 +15,9 @@ ALTER TABLE [Requisi] ADD
    [Bandeira]             [varchar](10),
    [PDigito]              [varchar](20),
    [UDigito]              [varchar](20),
-   [Nome]                 [varchar](100)
+   [Nome]                 [varchar](100),
+   [NSU]                  [varchar](20),
+   [CodigoRazao]          [varchar](10)
 GO
 
 
