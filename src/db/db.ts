@@ -1,23 +1,13 @@
 import knex from "knex";
 
-// const db = knex({
-//   client: "mssql",
-//   connection: {
-//     host: "189.89.178.14",
-//     user: "Soft Line",
-//     password: "4321",
-//     database: "IMPORT",
-//     port: 65533,
-//   },
-// });
 const db = knex({
   client: "mssql",
   connection: {
-    host: "38.9.119.170",
-    user: "Soft Line",
-    password: "4321",
-    database: "ATLANTICO",
-    port: 54112,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PSWD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT ? Number(process.env.DB_PORT) : undefined,
   },
 });
 

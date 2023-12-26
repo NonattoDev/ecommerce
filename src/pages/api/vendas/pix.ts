@@ -68,37 +68,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       //! So pode passar se o pix for pago
       if (response.data) {
-        let { CodInd } = await db("Clientes").where("CodCli", CodCli).select("CodInd").first();
-        if (CodInd === null) {
-          CodInd = await db("indicado")
-            .select("CodInd")
-            .where("codseg", 1)
-            .andWhere(function () {
-              this.where("Inativo", "F").orWhereNull("Inativo");
-            })
-            .andWhere("statusFila", "FILA")
-            .orderBy("CodInd")
-            .first();
+        try {
+          let { CodInd } = await db("Clientes").where("CodCli", CodCli).select("CodInd").first();
 
-          CodInd = CodInd.CodInd;
-
-          await db("Indicado").where("CodInd", CodInd).update({
-            statusFila: "OK",
-          });
-
-          if (!CodInd) {
-            await db("Indicado")
-              .where("codseg", 1)
-              .andWhere(function () {
-                this.where("Inativo", "F").orWhereNull("Inativo");
-              })
-              .update({
-                statusFila: "FILA",
-              });
-
-            CodInd = await db("indicado")
-              .select("CodInd", "Indicador", "Inativo")
-              .where("codseg", 1)
+          if (CodInd === null) {
+            CodInd = await db("Indicado")
+              .select("CodInd")
+              .where("CodSeg", 1)
               .andWhere(function () {
                 this.where("Inativo", "F").orWhereNull("Inativo");
               })
@@ -111,7 +87,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await db("Indicado").where("CodInd", CodInd).update({
               statusFila: "OK",
             });
+
+            if (!CodInd) {
+              await db("Indicado")
+                .where("codseg", 1)
+                .andWhere(function () {
+                  this.where("Inativo", "F").orWhereNull("Inativo");
+                })
+                .update({
+                  statusFila: "FILA",
+                });
+
+              CodInd = await db("indicado")
+                .select("CodInd", "Indicador", "Inativo")
+                .where("codseg", 1)
+                .andWhere(function () {
+                  this.where("Inativo", "F").orWhereNull("Inativo");
+                })
+                .andWhere("statusFila", "FILA")
+                .orderBy("CodInd")
+                .first();
+
+              CodInd = CodInd.CodInd;
+
+              await db("Indicado").where("CodInd", CodInd).update({
+                statusFila: "OK",
+              });
+            }
           }
+        } catch (error) {
+          console.log("Erro ao buscar o indicador: ", error);
         }
 
         //! ------------------------------------------------------------------------------------------!//
@@ -204,7 +209,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     } catch (error: any) {
       console.log("Erro ao gerar o pagamento:", error);
-      return res.json(error.response.data);
+      return res.json(error);
     }
   }
 

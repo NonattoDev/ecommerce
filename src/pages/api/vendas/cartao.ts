@@ -161,7 +161,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 statusFila: "OK",
               });
             }
+            
           }
+
+          // Saiu do IF, ou seja, o cliente tem um indicador
+
           // - Chamada no banco que pega o codigo referente ao pagamento em BOLETO
           const { CodCartao } = await db("empresa").select("CodCartao").where("CodEmp", 1).first();
           const Pagamento = await response.data;
