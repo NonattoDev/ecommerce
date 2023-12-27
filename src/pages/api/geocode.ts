@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const response = await client.geocode({
         params: {
           address: address,
-          key: process.env.GOOGLE_MAPS_API || "",
+          key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API || "",
         },
       });
 

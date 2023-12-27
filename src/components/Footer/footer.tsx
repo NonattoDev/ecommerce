@@ -76,7 +76,7 @@ const Footer = () => {
               <Link href="https://softlineinfo.com.br" style={{ textDecoration: "none", color: "#fff", textAlign: "center" }}>
                 <span>Site produzido por Soft Line Sistemas</span>
               </Link>
-              <LoadScript googleMapsApiKey="AIzaSyAYSb2k0Y8sZzZNFOgsDwNCAlw4AALzKZY">
+              <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API || ""}>
                 <GoogleMap mapContainerStyle={containerStyle} center={mapPosition} zoom={18}>
                   <Marker position={mapPosition} />
                 </GoogleMap>

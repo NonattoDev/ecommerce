@@ -37,6 +37,25 @@ const Cartao = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const [pagSeguroLoaded, setPagSeguroLoaded] = useState(false);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js";
+    script.async = true;
+    script.onload = () => setPagSeguroLoaded(true);
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  if (!pagSeguroLoaded) {
+    return <Loading />;
+  }
+
   const calcularTotalCompra = () => {
     let total = 0;
     produtosNoCarrinho.forEach((produto) => {
