@@ -196,7 +196,6 @@ const Cartao = () => {
         // Definir aonde ficará no Enterprise o valor do frete pago pelo cliente
         const resposta = await axios.post("/api/vendas/cartao", {
           dadosPessoais,
-          dadosCartao,
           encryptedCardData: encryptedCardData.encryptedCard,
           formattedProducts,
           totalAmount: calcularTotalCompraComFrete(),

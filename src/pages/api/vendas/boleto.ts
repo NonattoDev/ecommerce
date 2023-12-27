@@ -62,13 +62,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         charges: [
           {
             reference_id: valorAtualizado,
-            description: "Boleto Softline Sistemas",
+            description: "Boleto",
             amount: { value: Math.round(valorCompra * 100), currency: "BRL" },
             payment_method: {
               type: "BOLETO",
               boleto: {
                 due_date: moment().add(3, "days").format("YYYY-MM-DD"),
-                instruction_lines: { line_1: "Pagamento processado para DESC Fatura", line_2: "Via PagSeguro" },
+                instruction_lines: { line_1: "Pagamento", line_2: "Via PagSeguro" },
                 holder: {
                   name: dadosPessoais.name,
                   tax_id: dadosPessoais.cpfCnpj.replace(/[.-]/g, ""),
