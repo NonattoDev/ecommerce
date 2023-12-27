@@ -36,25 +36,29 @@ const Cartao = () => {
   const [formasDeParcelar, setFormasDeParcelar] = useState<FormasDeParcelar[]>();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  const [pagSeguroLoaded, setPagSeguroLoaded] = useState(false);
+  const [publicKey, setPublicKey] = useState("");
 
   useEffect(() => {
+    const criarChavePublica = async () => {
+      try {
+        const response = await axios.get("/api/vendas/criarchavepublica");
+        setPublicKey(response.data.public_key);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    criarChavePublica();
+
     const script = document.createElement("script");
     script.src = "https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js";
     script.async = true;
-    script.onload = () => setPagSeguroLoaded(true);
-
     document.body.appendChild(script);
 
     return () => {
       document.body.removeChild(script);
     };
   }, []);
-
-  if (!pagSeguroLoaded) {
-    return <Loading />;
-  }
 
   const calcularTotalCompra = () => {
     let total = 0;
@@ -166,51 +170,77 @@ const Cartao = () => {
       return toast.warn("Digite o número do seu cartão");
     }
 
-    try {
-      // Definir aonde ficará no Enterprise o valor do frete pago pelo cliente
-      const resposta = await axios.post("/api/vendas/cartao", {
-        dadosPessoais,
-        dadosCartao,
-        formattedProducts,
-        totalAmount: calcularTotalCompraComFrete(),
-        endereco,
-        parcelaSelecionada,
-        CodCli: session?.user?.id,
-        valorFrete: calcularValorFrete(),
+    //@ts-ignore
+    if (window.PagSeguro) {
+      //@ts-ignore
+      const encryptedCardData = window.PagSeguro.encryptCard({
+        publicKey: publicKey,
+        holder: dadosCartao.nomeCartao,
+        number: dadosCartao.numeroCartao.replace(/\s/g, ""),
+        expMonth: dadosCartao.expMonth,
+        expYear: dadosCartao.expYear,
+        securityCode: dadosCartao.cvv,
       });
 
-      if (resposta.data.error_messages) {
+      if (encryptedCardData.hasErrors) {
+        // Trate os erros aqui
+        console.error(encryptedCardData.errors);
         setLoading(false);
-        const erros = resposta.data.error_messages;
-        erros.forEach((erro: any) => {
-          if (erro.description === "must be a valid CPF or CNPJ") return toast.warn("Digite um CPF ou CNPJ Válido");
-          toast.warn(erro.parameter_name);
-          toast.warn(erro.description);
+        toast.warn("Ocorreu um erro, por favor, digite novamente o número do cartão");
+        return;
+      }
+      console.log(encryptedCardData);
+
+      // Se nao houver erros, prossiga com o fluxo
+
+      try {
+        // Definir aonde ficará no Enterprise o valor do frete pago pelo cliente
+        const resposta = await axios.post("/api/vendas/cartao", {
+          dadosPessoais,
+          dadosCartao,
+          encryptedCardData: encryptedCardData.encryptedCard,
+          formattedProducts,
+          totalAmount: calcularTotalCompraComFrete(),
+          endereco,
+          parcelaSelecionada,
+          CodCli: session?.user?.id,
+          valorFrete: calcularValorFrete(),
         });
-        return;
-      }
 
-      if (resposta?.status == 200) {
+        if (resposta.data.error_messages) {
+          setLoading(false);
+          const erros = resposta.data.error_messages;
+          erros.forEach((erro: any) => {
+            if (erro.description === "must be a valid CPF or CNPJ") return toast.warn("Digite um CPF ou CNPJ Válido");
+            toast.warn(erro.parameter_name);
+            toast.warn(erro.description);
+          });
+          return;
+        }
+
+        if (resposta?.status == 200) {
+          setLoading(false);
+          // Redirecionar para a página raiz ("/")
+          router.push("/");
+          //Remover do Localstorage o carrinho com o id que vem da sessão apos a venda efetuada
+          handleLimparCarrinho();
+
+          //Retornar um aviso
+          toast.success(`Pagamento realizado o código da sua compra é: ${resposta?.data?.idVenda}`, { position: "top-center", pauseOnHover: false });
+
+          return;
+        } else {
+          setLoading(false);
+          return toast.info(resposta?.data?.charges[0]?.payment_response?.message);
+        }
+      } catch (error: any) {
         setLoading(false);
-        // Redirecionar para a página raiz ("/")
-        router.push("/");
-        //Remover do Localstorage o carrinho com o id que vem da sessão apos a venda efetuada
-        handleLimparCarrinho();
-
-        //Retornar um aviso
-        toast.success(`Pagamento realizado o código da sua compra é: ${resposta?.data?.idVenda}`, { position: "top-center", pauseOnHover: false });
-
-        return;
-      } else {
-        setLoading(false);
-        return toast.info(resposta?.data?.charges[0]?.payment_response?.message);
+        toast.warn(error.message);
       }
-    } catch (error: any) {
+    } else {
+      console.error("SDK do PagSeguro não carregado.");
       setLoading(false);
-      toast.warn(error.message);
     }
-
-    // Aqui você pode usar os dados armazenados nos estados para enviar a requisição ou executar outras ações necessárias
   };
 
   useEffect(() => {

@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   res.setHeader("Access-Control-Allow-Origin", "*"); // Permite que todas as origens acessem
   if (req.method === "POST") {
     try {
-      let { dadosPessoais, dadosCartao, formattedProducts, totalAmount, endereco, parcelaSelecionada, CodCli, valorFrete } = req.body;
+      let { dadosPessoais, formattedProducts, totalAmount, endereco, parcelaSelecionada, CodCli, valorFrete, encryptedCardData } = req.body;
 
       //Tratando para mandar para a PAGSEGURO
       if (parcelaSelecionada === 0) {
@@ -92,11 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 installments: parcelaSelecionada,
                 capture: true,
                 card: {
-                  number: dadosCartao.numeroCartao.replace(/\D/g, ""),
-                  exp_month: dadosCartao.expMonth,
-                  exp_year: dadosCartao.expYear,
-                  security_code: dadosCartao.cvv,
-                  holder: { name: dadosCartao.nomeCartao },
+                  encrypted: encryptedCardData,
                   store: true,
                 },
               },
@@ -113,6 +109,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const response = await axios.post(options.url, options.data, {
           headers: options.headers,
         });
+
+        console.log(response.data);
 
         //! Se o Status é OK, ou seja, o cartao autorizou
         if (response.data.charges[0].payment_response.code === "20000") {
@@ -161,7 +159,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 statusFila: "OK",
               });
             }
-            
           }
 
           // Saiu do IF, ou seja, o cliente tem um indicador
