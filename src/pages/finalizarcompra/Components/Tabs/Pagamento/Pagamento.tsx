@@ -33,12 +33,8 @@ const Pagamento = () => {
               <PagamentoPix />
             </Tab>
           )}
-          {boletoHabilitado ? (
+          {boletoHabilitado && (
             <Tab eventKey="Boleto" title="Boleto" key={`Boleto-${key}`}>
-              <PagamentoBoleto />
-            </Tab>
-          ) : (
-            <Tab eventKey="Boleto" title="Boleto" disabled key={`Boleto-${key}`}>
               <PagamentoBoleto />
             </Tab>
           )}
