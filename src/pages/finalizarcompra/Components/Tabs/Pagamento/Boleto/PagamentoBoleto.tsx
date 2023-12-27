@@ -100,7 +100,7 @@ const PagamentoBoleto = () => {
 
       toast.success(`Seu Boleto foi gerado com sucesso, o número do seu pedido é:${resposta?.data?.idVenda} `);
       window.open(resposta?.data?.data?.charges[0]?.links[0]?.href, "_blank");
-      //   router.push("/");
+      router.push("/");
     } catch (error: any) {
       setLoading(false);
       console.log(error);

@@ -3,6 +3,7 @@ import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import transporter from "@/services/nodeMailer";
+import { Console } from "console";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*"); // Permite que todas as origens acessem
@@ -97,79 +98,129 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       //! Se o Status é OK, ou seja, foi gerado o BOLETO, vamos agir no Enterprise
       if (response.data.charges[0].payment_response.code === "20000") {
-        const dataAtual = moment().startOf("day"); // Zera horas, minutos, segundos e milissegundos
-        const dataFormatada = dataAtual.format("YYYY-MM-DD HH:mm:ss.SSS");
+        // Logica do CodInd
+        try {
+          let { CodInd } = await db("Clientes").where("CodCli", CodCli).select("CodInd").first();
+          if (CodInd === null) {
+            CodInd = await db("Indicado")
+              .select("CodInd")
+              .where("CodSeg", 1)
+              .andWhere(function () {
+                this.where("Inativo", "F").orWhereNull("Inativo");
+              })
+              .andWhere("statusFila", "FILA")
+              .orderBy("CodInd")
+              .first();
 
-        // 2. Atualize o valor da venda na tabela
-        await db("numero").update({ Venda: valorAtualizado });
+            if (!CodInd) {
+              await db("Indicado")
+                .where("CodSeg", 1)
+                .andWhere(function () {
+                  this.where("Inativo", "F").orWhereNull("Inativo");
+                })
+                .update({
+                  statusFila: "FILA",
+                });
 
-        // - Chamada no banco que pega o codigo referente ao pagamento em BOLETO
+              CodInd = await db("indicado")
+                .select("CodInd", "Indicador", "Inativo")
+                .where("codseg", 1)
+                .andWhere(function () {
+                  this.where("Inativo", "F").orWhereNull("Inativo");
+                })
+                .andWhere("statusFila", "FILA")
+                .orderBy("CodInd")
+                .first();
 
-        const { CodBoleto } = await db("empresa").select("CodBoleto").where("CodEmp", 1).first();
+              CodInd = CodInd.CodInd;
 
-        // Definindo o enum para os estados de pagamento
-        enum StatusPagamento {
-          paid = "Pago",
-          waiting = "Aguardando",
-          canceled = "Cancelado",
-        }
+              await db("Indicado").where("CodInd", CodInd).update({
+                statusFila: "OK",
+              });
+            }
 
-        const statusPagamentoMap = {
-          paid: StatusPagamento.paid,
-          waiting: StatusPagamento.waiting,
-          canceled: StatusPagamento.canceled,
-        };
+            CodInd = CodInd.CodInd;
 
-        // 3. Inserir em Requisi
-        const inserirVendaRequisi = await db("requisi").insert({
-          Pedido: valorAtualizado,
-          Data: dataFormatada,
-          Tipo: "PEDIDO",
-          CodCli: CodCli,
-          Observacao: "PAGAMENTO NO ECOMMERCE VIA BOLETO",
-          Tipo_Preco: 1, //
-          CodCon: 0,
-          CodPros: 0,
-          CodEmp: 1,
-          Dimensao: 2,
-          CodInd: 1, //
-          Status: "VENDA",
-          FIB: valorFrete > 0 ? 0 : 9,
-          Ecommerce: "X",
-          Frete: valorFrete,
-          CodForma1: CodBoleto,
-          Data1: response.data.charges[0].payment_method.boleto.due_date,
-          Parc1: 1,
-          //FAZER AS MUDANÇAS DE ACORDO FORMA DE PAGAMENTO
-          StatusPagamento: statusPagamentoMap[response.data.charges[0].status.toLowerCase() as keyof typeof statusPagamentoMap] || "Status Desconhecido",
-          CodAutorizacaoNumber: response.data.charges[0].payment_response.code,
-          idStatus: response.data.id,
-          idPagamento: response.data.charges[0].id,
-          Nome: response.data.charges[0].payment_method.boleto.holder.name,
-          Autorizacao: `E${valorAtualizado}`,
-        });
-        // 4. Inserir em Requisi1
-        for (const item of response.data.items) {
-          await db.raw(`Update Produto set EstoqueReservado1 = EstoqueReservado1 + ${parseFloat(item.quantity)} Where CodPro = ${parseInt(item.reference_id)}`);
-          await db("requisi1").insert({
+            await db("Indicado").where("CodInd", CodInd).update({
+              statusFila: "OK",
+            });
+
+            console.log("CodInd: ", CodInd);
+          }
+
+          const dataAtual = moment().startOf("day"); // Zera horas, minutos, segundos e milissegundos
+          const dataFormatada = dataAtual.format("YYYY-MM-DD HH:mm:ss.SSS");
+
+          // 2. Atualize o valor da venda na tabela
+          await db("numero").update({ Venda: valorAtualizado });
+
+          // - Chamada no banco que pega o codigo referente ao pagamento em BOLETO
+
+          const { CodBoleto } = await db("empresa").select("CodBoleto").where("CodEmp", 1).first();
+
+          // Definindo o enum para os estados de pagamento
+          enum StatusPagamento {
+            paid = "Pago",
+            waiting = "Aguardando",
+            canceled = "Cancelado",
+          }
+
+          const statusPagamentoMap = {
+            paid: StatusPagamento.paid,
+            waiting: StatusPagamento.waiting,
+            canceled: StatusPagamento.canceled,
+          };
+
+          // 3. Inserir em Requisi
+          const inserirVendaRequisi = await db("requisi").insert({
             Pedido: valorAtualizado,
-            CodPro: parseInt(item.reference_id),
-            qtd: parseFloat(item.quantity),
-            preco: parseFloat(item.unit_amount) / 100,
-            preco1: item.Preco1,
-            preco2: item.Preco1,
-            Situacao: "000", //
-            Marca: "*",
+            Data: dataFormatada,
+            Tipo: "PEDIDO",
+            CodCli: CodCli,
+            Observacao: "PAGAMENTO NO ECOMMERCE VIA BOLETO",
+            Tipo_Preco: 1, //
+            CodCon: 0,
+            CodPros: 0,
+            CodEmp: 1,
+            Dimensao: 2,
+            CodInd: CodInd || CodInd.CodInd, //
+            Status: "VENDA",
+            FIB: valorFrete > 0 ? 0 : 9,
+            Ecommerce: "X",
+            Frete: valorFrete,
+            CodForma1: CodBoleto,
+            Data1: response.data.charges[0].payment_method.boleto.due_date,
+            Parc1: 1,
+            //FAZER AS MUDANÇAS DE ACORDO FORMA DE PAGAMENTO
+            StatusPagamento: statusPagamentoMap[response.data.charges[0].status.toLowerCase() as keyof typeof statusPagamentoMap] || "Status Desconhecido",
+            CodAutorizacaoNumber: response.data.charges[0].payment_response.code,
+            idStatus: response.data.id,
+            idPagamento: response.data.charges[0].id,
+            Nome: response.data.charges[0].payment_method.boleto.holder.name,
+            Autorizacao: `E${valorAtualizado}`,
           });
-        }
+          // 4. Inserir em Requisi1
+          for (const item of response.data.items) {
+            await db.raw(`Update Produto set EstoqueReservado1 = EstoqueReservado1 + ${parseFloat(item.quantity)} Where CodPro = ${parseInt(item.reference_id)}`);
+            await db("requisi1").insert({
+              Pedido: valorAtualizado,
+              CodPro: parseInt(item.reference_id),
+              qtd: parseFloat(item.quantity),
+              preco: parseFloat(item.unit_amount) / 100,
+              preco1: item.Preco1,
+              preco2: item.Preco1,
+              Situacao: "000", //
+              Marca: "*",
+            });
+          }
 
-        const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
+          const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
 
-        const mailOptions = {
-          from: "softlinedocs@gmail.com",
-          to: email,
-          subject: "Seu Boleto de Pagamento Está Pronto",
-          html: `
+          const mailOptions = {
+            from: "softlinedocs@gmail.com",
+            to: email,
+            subject: "Seu Boleto de Pagamento Está Pronto",
+            html: `
             <div style="font-family: 'Arial', sans-serif; color: #333;">
               <h2>Boleto Pendente, ${Cliente}!</h2>
               <p>Olá, ${Cliente}! 🎈</p>
@@ -198,15 +249,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               }
             </style>
           `,
-        };
+          };
 
-        try {
-          const enviarEmail = await transporter.sendMail(mailOptions);
-          console.log("Email enviado: ", enviarEmail.response);
+          try {
+            const enviarEmail = await transporter.sendMail(mailOptions);
+            console.log("Email enviado: ", enviarEmail.response);
+          } catch (error) {
+            console.log(error);
+          }
+
+          return res.status(200).json({ message: "Venda concluída no banco de dados", idVenda: valorAtualizado, data: response.data });
         } catch (error) {
           console.log(error);
+          return res.status(500).json({ message: "Erro ao inserir venda no banco de dados", error });
         }
-        return res.status(200).json({ message: "Venda concluída no banco de dados", idVenda: valorAtualizado, data: response.data });
       }
     } catch (error: any) {
       return res.json(error.response.data);

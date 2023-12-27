@@ -186,13 +186,12 @@ const Cartao = () => {
         // Trate os erros aqui
         console.error(encryptedCardData.errors);
         setLoading(false);
-        toast.warn("Ocorreu um erro, por favor, digite novamente o número do cartão");
+        toast.warn("Ocorreu um erro, por favor, verifique os dados do cartão e tente novamente");
         return;
       }
       console.log(encryptedCardData);
 
-      // Se nao houver erros, prossiga com o fluxo
-
+      // Se não houver erros, prossiga com o fluxo
       try {
         // Definir aonde ficará no Enterprise o valor do frete pago pelo cliente
         const resposta = await axios.post("/api/vendas/cartao", {

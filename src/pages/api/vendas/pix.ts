@@ -82,12 +82,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               .orderBy("CodInd")
               .first();
 
-            CodInd = CodInd.CodInd;
-
-            await db("Indicado").where("CodInd", CodInd).update({
-              statusFila: "OK",
-            });
-
             if (!CodInd) {
               await db("Indicado")
                 .where("codseg", 1)
@@ -114,6 +108,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 statusFila: "OK",
               });
             }
+
+            CodInd = CodInd.CodInd;
+
+            await db("Indicado").where("CodInd", CodInd).update({
+              statusFila: "OK",
+            });
           }
         } catch (error) {
           console.log("Erro ao buscar o indicador: ", error);
