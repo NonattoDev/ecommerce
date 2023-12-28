@@ -55,7 +55,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", session.user.id).first();
 
       const mailOptions = {
-        from: "softlinedocs@gmail.com",
+        from: {
+          name: "S-Commerce",
+          address: process.env.GMAIL_LOGIN as string,
+        },
         to: email,
         subject: `Pedido de Proposta Recebido`,
         html: `

@@ -73,14 +73,14 @@ const Footer = () => {
 
           <Col xs={12} md={6} className="d-flex justify-content-md-end">
             <div>
-              <Link href="https://softlineinfo.com.br" style={{ textDecoration: "none", color: "#fff", textAlign: "center" }}>
-                <span>Site produzido por Soft Line Sistemas</span>
-              </Link>
               <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API || ""}>
                 <GoogleMap mapContainerStyle={containerStyle} center={mapPosition} zoom={18}>
                   <Marker position={mapPosition} />
                 </GoogleMap>
               </LoadScript>
+              <Link href="https://softlineinfo.com.br" style={{ textDecoration: "none", color: "#fff", textAlign: "center" }}>
+                <span>Site produzido por Soft Line Sistemas</span>
+              </Link>
             </div>
           </Col>
         </Row>

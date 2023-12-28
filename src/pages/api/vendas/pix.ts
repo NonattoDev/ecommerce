@@ -170,8 +170,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
 
         const mailOptions = {
-          from: "softlinedocs@gmail.com",
-          to: email,
+          from: {
+            name: "S-Commerce",
+            address: process.env.GMAIL_LOGIN as string,
+          },
           subject: "Seu Pagamento via Pix Está Pronto",
           html: `
             <div style="font-family: 'Arial', sans-serif; color: #333;">
@@ -239,7 +241,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
 
       const mailOptions = {
-        from: "softlinedocs@gmail.com",
+        from: {
+          name: "S-Commerce",
+          address: process.env.GMAIL_LOGIN as string,
+        },
         to: email,
         subject: "Confirmação de Pagamento via Pix",
         html: `
