@@ -40,8 +40,8 @@ export default async function loginUsuario(req: NextApiRequest, res: NextApiResp
     if (usuario) {
       const mailOptions = {
         from: {
-          name: "Soft Line Sistemas",
-          address: "softlinedocs@gmail.com",
+          name: "S-Commerce",
+          address: process.env.GMAIL_LOGIN as string,
         },
         to: email,
         subject: "Login realizado com sucesso como ADMIN",
@@ -98,8 +98,8 @@ export default async function loginUsuario(req: NextApiRequest, res: NextApiResp
 
     const mailOptions = {
       from: {
-        name: "Soft Line Sistemas",
-        address: "softlinedocs@gmail.com",
+        name: "S-Commerce",
+        address: process.env.GMAIL_LOGIN as string,
       },
       to: email,
       subject: "Login realizado com sucesso",

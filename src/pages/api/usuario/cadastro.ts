@@ -69,8 +69,8 @@ export default async function cadastrarUsuario(req: NextApiRequest, res: NextApi
 
     const mailOptions = {
       from: {
-        name: "Soft Line Sistemas",
-        address: "softlinedocs@gmail.com",
+        name: "S-Commerce",
+        address: process.env.GMAIL_LOGIN as string,
       },
       to: novoUsuario.email,
       subject: "Confirme sua conta no S-Commerce",

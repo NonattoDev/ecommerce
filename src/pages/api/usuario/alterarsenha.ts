@@ -16,8 +16,8 @@ export default async function alterarSenha(req: NextApiRequest, res: NextApiResp
       const updateSenha = await db("clientes").where("CodCli", CodCli).update({ chave: password });
       const mailOptions = {
         from: {
-          name: "Soft Line Sistemas",
-          address: "softlinedocs@gmail.com",
+          name: "S-Commerce",
+          address: process.env.GMAIL_LOGIN as string,
         },
         to: decodedToken.data.email,
         subject: "Alteração de senha",

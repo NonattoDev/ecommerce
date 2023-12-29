@@ -11,8 +11,8 @@ export default async function recuperarSenha(req: NextApiRequest, res: NextApiRe
       const token = jwt.sign({ data: cliente, exp: Math.floor(Date.now() / 1000) + 600 }, "OdXFNuFU4BJOmfkYMYhy195IMcM");
       const mailOptions = {
         from: {
-          name: "Soft Line Sistemas",
-          address: "softlinedocs@gmail.com",
+          name: "S-Commerce",
+          address: process.env.GMAIL_LOGIN as string,
         },
         to: cliente.email,
         subject: "Alteração de Senha",

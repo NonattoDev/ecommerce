@@ -110,12 +110,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           headers: options.headers,
         });
 
-        const fs = require("fs");
-        // gerar com fs um json do reponse.data
-        fs.writeFile("response.json", JSON.stringify(response.data), function (err: any) {
-          if (err) throw err;
-          console.log("Saved!");
-        });
+        // const fs = require("fs");
+        // // gerar com fs um json do reponse.data
+        // fs.writeFile("Response.json", JSON.stringify(response.data), function (err: any) {
+        //   if (err) throw err;
+        //   console.log("Saved!");
+        // });
+        // // Gerar um json do options.data
+        // fs.writeFile("Request.json", JSON.stringify(options.data), function (err: any) {
+        //   if (err) throw err;
+        //   console.log("Saved!");
+        // });
 
         //! Se o Status é OK, ou seja, o cartao autorizou
         if (response.data.charges[0].payment_response.code === "20000") {
@@ -235,7 +240,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { email, Cliente } = await db("clientes").select("email", "Cliente").where("CodCli", CodCli).first();
 
             const mailOptions = {
-              from: "softlinedocs@gmail.com",
+              from: {
+                name: "S-Commerce",
+                address: process.env.GMAIL_LOGIN as string,
+              },
               to: email,
               subject: `Confirmação de Compra Aprovada`,
               html: `
