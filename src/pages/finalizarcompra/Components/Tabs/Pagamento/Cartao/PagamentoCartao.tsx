@@ -189,7 +189,6 @@ const Cartao = () => {
         toast.warn("Ocorreu um erro, por favor, verifique os dados do cartão e tente novamente");
         return;
       }
-      console.log(encryptedCardData);
 
       // Se não houver erros, prossiga com o fluxo
       try {
